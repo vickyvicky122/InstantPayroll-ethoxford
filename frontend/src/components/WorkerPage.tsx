@@ -5,16 +5,19 @@ import {
   INSTANT_PAYROLL_ABI,
   PLASMA_PAYOUT_ADDRESS,
   PLASMA_PAYOUT_ABI,
+  GOOGLE_CLIENT_ID,
   flareProvider,
   plasmaProvider,
 } from "../config";
 import {
   prepareGitHubAttestationRequest,
+  prepareGoogleDocsAttestationRequest,
   submitAttestationRequest,
   waitForFinalization,
   retrieveProof,
   buildClaimProof,
 } from "../utils/fdc";
+import { requestGoogleAccessToken, parseGoogleDocId } from "../utils/google-auth";
 
 interface Stream {
   id: number;
@@ -88,10 +91,22 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
   const [fdcProgress, setFdcProgress] = useState<string>("");
   const [fdcClaimingStreamId, setFdcClaimingStreamId] = useState<number | null>(null);
 
-  // Persist githubRepo
+  // Google Docs state
+  const [workSource, setWorkSource] = useState<"github" | "google">(() => (localStorage.getItem("workSource") as "github" | "google") || "github");
+  const [googleDocInput, setGoogleDocInput] = useState<string>(() => localStorage.getItem("googleDocInput") || "");
+  const [googleToken, setGoogleToken] = useState<string | null>(null);
+  const [googleSigningIn, setGoogleSigningIn] = useState(false);
+
+  // Persist settings
   useEffect(() => {
     localStorage.setItem("githubRepo", githubRepo);
   }, [githubRepo]);
+  useEffect(() => {
+    localStorage.setItem("googleDocInput", googleDocInput);
+  }, [googleDocInput]);
+  useEffect(() => {
+    localStorage.setItem("workSource", workSource);
+  }, [workSource]);
 
   // Tick every second for live countdowns
   useEffect(() => {
@@ -205,8 +220,29 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
     }
   };
 
+  const handleGoogleSignIn = async () => {
+    if (!GOOGLE_CLIENT_ID) return;
+    setGoogleSigningIn(true);
+    try {
+      const token = await requestGoogleAccessToken(GOOGLE_CLIENT_ID);
+      setGoogleToken(token);
+    } catch (e: any) {
+      console.error("Google sign-in error:", e);
+      alert("Google sign-in failed: " + e.message);
+    } finally {
+      setGoogleSigningIn(false);
+    }
+  };
+
   const handleFdcClaim = async (streamId: number) => {
-    if (!signer || !isCoston2 || !githubRepo.trim()) return;
+    if (!signer || !isCoston2) return;
+    if (workSource === "github" && !githubRepo.trim()) return;
+    if (workSource === "google" && !googleDocInput.trim()) return;
+
+    if (workSource === "google" && !googleToken) {
+      alert("Please sign in with Google first.");
+      return;
+    }
 
     setFdcClaimingStreamId(streamId);
     setFdcError(null);
@@ -216,8 +252,15 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
       // Step 1: Prepare
       setFdcStep("preparing");
       setFdcProgress("Calling FDC verifier API...");
-      const data = await prepareGitHubAttestationRequest(githubRepo.trim());
-      const abiEncodedRequest = data.abiEncodedRequest;
+      let abiEncodedRequest: string;
+      if (workSource === "google") {
+        const fileId = parseGoogleDocId(googleDocInput.trim());
+        const data = await prepareGoogleDocsAttestationRequest(fileId, googleToken!);
+        abiEncodedRequest = data.abiEncodedRequest;
+      } else {
+        const data = await prepareGitHubAttestationRequest(githubRepo.trim());
+        abiEncodedRequest = data.abiEncodedRequest;
+      }
 
       // Step 2: Submit
       setFdcStep("submitting");
@@ -332,21 +375,82 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
         )}
       </div>
 
-      {/* GitHub Repo Input */}
+      {/* Work Verification Source */}
       <div className="card">
-        <h3 style={{ marginBottom: 8 }}>GitHub Repository</h3>
-        <input
-          type="text"
-          className="input"
-          placeholder="owner/repo (e.g. myorg/myproject)"
-          value={githubRepo}
-          onChange={(e) => setGithubRepo(e.target.value)}
-          disabled={isFdcBusy}
-          style={{ width: "100%", maxWidth: 400 }}
-        />
-        <p className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
-          Used for FDC GitHub commit verification when claiming
-        </p>
+        <h3 style={{ marginBottom: 8 }}>Work Verification</h3>
+        <div className="tabs" style={{ marginBottom: 12 }}>
+          <button
+            className={`tab ${workSource === "github" ? "tab-active" : ""}`}
+            onClick={() => setWorkSource("github")}
+            disabled={isFdcBusy}
+          >
+            GitHub
+          </button>
+          <button
+            className={`tab ${workSource === "google" ? "tab-active" : ""}`}
+            onClick={() => setWorkSource("google")}
+            disabled={isFdcBusy}
+          >
+            Google Docs
+          </button>
+        </div>
+
+        {workSource === "github" && (
+          <div>
+            <input
+              type="text"
+              className="input"
+              placeholder="owner/repo (e.g. myorg/myproject)"
+              value={githubRepo}
+              onChange={(e) => setGithubRepo(e.target.value)}
+              disabled={isFdcBusy}
+              style={{ width: "100%", maxWidth: 400 }}
+            />
+            <p className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
+              FDC verifies GitHub commit count as proof of work
+            </p>
+          </div>
+        )}
+
+        {workSource === "google" && (
+          <div>
+            {!GOOGLE_CLIENT_ID ? (
+              <p className="muted" style={{ color: "#e67e22" }}>
+                Set VITE_GOOGLE_CLIENT_ID in your .env to enable Google Docs verification.
+              </p>
+            ) : (
+              <>
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="Google Doc URL or file ID"
+                  value={googleDocInput}
+                  onChange={(e) => setGoogleDocInput(e.target.value)}
+                  disabled={isFdcBusy}
+                  style={{ width: "100%", maxWidth: 400, marginBottom: 8 }}
+                />
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {googleToken ? (
+                    <span style={{ color: "#27ae60", fontSize: "0.85rem", fontWeight: 600 }}>
+                      Signed in with Google
+                    </span>
+                  ) : (
+                    <button
+                      className="btn btn-secondary"
+                      onClick={handleGoogleSignIn}
+                      disabled={googleSigningIn || isFdcBusy}
+                    >
+                      {googleSigningIn ? "Signing in..." : "Sign in with Google"}
+                    </button>
+                  )}
+                </div>
+                <p className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
+                  FDC verifies Google Doc revision count as proof of work
+                </p>
+              </>
+            )}
+          </div>
+        )}
       </div>
 
       {/* FDC Progress (global, shown when active) */}
@@ -431,10 +535,28 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
                         <button
                           className="btn btn-primary"
                           onClick={() => handleFdcClaim(s.id)}
-                          disabled={isFdcBusy || claiming === s.id || !isCoston2 || !githubRepo.trim()}
-                          title={!githubRepo.trim() ? "Enter a GitHub repo above first" : "Verify GitHub commits via FDC and claim"}
+                          disabled={
+                            isFdcBusy ||
+                            claiming === s.id ||
+                            !isCoston2 ||
+                            (workSource === "github" && !githubRepo.trim()) ||
+                            (workSource === "google" && (!googleDocInput.trim() || !googleToken || !GOOGLE_CLIENT_ID))
+                          }
+                          title={
+                            workSource === "github" && !githubRepo.trim()
+                              ? "Enter a GitHub repo above first"
+                              : workSource === "google" && !googleToken
+                                ? "Sign in with Google first"
+                                : workSource === "google"
+                                  ? "Verify Google Doc revisions via FDC and claim"
+                                  : "Verify GitHub commits via FDC and claim"
+                          }
                         >
-                          {isThisStreamFdcBusy ? "FDC Claiming..." : "Claim with GitHub Proof"}
+                          {isThisStreamFdcBusy
+                            ? "FDC Claiming..."
+                            : workSource === "google"
+                              ? "Claim with Google Docs Proof"
+                              : "Claim with GitHub Proof"}
                         </button>
                         <button
                           className="btn btn-secondary"
@@ -445,7 +567,9 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
                         </button>
                       </div>
                       <p className="muted" style={{ marginTop: 8, fontSize: "0.8rem" }}>
-                        GitHub Proof uses FDC attestation to verify commits. Demo uses hardcoded count.
+                        {workSource === "google"
+                          ? "Google Docs Proof uses FDC attestation to verify document revisions. Demo uses hardcoded count."
+                          : "GitHub Proof uses FDC attestation to verify commits. Demo uses hardcoded count."}
                       </p>
                     </div>
                   ) : (

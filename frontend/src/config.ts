@@ -4,6 +4,9 @@ import { ethers } from "ethers";
 export const INSTANT_PAYROLL_ADDRESS = import.meta.env.VITE_INSTANT_PAYROLL_ADDRESS || "";
 export const PLASMA_PAYOUT_ADDRESS = import.meta.env.VITE_PLASMA_PAYOUT_ADDRESS || "";
 
+// Google OAuth
+export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
+
 // Chain configs
 export const COSTON2_CHAIN_ID = 114;
 export const COSTON2_RPC = "https://coston2-api.flare.network/ext/C/rpc";

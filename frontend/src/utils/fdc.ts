@@ -226,3 +226,51 @@ export function buildClaimProof(
   const data = decodeProof(responseHex);
   return { merkleProof, data };
 }
+
+/**
+ * Step 1 (Google Docs variant): Prepare an attestation request using Google Drive Revisions API.
+ * Counts document revisions as the commitCount for FDC proof.
+ */
+export async function prepareGoogleDocsAttestationRequest(
+  fileId: string,
+  accessToken: string
+): Promise<{ abiEncodedRequest: string }> {
+  const apiUrl = `https://www.googleapis.com/drive/v3/files/${fileId}/revisions?fields=revisions(id)`;
+
+  const postProcessJq = `{commitCount: .revisions | length}`;
+  const abiSignature = `{"components": [{"internalType": "uint256", "name": "commitCount", "type": "uint256"}], "name": "task", "type": "tuple"}`;
+
+  const attestationType = toUtf8HexString("Web2Json");
+  const sourceId = toUtf8HexString("PublicWeb2");
+
+  const request = {
+    attestationType,
+    sourceId,
+    requestBody: {
+      url: apiUrl,
+      httpMethod: "GET",
+      headers: JSON.stringify({ Authorization: "Bearer " + accessToken }),
+      queryParams: "{}",
+      body: "{}",
+      postProcessJq,
+      abiSignature,
+    },
+  };
+
+  const url = `${VERIFIER_URL}/verifier/web2/Web2Json/prepareRequest`;
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "X-API-KEY": VERIFIER_API_KEY,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(request),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Verifier error: ${response.status} ${response.statusText} — ${text}`);
+  }
+
+  return await response.json();
+}
