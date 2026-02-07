@@ -46,6 +46,7 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
   const [claimEvents, setClaimEvents] = useState<any[]>([]);
   const [bonusStatus, setBonusStatus] = useState<{ wouldTrigger: boolean; isSecure: boolean } | null>(null);
   const [price, setPrice] = useState<string>("");
+  const [priceDecimals, setPriceDecimals] = useState<number>(7);
   const [activeTab, setActiveTab] = useState<"flare" | "plasma">("flare");
   const [now, setNow] = useState(Math.floor(Date.now() / 1000));
 
@@ -55,30 +56,35 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
     return () => clearInterval(tick);
   }, []);
 
-  const readContract = useMemo(() => new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, flareProvider), []);
+  const readContract = useMemo(
+    () => INSTANT_PAYROLL_ADDRESS ? new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, flareProvider) : null,
+    []
+  );
 
   const loadWorkerData = useCallback(async () => {
-    if (!address || !INSTANT_PAYROLL_ADDRESS) return;
+    if (!address || !readContract) return;
     setLoading(true);
     try {
       // Load streams where address is the worker
       const nextId = await readContract.nextStreamId();
       const count = Number(nextId);
-      const results = await Promise.all(
+      const results = await Promise.allSettled(
         Array.from({ length: count }, (_, i) => readContract.getStream(i))
       );
       const found: Stream[] = results
-        .map((s, i) => ({
+        .map((r, i) => ({ r, i }))
+        .filter((x): x is { r: PromiseFulfilledResult<any>; i: number } => x.r.status === "fulfilled")
+        .map(({ r, i }) => ({
           id: i,
-          employer: s.employer,
-          worker: s.worker,
-          usdRatePerInterval: s.usdRatePerInterval,
-          claimInterval: s.claimInterval,
-          totalDeposit: s.totalDeposit,
-          totalClaimed: s.totalClaimed,
-          lastClaimTime: s.lastClaimTime,
-          createdAt: s.createdAt,
-          active: s.active,
+          employer: r.value.employer,
+          worker: r.value.worker,
+          usdRatePerInterval: r.value.usdRatePerInterval,
+          claimInterval: r.value.claimInterval,
+          totalDeposit: r.value.totalDeposit,
+          totalClaimed: r.value.totalClaimed,
+          lastClaimTime: r.value.lastClaimTime,
+          createdAt: r.value.createdAt,
+          active: r.value.active,
         }))
         .filter((s) => s.worker.toLowerCase() === address.toLowerCase());
       setStreams(found);
@@ -86,7 +92,9 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
       // Load price
       try {
         const result = await readContract.getCurrentPrice();
-        setPrice(ethers.formatUnits(result.price, Number(result.decimals)));
+        const decimals = Number(result.decimals);
+        setPriceDecimals(decimals);
+        setPrice(ethers.formatUnits(result.price, decimals));
       } catch (e) { console.error("Price feed error:", e); }
 
       // Load bonus status
@@ -98,7 +106,13 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
       // Load past claim events for this worker
       try {
         const filter = readContract.filters.PaymentClaimed(null, address);
-        const events = await readContract.queryFilter(filter, -10000);
+        let events;
+        try {
+          events = await readContract.queryFilter(filter, -10000);
+        } catch {
+          // Fallback: query without block range if RPC rejects the range
+          events = await readContract.queryFilter(filter);
+        }
         setClaimEvents(events.map((e: any) => e.args));
       } catch (e) { console.error("Claim events error:", e); }
 
@@ -107,7 +121,7 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
     } finally {
       setLoading(false);
     }
-  }, [address]);
+  }, [address, readContract]);
 
   const loadPlasmaData = useCallback(async () => {
     if (!address || !PLASMA_PAYOUT_ADDRESS) return;
@@ -300,7 +314,7 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
                     {ev.bonusTriggered && <span className="bonus-badge">2x BONUS</span>}
                   </div>
                   <div className="event-sub">
-                    {ev.commitCount.toString()} commits | FLR/USD: {ethers.formatUnits(ev.flrUsdPrice, 7)}
+                    {ev.commitCount.toString()} commits | FLR/USD: {ethers.formatUnits(ev.flrUsdPrice, priceDecimals)}
                   </div>
                 </div>
               ))

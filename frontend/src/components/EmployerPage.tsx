@@ -38,29 +38,34 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
   const [ending, setEnding] = useState<number | null>(null);
   const [price, setPrice] = useState<{ price: string; decimals: number } | null>(null);
 
-  const readContract = useMemo(() => new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, flareProvider), []);
+  const readContract = useMemo(
+    () => INSTANT_PAYROLL_ADDRESS ? new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, flareProvider) : null,
+    []
+  );
 
   const loadStreams = useCallback(async () => {
-    if (!address || !INSTANT_PAYROLL_ADDRESS) return;
+    if (!address || !readContract) return;
     setLoading(true);
     try {
       const nextId = await readContract.nextStreamId();
       const count = Number(nextId);
-      const results = await Promise.all(
+      const results = await Promise.allSettled(
         Array.from({ length: count }, (_, i) => readContract.getStream(i))
       );
       const found: Stream[] = results
-        .map((s, i) => ({
+        .map((r, i) => ({ r, i }))
+        .filter((x): x is { r: PromiseFulfilledResult<any>; i: number } => x.r.status === "fulfilled")
+        .map(({ r, i }) => ({
           id: i,
-          employer: s.employer,
-          worker: s.worker,
-          usdRatePerInterval: s.usdRatePerInterval,
-          claimInterval: s.claimInterval,
-          totalDeposit: s.totalDeposit,
-          totalClaimed: s.totalClaimed,
-          lastClaimTime: s.lastClaimTime,
-          createdAt: s.createdAt,
-          active: s.active,
+          employer: r.value.employer,
+          worker: r.value.worker,
+          usdRatePerInterval: r.value.usdRatePerInterval,
+          claimInterval: r.value.claimInterval,
+          totalDeposit: r.value.totalDeposit,
+          totalClaimed: r.value.totalClaimed,
+          lastClaimTime: r.value.lastClaimTime,
+          createdAt: r.value.createdAt,
+          active: r.value.active,
         }))
         .filter((s) => s.employer.toLowerCase() === address.toLowerCase());
       setStreams(found);
@@ -69,10 +74,10 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
     } finally {
       setLoading(false);
     }
-  }, [address]);
+  }, [address, readContract]);
 
   const loadPrice = useCallback(async () => {
-    if (!INSTANT_PAYROLL_ADDRESS) return;
+    if (!readContract) return;
     try {
       const result = await readContract.getCurrentPrice();
       setPrice({
@@ -82,7 +87,7 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
     } catch (e: any) {
       console.error("Price error:", e);
     }
-  }, []);
+  }, [readContract]);
 
   useEffect(() => {
     loadStreams();
