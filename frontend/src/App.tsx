@@ -2,6 +2,7 @@ import { Component } from "react";
 import type { ErrorInfo, ReactNode } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Header } from "./components/Header";
+import { LandingPage } from "./components/LandingPage";
 import { EmployerPage } from "./components/EmployerPage";
 import { WorkerPage } from "./components/WorkerPage";
 import { useWallet } from "./hooks/useWallet";
@@ -48,6 +49,10 @@ function App() {
             <Routes>
               <Route
                 path="/"
+                element={<LandingPage onConnect={connect} connecting={connecting} address={address} />}
+              />
+              <Route
+                path="/employer"
                 element={<EmployerPage address={address} signer={signer} isCorrectNetwork={isCorrectNetwork} />}
               />
               <Route
