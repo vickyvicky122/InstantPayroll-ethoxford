@@ -4,7 +4,8 @@ import {
   INSTANT_PAYROLL_ADDRESS,
   INSTANT_PAYROLL_ABI,
   flareProvider,
-  COSTON2_EXPLORER,
+  FLARE_EXPLORER,
+  CURRENCY_SYMBOL,
 } from "../config";
 
 interface Stream {
@@ -23,10 +24,10 @@ interface Stream {
 interface EmployerPageProps {
   address: string;
   signer: ethers.Signer | null;
-  isCoston2: boolean;
+  isCorrectNetwork: boolean;
 }
 
-export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) {
+export function EmployerPage({ address, signer, isCorrectNetwork }: EmployerPageProps) {
   const [workerAddr, setWorkerAddr] = useState("");
   const [usdRate, setUsdRate] = useState("0.5");
   const [interval, setInterval_] = useState("60");
@@ -100,7 +101,7 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!signer || !isCoston2) return;
+    if (!signer || !isCorrectNetwork) return;
     if (!ethers.isAddress(workerAddr)) {
       alert("Invalid Ethereum address");
       return;
@@ -128,7 +129,7 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
   };
 
   const handleEnd = async (streamId: number) => {
-    if (!signer || !isCoston2) return;
+    if (!signer || !isCorrectNetwork) return;
     setEnding(streamId);
     try {
       const contract = new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, signer);
@@ -209,7 +210,7 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
             </div>
           </div>
           <div className="form-group">
-            <label>Deposit (C2FLR)</label>
+            <label>Deposit ({CURRENCY_SYMBOL})</label>
             <input
               type="number"
               step="0.1"
@@ -222,13 +223,13 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
           <button
             type="submit"
             className="btn btn-primary btn-full"
-            disabled={creating || !isCoston2}
+            disabled={creating || !isCorrectNetwork}
           >
             {creating ? "Creating Stream..." : "Create Stream"}
           </button>
           {txHash && (
             <p className="tx-link">
-              TX: <a href={`${COSTON2_EXPLORER}/tx/${txHash}`} target="_blank" rel="noopener noreferrer">{txHash.slice(0, 10)}...</a>
+              TX: <a href={`${FLARE_EXPLORER}/tx/${txHash}`} target="_blank" rel="noopener noreferrer">{txHash.slice(0, 10)}...</a>
             </p>
           )}
         </form>
@@ -250,8 +251,8 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
             <div className="stream-details">
               <div><strong>Worker:</strong> {s.worker.slice(0, 8)}...{s.worker.slice(-6)}</div>
               <div><strong>Rate:</strong> ${ethers.formatEther(s.usdRatePerInterval)} / {s.claimInterval.toString()}s</div>
-              <div><strong>Deposited:</strong> {ethers.formatEther(s.totalDeposit)} C2FLR</div>
-              <div><strong>Claimed:</strong> {ethers.formatEther(s.totalClaimed)} C2FLR</div>
+              <div><strong>Deposited:</strong> {ethers.formatEther(s.totalDeposit)} {CURRENCY_SYMBOL}</div>
+              <div><strong>Claimed:</strong> {ethers.formatEther(s.totalClaimed)} {CURRENCY_SYMBOL}</div>
               <div className="progress-bar">
                 <div
                   className="progress-fill"

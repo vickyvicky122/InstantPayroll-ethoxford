@@ -30,7 +30,7 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 }
 
 function App() {
-  const { address, signer, isCoston2, connecting, connect, switchToCoston2 } = useWallet();
+  const { address, signer, isCorrectNetwork, connecting, connect, switchToFlare, networkName } = useWallet();
 
   return (
     <BrowserRouter>
@@ -38,20 +38,21 @@ function App() {
         <Header
           address={address}
           connecting={connecting}
-          isCoston2={isCoston2}
+          isCorrectNetwork={isCorrectNetwork}
+          networkName={networkName}
           onConnect={connect}
-          onSwitchNetwork={switchToCoston2}
+          onSwitchNetwork={switchToFlare}
         />
         <main className="main">
           <ErrorBoundary>
             <Routes>
               <Route
                 path="/"
-                element={<EmployerPage address={address} signer={signer} isCoston2={isCoston2} />}
+                element={<EmployerPage address={address} signer={signer} isCorrectNetwork={isCorrectNetwork} />}
               />
               <Route
                 path="/worker"
-                element={<WorkerPage address={address} signer={signer} isCoston2={isCoston2} />}
+                element={<WorkerPage address={address} signer={signer} isCorrectNetwork={isCorrectNetwork} />}
               />
             </Routes>
           </ErrorBoundary>

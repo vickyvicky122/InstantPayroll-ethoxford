@@ -6,6 +6,7 @@ import {
   PLASMA_PAYOUT_ADDRESS,
   PLASMA_PAYOUT_ABI,
   GOOGLE_CLIENT_ID,
+  CURRENCY_SYMBOL,
   flareProvider,
   plasmaProvider,
 } from "../config";
@@ -44,7 +45,7 @@ interface PlasmaPayout {
 interface WorkerPageProps {
   address: string;
   signer: ethers.Signer | null;
-  isCoston2: boolean;
+  isCorrectNetwork: boolean;
 }
 
 type FdcStep = "idle" | "preparing" | "submitting" | "finalizing" | "retrieving" | "claiming" | "done" | "error";
@@ -71,7 +72,7 @@ const FDC_STEP_NUMBER: Record<FdcStep, number> = {
   error: 0,
 };
 
-export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
+export function WorkerPage({ address, signer, isCorrectNetwork }: WorkerPageProps) {
   const [streams, setStreams] = useState<Stream[]>([]);
   const [plasmaPayouts, setPlasmaPayouts] = useState<PlasmaPayout[]>([]);
   const [totalEarnedUSD, setTotalEarnedUSD] = useState<bigint>(0n);
@@ -205,7 +206,7 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
   }, [loadWorkerData, loadPlasmaData]);
 
   const handleClaimDemo = async (streamId: number) => {
-    if (!signer || !isCoston2) return;
+    if (!signer || !isCorrectNetwork) return;
     setClaiming(streamId);
     try {
       const contract = new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, signer);
@@ -235,7 +236,7 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
   };
 
   const handleFdcClaim = async (streamId: number) => {
-    if (!signer || !isCoston2) return;
+    if (!signer || !isCorrectNetwork) return;
     if (workSource === "github" && !githubRepo.trim()) return;
     if (workSource === "google" && !googleDocInput.trim()) return;
 
@@ -492,7 +493,7 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
               <div className="stream-details">
                 <div><strong>Employer:</strong> {s.employer.slice(0, 8)}...{s.employer.slice(-6)}</div>
                 <div><strong>Rate:</strong> ${ethers.formatEther(s.usdRatePerInterval)} / {s.claimInterval.toString()}s</div>
-                <div><strong>Remaining:</strong> {ethers.formatEther(remaining)} C2FLR</div>
+                <div><strong>Remaining:</strong> {ethers.formatEther(remaining)} {CURRENCY_SYMBOL}</div>
                 <div className="progress-bar">
                   <div className="progress-fill" style={{ width: `${pctUsed}%` }} />
                 </div>
@@ -538,7 +539,7 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
                           disabled={
                             isFdcBusy ||
                             claiming === s.id ||
-                            !isCoston2 ||
+                            !isCorrectNetwork ||
                             (workSource === "github" && !githubRepo.trim()) ||
                             (workSource === "google" && (!googleDocInput.trim() || !googleToken || !GOOGLE_CLIENT_ID))
                           }
@@ -561,7 +562,7 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
                         <button
                           className="btn btn-secondary"
                           onClick={() => handleClaimDemo(s.id)}
-                          disabled={claiming === s.id || isFdcBusy || !isCoston2}
+                          disabled={claiming === s.id || isFdcBusy || !isCorrectNetwork}
                         >
                           {claiming === s.id ? "Claiming..." : "Quick Claim (Demo)"}
                         </button>

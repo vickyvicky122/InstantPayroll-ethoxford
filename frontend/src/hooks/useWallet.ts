@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { ethers } from "ethers";
-import { COSTON2_CHAIN_ID, COSTON2_NETWORK } from "../config";
+import { FLARE_CHAIN_ID, FLARE_NETWORK } from "../config";
 
 export function useWallet() {
   const [address, setAddress] = useState<string>("");
@@ -43,13 +43,13 @@ export function useWallet() {
     }
   }, [getProvider]);
 
-  const switchToCoston2 = useCallback(async () => {
+  const switchToFlare = useCallback(async () => {
     const eth = getProvider();
     if (!eth) return;
     try {
       await eth.request({
         method: "wallet_switchEthereumChain",
-        params: [{ chainId: COSTON2_NETWORK.chainId }],
+        params: [{ chainId: FLARE_NETWORK.chainId }],
       });
       await connect();
     } catch (err: any) {
@@ -57,11 +57,11 @@ export function useWallet() {
         try {
           await eth.request({
             method: "wallet_addEthereumChain",
-            params: [COSTON2_NETWORK],
+            params: [FLARE_NETWORK],
           });
           await connect();
         } catch (addErr: any) {
-          console.error("Failed to add Coston2 network:", addErr);
+          console.error("Failed to add network:", addErr);
         }
       } else {
         console.error("Failed to switch network:", err);
@@ -102,7 +102,8 @@ export function useWallet() {
     };
   }, [connect, getProvider]);
 
-  const isCoston2 = chainId === COSTON2_CHAIN_ID;
+  const isCorrectNetwork = chainId === FLARE_CHAIN_ID;
+  const networkName = FLARE_NETWORK.chainName;
 
-  return { address, signer, chainId, isCoston2, connecting, connect, switchToCoston2 };
+  return { address, signer, chainId, isCorrectNetwork, connecting, connect, switchToFlare, networkName };
 }

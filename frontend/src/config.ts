@@ -2,27 +2,80 @@ import { ethers } from "ethers";
 
 // Contract addresses — update after deployment
 export const INSTANT_PAYROLL_ADDRESS = import.meta.env.VITE_INSTANT_PAYROLL_ADDRESS || "";
-export const PLASMA_PAYOUT_ADDRESS = import.meta.env.VITE_PLASMA_PAYOUT_ADDRESS || "";
 
 // Google OAuth
 export const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID || "";
 
-// Chain configs
-export const COSTON2_CHAIN_ID = 114;
-export const COSTON2_RPC = "https://coston2-api.flare.network/ext/C/rpc";
-export const COSTON2_EXPLORER = "https://coston2-explorer.flare.network";
+// --- Network-aware configuration ---
+
+type NetworkId = "coston2" | "flare";
+
+interface FlareNetworkConfig {
+  chainId: number;
+  chainName: string;
+  currencyName: string;
+  currencySymbol: string;
+  rpcUrl: string;
+  explorerUrl: string;
+  daLayerUrl: string;
+  fdcVerifierUrl: string;
+}
+
+const NETWORKS: Record<NetworkId, FlareNetworkConfig> = {
+  coston2: {
+    chainId: 114,
+    chainName: "Flare Testnet Coston2",
+    currencyName: "Coston2 Flare",
+    currencySymbol: "C2FLR",
+    rpcUrl: "https://coston2-api.flare.network/ext/C/rpc",
+    explorerUrl: "https://coston2-explorer.flare.network",
+    daLayerUrl: "https://ctn2-data-availability.flare.network",
+    fdcVerifierUrl: "https://fdc-verifiers-testnet.flare.network",
+  },
+  flare: {
+    chainId: 14,
+    chainName: "Flare Mainnet",
+    currencyName: "Flare",
+    currencySymbol: "FLR",
+    rpcUrl: "https://flare-api.flare.network/ext/C/rpc",
+    explorerUrl: "https://flare-explorer.flare.network",
+    daLayerUrl: "https://flr-data-availability.flare.network",
+    fdcVerifierUrl: "https://fdc-verifiers-mainnet.flare.network",
+  },
+};
+
+export const ACTIVE_NETWORK: NetworkId =
+  (import.meta.env.VITE_NETWORK as NetworkId) || "coston2";
+export const NETWORK_CONFIG = NETWORKS[ACTIVE_NETWORK];
+
+export const FLARE_CHAIN_ID = NETWORK_CONFIG.chainId;
+export const FLARE_RPC = NETWORK_CONFIG.rpcUrl;
+export const FLARE_EXPLORER = NETWORK_CONFIG.explorerUrl;
+export const CURRENCY_SYMBOL = NETWORK_CONFIG.currencySymbol;
+
+export const FLARE_NETWORK = {
+  chainId: "0x" + NETWORK_CONFIG.chainId.toString(16),
+  chainName: NETWORK_CONFIG.chainName,
+  nativeCurrency: {
+    name: NETWORK_CONFIG.currencyName,
+    symbol: NETWORK_CONFIG.currencySymbol,
+    decimals: 18,
+  },
+  rpcUrls: [NETWORK_CONFIG.rpcUrl],
+  blockExplorerUrls: [NETWORK_CONFIG.explorerUrl],
+};
+
+export const FDC_API_KEY =
+  import.meta.env.VITE_FDC_API_KEY || "00000000-0000-0000-0000-000000000000";
+
+// Plasma config — only relevant on testnet
+export const PLASMA_ENABLED = ACTIVE_NETWORK === "coston2";
+export const PLASMA_PAYOUT_ADDRESS = PLASMA_ENABLED
+  ? import.meta.env.VITE_PLASMA_PAYOUT_ADDRESS || ""
+  : "";
 
 export const PLASMA_TESTNET_CHAIN_ID = 9746;
 export const PLASMA_TESTNET_RPC = "https://testnet-rpc.plasma.to";
-
-// Network configs for MetaMask
-export const COSTON2_NETWORK = {
-  chainId: "0x" + COSTON2_CHAIN_ID.toString(16),
-  chainName: "Flare Testnet Coston2",
-  nativeCurrency: { name: "Coston2 Flare", symbol: "C2FLR", decimals: 18 },
-  rpcUrls: [COSTON2_RPC],
-  blockExplorerUrls: [COSTON2_EXPLORER],
-};
 
 export const PLASMA_NETWORK = {
   chainId: "0x" + PLASMA_TESTNET_CHAIN_ID.toString(16),
@@ -55,5 +108,5 @@ export const PLASMA_PAYOUT_ABI = [
 ];
 
 // Read-only providers
-export const flareProvider = new ethers.JsonRpcProvider(COSTON2_RPC);
+export const flareProvider = new ethers.JsonRpcProvider(FLARE_RPC);
 export const plasmaProvider = new ethers.JsonRpcProvider(PLASMA_TESTNET_RPC);

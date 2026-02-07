@@ -3,12 +3,13 @@ import { Link, useLocation } from "react-router-dom";
 interface HeaderProps {
   address: string;
   connecting: boolean;
-  isCoston2: boolean;
+  isCorrectNetwork: boolean;
+  networkName: string;
   onConnect: () => void;
   onSwitchNetwork: () => void;
 }
 
-export function Header({ address, connecting, isCoston2, onConnect, onSwitchNetwork }: HeaderProps) {
+export function Header({ address, connecting, isCorrectNetwork, networkName, onConnect, onSwitchNetwork }: HeaderProps) {
   const location = useLocation();
 
   return (
@@ -25,9 +26,9 @@ export function Header({ address, connecting, isCoston2, onConnect, onSwitchNetw
         </nav>
       </div>
       <div className="header-right">
-        {address && !isCoston2 && (
+        {address && !isCorrectNetwork && (
           <button className="btn btn-warning" onClick={onSwitchNetwork}>
-            Switch to Coston2
+            Switch to {networkName}
           </button>
         )}
         {address ? (

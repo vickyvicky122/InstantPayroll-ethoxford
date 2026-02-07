@@ -1,9 +1,10 @@
 import { ethers } from "ethers";
+import { FDC_API_KEY } from "../config";
 
 // --- Constants ---
 
 const VERIFIER_URL = "/api/fdc-verifier";
-const VERIFIER_API_KEY = "00000000-0000-0000-0000-000000000000";
+const VERIFIER_API_KEY = FDC_API_KEY;
 const DA_LAYER_URL = "/api/da-layer";
 
 const FLARE_CONTRACT_REGISTRY_ADDRESS = "0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019";
