@@ -8,14 +8,26 @@ export function useWallet() {
   const [chainId, setChainId] = useState<number>(0);
   const [connecting, setConnecting] = useState(false);
 
+  const getProvider = useCallback(() => {
+    // Check standard window.ethereum
+    if ((window as any).ethereum) return (window as any).ethereum;
+    // Check for MetaMask-specific provider (when multiple wallets installed)
+    if ((window as any).ethereum?.providers) {
+      return (window as any).ethereum.providers.find((p: any) => p.isMetaMask) || null;
+    }
+    return null;
+  }, []);
+
   const connect = useCallback(async () => {
-    if (!(window as any).ethereum) {
-      alert("Please install MetaMask");
+    const eth = getProvider();
+    if (!eth) {
+      alert("No wallet detected. Please install MetaMask or another Web3 wallet and refresh the page.");
+      window.open("https://metamask.io/download/", "_blank");
       return;
     }
     setConnecting(true);
     try {
-      const provider = new ethers.BrowserProvider((window as any).ethereum);
+      const provider = new ethers.BrowserProvider(eth);
       await provider.send("eth_requestAccounts", []);
       const s = await provider.getSigner();
       const addr = await s.getAddress();
@@ -29,12 +41,13 @@ export function useWallet() {
     } finally {
       setConnecting(false);
     }
-  }, []);
+  }, [getProvider]);
 
   const switchToCoston2 = useCallback(async () => {
-    if (!(window as any).ethereum) return;
+    const eth = getProvider();
+    if (!eth) return;
     try {
-      await (window as any).ethereum.request({
+      await eth.request({
         method: "wallet_switchEthereumChain",
         params: [{ chainId: COSTON2_NETWORK.chainId }],
       });
@@ -42,7 +55,7 @@ export function useWallet() {
     } catch (err: any) {
       if (err.code === 4902) {
         try {
-          await (window as any).ethereum.request({
+          await eth.request({
             method: "wallet_addEthereumChain",
             params: [COSTON2_NETWORK],
           });
@@ -54,10 +67,23 @@ export function useWallet() {
         console.error("Failed to switch network:", err);
       }
     }
-  }, [connect]);
+  }, [connect, getProvider]);
 
+  // Auto-reconnect if wallet is already authorized (no popup)
   useEffect(() => {
-    if (!(window as any).ethereum) return;
+    const eth = getProvider();
+    if (!eth) return;
+    eth.request({ method: "eth_accounts" })
+      .then((accounts: string[]) => {
+        if (accounts.length > 0) connect();
+      })
+      .catch(() => {});
+  }, [connect, getProvider]);
+
+  // Listen for account/chain changes
+  useEffect(() => {
+    const eth = getProvider();
+    if (!eth) return;
     const handleAccountsChanged = (accounts: string[]) => {
       if (accounts.length === 0) {
         setAddress("");
@@ -68,13 +94,13 @@ export function useWallet() {
     };
     const handleChainChanged = () => connect();
 
-    (window as any).ethereum.on("accountsChanged", handleAccountsChanged);
-    (window as any).ethereum.on("chainChanged", handleChainChanged);
+    eth.on("accountsChanged", handleAccountsChanged);
+    eth.on("chainChanged", handleChainChanged);
     return () => {
-      (window as any).ethereum?.removeListener("accountsChanged", handleAccountsChanged);
-      (window as any).ethereum?.removeListener("chainChanged", handleChainChanged);
+      eth.removeListener("accountsChanged", handleAccountsChanged);
+      eth.removeListener("chainChanged", handleChainChanged);
     };
-  }, [connect]);
+  }, [connect, getProvider]);
 
   const isCoston2 = chainId === COSTON2_CHAIN_ID;
 
