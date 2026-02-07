@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { ethers } from "ethers";
 import {
   INSTANT_PAYROLL_ADDRESS,
@@ -35,33 +35,34 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
   const [txHash, setTxHash] = useState("");
   const [streams, setStreams] = useState<Stream[]>([]);
   const [loading, setLoading] = useState(false);
+  const [ending, setEnding] = useState<number | null>(null);
   const [price, setPrice] = useState<{ price: string; decimals: number } | null>(null);
 
-  const readContract = new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, flareProvider);
+  const readContract = useMemo(() => new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, flareProvider), []);
 
   const loadStreams = useCallback(async () => {
     if (!address || !INSTANT_PAYROLL_ADDRESS) return;
     setLoading(true);
     try {
       const nextId = await readContract.nextStreamId();
-      const found: Stream[] = [];
-      for (let i = 0; i < Number(nextId); i++) {
-        const s = await readContract.getStream(i);
-        if (s.employer.toLowerCase() === address.toLowerCase()) {
-          found.push({
-            id: i,
-            employer: s.employer,
-            worker: s.worker,
-            usdRatePerInterval: s.usdRatePerInterval,
-            claimInterval: s.claimInterval,
-            totalDeposit: s.totalDeposit,
-            totalClaimed: s.totalClaimed,
-            lastClaimTime: s.lastClaimTime,
-            createdAt: s.createdAt,
-            active: s.active,
-          });
-        }
-      }
+      const count = Number(nextId);
+      const results = await Promise.all(
+        Array.from({ length: count }, (_, i) => readContract.getStream(i))
+      );
+      const found: Stream[] = results
+        .map((s, i) => ({
+          id: i,
+          employer: s.employer,
+          worker: s.worker,
+          usdRatePerInterval: s.usdRatePerInterval,
+          claimInterval: s.claimInterval,
+          totalDeposit: s.totalDeposit,
+          totalClaimed: s.totalClaimed,
+          lastClaimTime: s.lastClaimTime,
+          createdAt: s.createdAt,
+          active: s.active,
+        }))
+        .filter((s) => s.employer.toLowerCase() === address.toLowerCase());
       setStreams(found);
     } catch (e: any) {
       console.error("Load streams error:", e);
@@ -95,6 +96,10 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!signer || !isCoston2) return;
+    if (!ethers.isAddress(workerAddr)) {
+      alert("Invalid Ethereum address");
+      return;
+    }
 
     setCreating(true);
     setTxHash("");
@@ -119,6 +124,7 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
 
   const handleEnd = async (streamId: number) => {
     if (!signer || !isCoston2) return;
+    setEnding(streamId);
     try {
       const contract = new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, signer);
       const tx = await contract.endStream(streamId);
@@ -127,6 +133,8 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
     } catch (e: any) {
       console.error("End stream error:", e);
       alert("Error: " + (e.reason || e.message));
+    } finally {
+      setEnding(null);
     }
   };
 
@@ -249,8 +257,8 @@ export function EmployerPage({ address, signer, isCoston2 }: EmployerPageProps) 
               </div>
             </div>
             {s.active && (
-              <button className="btn btn-danger" onClick={() => handleEnd(s.id)}>
-                End Stream
+              <button className="btn btn-danger" onClick={() => handleEnd(s.id)} disabled={ending === s.id}>
+                {ending === s.id ? "Ending..." : "End Stream"}
               </button>
             )}
           </div>

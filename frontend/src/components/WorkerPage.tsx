@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { ethers } from "ethers";
 import {
   INSTANT_PAYROLL_ADDRESS,
@@ -47,8 +47,15 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
   const [bonusStatus, setBonusStatus] = useState<{ wouldTrigger: boolean; isSecure: boolean } | null>(null);
   const [price, setPrice] = useState<string>("");
   const [activeTab, setActiveTab] = useState<"flare" | "plasma">("flare");
+  const [now, setNow] = useState(Math.floor(Date.now() / 1000));
 
-  const readContract = new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, flareProvider);
+  // Tick every second for live countdowns
+  useEffect(() => {
+    const tick = setInterval(() => setNow(Math.floor(Date.now() / 1000)), 1000);
+    return () => clearInterval(tick);
+  }, []);
+
+  const readContract = useMemo(() => new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, flareProvider), []);
 
   const loadWorkerData = useCallback(async () => {
     if (!address || !INSTANT_PAYROLL_ADDRESS) return;
@@ -56,44 +63,44 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
     try {
       // Load streams where address is the worker
       const nextId = await readContract.nextStreamId();
-      const found: Stream[] = [];
-      for (let i = 0; i < Number(nextId); i++) {
-        const s = await readContract.getStream(i);
-        if (s.worker.toLowerCase() === address.toLowerCase()) {
-          found.push({
-            id: i,
-            employer: s.employer,
-            worker: s.worker,
-            usdRatePerInterval: s.usdRatePerInterval,
-            claimInterval: s.claimInterval,
-            totalDeposit: s.totalDeposit,
-            totalClaimed: s.totalClaimed,
-            lastClaimTime: s.lastClaimTime,
-            createdAt: s.createdAt,
-            active: s.active,
-          });
-        }
-      }
+      const count = Number(nextId);
+      const results = await Promise.all(
+        Array.from({ length: count }, (_, i) => readContract.getStream(i))
+      );
+      const found: Stream[] = results
+        .map((s, i) => ({
+          id: i,
+          employer: s.employer,
+          worker: s.worker,
+          usdRatePerInterval: s.usdRatePerInterval,
+          claimInterval: s.claimInterval,
+          totalDeposit: s.totalDeposit,
+          totalClaimed: s.totalClaimed,
+          lastClaimTime: s.lastClaimTime,
+          createdAt: s.createdAt,
+          active: s.active,
+        }))
+        .filter((s) => s.worker.toLowerCase() === address.toLowerCase());
       setStreams(found);
 
       // Load price
       try {
         const result = await readContract.getCurrentPrice();
         setPrice(ethers.formatUnits(result.price, Number(result.decimals)));
-      } catch {}
+      } catch (e) { console.error("Price feed error:", e); }
 
       // Load bonus status
       try {
         const bonus = await readContract.checkBonusStatus();
         setBonusStatus({ wouldTrigger: bonus.wouldTrigger, isSecure: bonus.isSecure });
-      } catch {}
+      } catch (e) { console.error("Bonus status error:", e); }
 
       // Load past claim events for this worker
       try {
         const filter = readContract.filters.PaymentClaimed(null, address);
         const events = await readContract.queryFilter(filter, -10000);
         setClaimEvents(events.map((e: any) => e.args));
-      } catch {}
+      } catch (e) { console.error("Claim events error:", e); }
 
     } catch (e: any) {
       console.error("Load error:", e);
@@ -142,10 +149,15 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
   };
 
   const getTimeUntilClaim = (stream: Stream) => {
-    const now = BigInt(Math.floor(Date.now() / 1000));
     const nextClaim = stream.lastClaimTime + stream.claimInterval;
-    if (now >= nextClaim) return 0;
-    return Number(nextClaim - now);
+    if (BigInt(now) >= nextClaim) return 0;
+    return Number(nextClaim - BigInt(now));
+  };
+
+  const formatCountdown = (secs: number) => {
+    const m = Math.floor(secs / 60);
+    const s = secs % 60;
+    return m > 0 ? `${m}m ${s.toString().padStart(2, '0')}s` : `${s}s`;
   };
 
   if (!address) {
@@ -246,7 +258,7 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
                     </div>
                   ) : (
                     <div className="claim-wait">
-                      Next claim in: <strong>{secsLeft}s</strong>
+                      Next claim in: <span className="countdown">{formatCountdown(secsLeft)}</span>
                     </div>
                   )}
                 </div>

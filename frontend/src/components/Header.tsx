@@ -14,7 +14,7 @@ export function Header({ address, connecting, isCoston2, onConnect, onSwitchNetw
   return (
     <header className="header">
       <div className="header-left">
-        <h1 className="logo">InstantPayroll</h1>
+        <h1 className="logo"><span className="logo-mark" />InstantPayroll</h1>
         <nav className="nav">
           <Link to="/" className={location.pathname === "/" ? "active" : ""}>
             Employer

@@ -38,16 +38,22 @@ export function useWallet() {
         method: "wallet_switchEthereumChain",
         params: [{ chainId: COSTON2_NETWORK.chainId }],
       });
+      await connect();
     } catch (err: any) {
       if (err.code === 4902) {
-        await (window as any).ethereum.request({
-          method: "wallet_addEthereumChain",
-          params: [COSTON2_NETWORK],
-        });
+        try {
+          await (window as any).ethereum.request({
+            method: "wallet_addEthereumChain",
+            params: [COSTON2_NETWORK],
+          });
+          await connect();
+        } catch (addErr: any) {
+          console.error("Failed to add Coston2 network:", addErr);
+        }
+      } else {
+        console.error("Failed to switch network:", err);
       }
     }
-    // Reconnect after switch
-    await connect();
   }, [connect]);
 
   useEffect(() => {
