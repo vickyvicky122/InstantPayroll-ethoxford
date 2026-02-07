@@ -36,6 +36,7 @@ export const INSTANT_PAYROLL_ABI = [
   "function getStream(uint256 _streamId) external view returns (tuple(address employer, address worker, uint256 usdRatePerInterval, uint256 claimInterval, uint256 totalDeposit, uint256 totalClaimed, uint256 lastClaimTime, uint256 createdAt, bool active))",
   "function getCurrentPrice() external view returns (uint256 price, int8 decimals, uint64 timestamp)",
   "function checkBonusStatus() external view returns (uint256 randomNumber, bool isSecure, bool wouldTrigger)",
+  "function claimDemo(uint256 _streamId, uint256 _commitCount) external",
   "function nextStreamId() external view returns (uint256)",
   "event StreamCreated(uint256 indexed streamId, address indexed employer, address indexed worker, uint256 usdRatePerInterval, uint256 claimInterval, uint256 totalDeposit)",
   "event PaymentClaimed(uint256 indexed streamId, address indexed worker, uint256 amountFLR, uint256 amountUSD, uint256 flrUsdPrice, bool bonusTriggered, uint256 commitCount)",

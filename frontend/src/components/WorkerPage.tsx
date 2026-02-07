@@ -37,11 +37,12 @@ interface WorkerPageProps {
   isCoston2: boolean;
 }
 
-export function WorkerPage({ address }: WorkerPageProps) {
+export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
   const [streams, setStreams] = useState<Stream[]>([]);
   const [plasmaPayouts, setPlasmaPayouts] = useState<PlasmaPayout[]>([]);
   const [totalEarnedUSD, setTotalEarnedUSD] = useState<bigint>(0n);
   const [loading, setLoading] = useState(false);
+  const [claiming, setClaiming] = useState<number | null>(null);
   const [claimEvents, setClaimEvents] = useState<any[]>([]);
   const [bonusStatus, setBonusStatus] = useState<{ wouldTrigger: boolean; isSecure: boolean } | null>(null);
   const [price, setPrice] = useState<string>("");
@@ -123,6 +124,22 @@ export function WorkerPage({ address }: WorkerPageProps) {
     }, 15000);
     return () => clearInterval(timer);
   }, [loadWorkerData, loadPlasmaData]);
+
+  const handleClaimDemo = async (streamId: number) => {
+    if (!signer || !isCoston2) return;
+    setClaiming(streamId);
+    try {
+      const contract = new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, signer);
+      const tx = await contract.claimDemo(streamId, 1);
+      await tx.wait();
+      await loadWorkerData();
+    } catch (e: any) {
+      console.error("Claim error:", e);
+      alert("Claim error: " + (e.reason || e.message));
+    } finally {
+      setClaiming(null);
+    }
+  };
 
   const getTimeUntilClaim = (stream: Stream) => {
     const now = BigInt(Math.floor(Date.now() / 1000));
@@ -216,10 +233,16 @@ export function WorkerPage({ address }: WorkerPageProps) {
                 <div className="claim-section">
                   {canClaim ? (
                     <div className="claim-ready">
-                      <p>Ready to claim! Run the FDC attestation script:</p>
-                      <code className="code-block">
-                        STREAM_ID={s.id} GITHUB_REPO=owner/repo npx hardhat run scripts/fdcGithub.ts --network coston2
-                      </code>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleClaimDemo(s.id)}
+                        disabled={claiming === s.id || !isCoston2}
+                      >
+                        {claiming === s.id ? "Claiming..." : "Claim Payment"}
+                      </button>
+                      <p className="muted" style={{ marginTop: 8, fontSize: "0.8rem" }}>
+                        Uses FTSO price feed + Secure Random bonus lottery
+                      </p>
                     </div>
                   ) : (
                     <div className="claim-wait">
