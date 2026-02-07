@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "CollateralReservationInfo",
+  "sourceName": "@flarenetwork/flare-periphery-contracts/coston2/data/CollateralReservationInfo.sol",
+  "abi": [],
+  "bytecode": "0x6080806040523460175760399081601c823930815050f35b5f80fdfe5f80fdfea2646970667358221220e73a30a64d908d87c670b06f3117f7faf5b03fdd9a1beb894d11ddabb510e6c864736f6c63430008190033",
+  "deployedBytecode": "0x5f80fdfea2646970667358221220e73a30a64d908d87c670b06f3117f7faf5b03fdd9a1beb894d11ddabb510e6c864736f6c63430008190033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

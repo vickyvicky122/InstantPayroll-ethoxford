@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "CollateralType",
+  "sourceName": "@flarenetwork/flare-periphery-contracts/coston2/data/CollateralType.sol",
+  "abi": [],
+  "bytecode": "0x6080806040523460175760399081601c823930815050f35b5f80fdfe5f80fdfea2646970667358221220bcbbfcdca3e3ccf203d2704c012e76e2ddedfcb5b7ff1357fb1a2fa0cd1afc0164736f6c63430008190033",
+  "deployedBytecode": "0x5f80fdfea2646970667358221220bcbbfcdca3e3ccf203d2704c012e76e2ddedfcb5b7ff1357fb1a2fa0cd1afc0164736f6c63430008190033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

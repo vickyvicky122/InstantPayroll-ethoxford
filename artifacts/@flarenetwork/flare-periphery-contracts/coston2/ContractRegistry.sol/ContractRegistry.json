@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ContractRegistry",
+  "sourceName": "@flarenetwork/flare-periphery-contracts/coston2/ContractRegistry.sol",
+  "abi": [],
+  "bytecode": "0x6080806040523460175760399081601c823930815050f35b5f80fdfe5f80fdfea26469706673582212205f619b3e643b7e94921e3be888bc855754b2aa5929c2afe66c4827e79284789e64736f6c63430008190033",
+  "deployedBytecode": "0x5f80fdfea26469706673582212205f619b3e643b7e94921e3be888bc855754b2aa5929c2afe66c4827e79284789e64736f6c63430008190033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
