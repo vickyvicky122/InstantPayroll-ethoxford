@@ -308,6 +308,42 @@ Demo mode exists because FDC testnet attestations require ~90 seconds for round 
 
 ---
 
+## Building on Flare — Developer Experience
+
+### What Worked Well
+
+**ContractRegistry is a great pattern.** Accessing FTSO, FDC, and Secure Random through a single on-chain registry (`ContractRegistry.getTestFtsoV2()`, `ContractRegistry.getFdcVerification()`, etc.) meant we didn't have to hardcode protocol addresses or worry about them changing across deployments. One import, one call, and you have a live price feed. Coming from Chainlink where you manage separate oracle contract addresses per feed per network, this felt much cleaner.
+
+**FTSO v2 was the easiest integration.** Getting a price feed was three lines of Solidity — get the interface from the registry, call `getFeedById` with the feed ID, and use the result. The feed ID format (`0x01464c522f555344...` for FLR/USD) is documented in the dev hub. The decimal precision comes back with the price, so no guessing. We had FTSO working in under 30 minutes.
+
+**Secure Random was equally straightforward.** Call `getRandomNumber()`, check the `isSecure` flag, use the number. The `isSecure` boolean is a nice touch — it tells you whether the number came from the full threshold protocol or a fallback, so you can gate security-sensitive logic on it. Our bonus lottery was implemented in about 7 lines of Solidity.
+
+**The Hardhat starter kit saved real time.** Network configs, compiler settings, and periphery contract imports were already wired up. We cloned it, added our contract, and were deploying to Coston2 within the first hour.
+
+**Coston2 testnet is fast and reliable.** Transactions confirmed in seconds, the faucet worked without issues, and the block explorer (Blockscout) had contract verification working. We never had to wait on the testnet or debug RPC connectivity during development.
+
+### What Was Challenging
+
+**FDC Web2Json had the steepest learning curve.** The concept is powerful — verify any public API response on-chain — but the end-to-end flow has many moving parts: prepare the attestation request with the right ABI encoding, submit it to FdcHub with the correct fee, calculate the voting round ID from the block timestamp, poll the Relay contract for finalization, then fetch the Merkle proof from the Data Availability layer. Each step has its own API and data format. We spent roughly 4 hours on FDC integration, more than FTSO and Secure Random combined.
+
+The JQ filter for post-processing the API response (`{commitCount: . | length}`) took some trial and error to get right — the verifier API returns helpful error messages, but the feedback loop is slow because you have to wait for a full attestation round (~90 seconds on testnet) to see if your filter produced the expected output. A local dry-run mode for testing JQ filters against API responses before submitting on-chain would have cut our iteration time significantly.
+
+**FDC testnet finalization latency (~90s) required a design workaround.** For a hackathon demo, waiting 90 seconds between "worker proves work" and "worker gets paid" breaks the narrative flow. We solved this by adding a `claimDemo()` function that bypasses FDC but keeps FTSO and Secure Random, so the live demo stays snappy while the repo contains the full FDC integration. This is a testnet limitation, not a protocol issue — mainnet finalization is faster — but it's worth noting for other hackathon builders.
+
+**ABI encoding for the attestation request body was fiddly.** The request needs specific Solidity types encoded in a particular order (url, httpMethod, postprocessJq, headerParamName, headerParamValue, body, abiSignature). Getting the encoding right required careful reading of the FDC docs and cross-referencing with the verifier API's `prepareRequest` endpoint. More complete examples in the starter kit for Web2Json specifically (not just EVM transaction attestations) would help.
+
+### Suggestions for Flare
+
+1. **Add a Web2Json example to the Hardhat starter kit.** The existing FDC examples focus on EVM transaction verification. A working Web2Json example with a public API (e.g., a weather API or GitHub) would lower the barrier for builders wanting to bring Web2 data on-chain.
+2. **Provide a local JQ filter tester.** A CLI tool or web UI where you can paste an API URL and JQ filter and see the processed output instantly, before committing to an on-chain attestation round.
+3. **Document the full attestation request ABI encoding.** The current docs cover the concept well but could include more copy-paste-ready code for constructing the `abiEncodedRequest` bytes for each attestation type.
+
+### Overall
+
+Flare's enshrined protocols are genuinely differentiated. Having price feeds, data attestation, and randomness as first-class network features — not external services — simplifies both the trust model and the developer experience. FTSO and Secure Random are production-ready for hackathon-speed development. FDC Web2Json is the most powerful of the three but needs more starter examples to match the onboarding quality of the other protocols.
+
+---
+
 ## License
 
 MIT
