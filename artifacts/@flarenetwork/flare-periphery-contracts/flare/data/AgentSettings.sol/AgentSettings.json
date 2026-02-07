@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "AgentSettings",
+  "sourceName": "@flarenetwork/flare-periphery-contracts/flare/data/AgentSettings.sol",
+  "abi": [],
+  "bytecode": "0x6080806040523460175760399081601c823930815050f35b5f80fdfe5f80fdfea26469706673582212206448625883bbcd64669120d3c364771d0fa6b94e0441a39dd9f683f3458dec2f64736f6c63430008190033",
+  "deployedBytecode": "0x5f80fdfea26469706673582212206448625883bbcd64669120d3c364771d0fa6b94e0441a39dd9f683f3458dec2f64736f6c63430008190033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

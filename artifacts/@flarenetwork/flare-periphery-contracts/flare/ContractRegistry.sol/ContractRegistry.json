@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "ContractRegistry",
+  "sourceName": "@flarenetwork/flare-periphery-contracts/flare/ContractRegistry.sol",
+  "abi": [],
+  "bytecode": "0x6080806040523460175760399081601c823930815050f35b5f80fdfe5f80fdfea2646970667358221220b620298acf26075a6c587cf7e178de50e8fc5cb6d0840c71a3a1a08dac9ac91764736f6c63430008190033",
+  "deployedBytecode": "0x5f80fdfea2646970667358221220b620298acf26075a6c587cf7e178de50e8fc5cb6d0840c71a3a1a08dac9ac91764736f6c63430008190033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

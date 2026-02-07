@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "RedemptionRequestInfo",
+  "sourceName": "@flarenetwork/flare-periphery-contracts/flare/data/RedemptionRequestInfo.sol",
+  "abi": [],
+  "bytecode": "0x6080806040523460175760399081601c823930815050f35b5f80fdfe5f80fdfea264697066735822122004a1b5f7d25fec86c1ad28fbadcf270dfda0acc852791f354eb72eee43710bf664736f6c63430008190033",
+  "deployedBytecode": "0x5f80fdfea264697066735822122004a1b5f7d25fec86c1ad28fbadcf270dfda0acc852791f354eb72eee43710bf664736f6c63430008190033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

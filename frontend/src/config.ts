@@ -82,7 +82,7 @@ export const PLASMA_NETWORK = {
   chainName: "Plasma Testnet",
   nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
   rpcUrls: [PLASMA_TESTNET_RPC],
-  blockExplorerUrls: [],
+  blockExplorerUrls: ["https://testnet.plasmascan.to"],
 };
 
 // Contract ABIs (minimal — only what frontend needs)

@@ -2,8 +2,8 @@
   "_format": "hh-sol-cache-2",
   "files": {
     "/Users/viktoriiamatviiuk/src/eth-oxford/flare/contracts/InstantPayroll.sol": {
-      "lastModificationDate": 1770479903071,
-      "contentHash": "94bcd9c15100d3e1e9ad6a1f0d373e3f",
+      "lastModificationDate": 1770502720326,
+      "contentHash": "a09bf44c0980a8f433b9f6285cccedfa",
       "sourceName": "contracts/InstantPayroll.sol",
       "solcConfig": {
         "version": "0.8.25",
@@ -31,11 +31,12 @@
         }
       },
       "imports": [
-        "@flarenetwork/flare-periphery-contracts/coston2/ContractRegistry.sol",
-        "@flarenetwork/flare-periphery-contracts/coston2/TestFtsoV2Interface.sol",
-        "@flarenetwork/flare-periphery-contracts/coston2/RandomNumberV2Interface.sol",
-        "@flarenetwork/flare-periphery-contracts/coston2/IFdcVerification.sol",
-        "@flarenetwork/flare-periphery-contracts/coston2/IWeb2Json.sol"
+        "@flarenetwork/flare-periphery-contracts/flare/ContractRegistry.sol",
+        "@flarenetwork/flare-periphery-contracts/flare/FtsoV2Interface.sol",
+        "@flarenetwork/flare-periphery-contracts/flare/TestFtsoV2Interface.sol",
+        "@flarenetwork/flare-periphery-contracts/flare/RandomNumberV2Interface.sol",
+        "@flarenetwork/flare-periphery-contracts/flare/IFdcVerification.sol",
+        "@flarenetwork/flare-periphery-contracts/flare/IWeb2Json.sol"
       ],
       "versionPragmas": [
         "^0.8.25"
@@ -3711,6 +3712,3486 @@
       ],
       "artifacts": [
         "InstantPayrollPayout"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFdcVerification.sol": {
+      "lastModificationDate": 1770473438736,
+      "contentHash": "c3c41aedd61fd29a6903a1f4d67c84a0",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFdcVerification.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IRelay.sol",
+        "./IAddressValidityVerification.sol",
+        "./IBalanceDecreasingTransactionVerification.sol",
+        "./IConfirmedBlockHeightExistsVerification.sol",
+        "./IEVMTransactionVerification.sol",
+        "./IPaymentVerification.sol",
+        "./IReferencedPaymentNonexistenceVerification.sol",
+        "./IWeb2JsonVerification.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFdcVerification"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/ContractRegistry.sol": {
+      "lastModificationDate": 1770473438624,
+      "contentHash": "630dc29da53e07e18a5372296ae14319",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/ContractRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IFlareContractRegistry.sol",
+        "./IPriceSubmitter.sol",
+        "./IGovernanceSettings.sol",
+        "./IFtsoRewardManager.sol",
+        "./IFtsoRegistry.sol",
+        "./IVoterWhitelister.sol",
+        "./IFtsoManager.sol",
+        "./IWNat.sol",
+        "./IGovernanceVotePower.sol",
+        "./IClaimSetupManager.sol",
+        "./IFlareAssetRegistry.sol",
+        "./IFlareContractRegistry.sol",
+        "./ISubmission.sol",
+        "./IEntityManager.sol",
+        "./IVoterRegistry.sol",
+        "./IFlareSystemsCalculator.sol",
+        "./IFlareSystemsManager.sol",
+        "./IRewardManager.sol",
+        "./IRelay.sol",
+        "./IWNatDelegationFee.sol",
+        "./IFtsoInflationConfigurations.sol",
+        "./IFtsoRewardOffersManager.sol",
+        "./IFtsoFeedDecimals.sol",
+        "./IFtsoFeedPublisher.sol",
+        "./IFtsoFeedIdConverter.sol",
+        "./IFastUpdateIncentiveManager.sol",
+        "./IFastUpdater.sol",
+        "./IFastUpdatesConfiguration.sol",
+        "./IFeeCalculator.sol",
+        "./FtsoV2Interface.sol",
+        "./TestFtsoV2Interface.sol",
+        "./ProtocolsV2Interface.sol",
+        "./RandomNumberV2Interface.sol",
+        "./RewardsV2Interface.sol",
+        "./IFdcVerification.sol",
+        "./IFdcHub.sol",
+        "./IFdcRequestFeeConfigurations.sol",
+        "./IAssetManagerController.sol",
+        "./IGenericRewardManager.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.25"
+      ],
+      "artifacts": [
+        "ContractRegistry"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/TestFtsoV2Interface.sol": {
+      "lastModificationDate": 1770473438977,
+      "contentHash": "f4ce715217a4a2532fd3f51f09e85679",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/TestFtsoV2Interface.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "TestFtsoV2Interface"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/RandomNumberV2Interface.sol": {
+      "lastModificationDate": 1770473438971,
+      "contentHash": "438e0f4ef75412659abca6a825fddd93",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/RandomNumberV2Interface.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "RandomNumberV2Interface"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/FtsoV2Interface.sol": {
+      "lastModificationDate": 1770473438645,
+      "contentHash": "28b1791ae69d0e5e28ca2a54f3b5ad64",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/FtsoV2Interface.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "FtsoV2Interface"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IWeb2Json.sol": {
+      "lastModificationDate": 1770473438965,
+      "contentHash": "545d61572e73d372477dfc186c227d6d",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IWeb2Json.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IWeb2Json"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IRelay.sol": {
+      "lastModificationDate": 1770473438937,
+      "contentHash": "88170e87ed04e1cf154cbf6ca2bcee6b",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IRelay.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./RandomNumberV2Interface.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IRelay"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IAddressValidityVerification.sol": {
+      "lastModificationDate": 1770473438655,
+      "contentHash": "06692793a03893a2a033a1e344da6adc",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IAddressValidityVerification.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAddressValidity.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IAddressValidityVerification"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IBalanceDecreasingTransactionVerification.sol": {
+      "lastModificationDate": 1770473438682,
+      "contentHash": "1cdc49f6ae2db7365adc6fb9e7d8da6d",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IBalanceDecreasingTransactionVerification.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IBalanceDecreasingTransaction.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IBalanceDecreasingTransactionVerification"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IReferencedPaymentNonexistenceVerification.sol": {
+      "lastModificationDate": 1770473438935,
+      "contentHash": "108c1b44cd60556d0a9b40ffdfeaf567",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IReferencedPaymentNonexistenceVerification.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IReferencedPaymentNonexistence.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IReferencedPaymentNonexistenceVerification"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IConfirmedBlockHeightExistsVerification.sol": {
+      "lastModificationDate": 1770473438702,
+      "contentHash": "99881e600414a5dac1333c14200359d2",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IConfirmedBlockHeightExistsVerification.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IConfirmedBlockHeightExists.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IConfirmedBlockHeightExistsVerification"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IEVMTransactionVerification.sol": {
+      "lastModificationDate": 1770473438723,
+      "contentHash": "57ec6e2ad9b5dfd8079d441971313ea7",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IEVMTransactionVerification.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IEVMTransaction.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IEVMTransactionVerification"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IPaymentVerification.sol": {
+      "lastModificationDate": 1770473438916,
+      "contentHash": "0578de4f101434110ea833e86b916d6f",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IPaymentVerification.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IPayment.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IPaymentVerification"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IWeb2JsonVerification.sol": {
+      "lastModificationDate": 1770473438966,
+      "contentHash": "6837f2fdd4f2a460a6a1a9ee0abd8429",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IWeb2JsonVerification.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IWeb2Json.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IWeb2JsonVerification"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IAddressValidity.sol": {
+      "lastModificationDate": 1770473438654,
+      "contentHash": "dc80a1768f9b2eec5d01bcbdbf6a75a3",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IAddressValidity.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IAddressValidity"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IBalanceDecreasingTransaction.sol": {
+      "lastModificationDate": 1770473438680,
+      "contentHash": "deae3a1d919e15820266987ed34558b9",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IBalanceDecreasingTransaction.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IBalanceDecreasingTransaction"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IReferencedPaymentNonexistence.sol": {
+      "lastModificationDate": 1770473438934,
+      "contentHash": "81acac296932b60a6e8a0142831d514f",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IReferencedPaymentNonexistence.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IReferencedPaymentNonexistence"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IConfirmedBlockHeightExists.sol": {
+      "lastModificationDate": 1770473438699,
+      "contentHash": "93d757d8da7acd75bd3e2082bd0f2ef4",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IConfirmedBlockHeightExists.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IConfirmedBlockHeightExists"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IEVMTransaction.sol": {
+      "lastModificationDate": 1770473438720,
+      "contentHash": "fb2b51352a42caf7d84d143a5cef37f9",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IEVMTransaction.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IEVMTransaction"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IPayment.sol": {
+      "lastModificationDate": 1770473438914,
+      "contentHash": "3387e523124247aabf032ca2b59e1c44",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IPayment.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IPayment"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFlareContractRegistry.sol": {
+      "lastModificationDate": 1770473438743,
+      "contentHash": "884fc283535bb30c4f72c648eb560523",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFlareContractRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFlareContractRegistry"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IPriceSubmitter.sol": {
+      "lastModificationDate": 1770473438929,
+      "contentHash": "bcdcc66e2f0b8c5a37950e35b4ed6d44",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IPriceSubmitter.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./genesis/interfaces/IFtsoGenesis.sol",
+        "./genesis/interfaces/IFtsoRegistryGenesis.sol",
+        "./genesis/interfaces/IFtsoManagerGenesis.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IPriceSubmitter"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFtsoRewardManager.sol": {
+      "lastModificationDate": 1770473438769,
+      "contentHash": "b514d90aab3972dc2f314bb19f19ded2",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFtsoRewardManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoRewardManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFtsoRegistry.sol": {
+      "lastModificationDate": 1770473438764,
+      "contentHash": "ec5b904d43586007141d8db4aa32da99",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFtsoRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./ftso/interfaces/IIFtso.sol",
+        "./genesis/interfaces/IFtsoRegistryGenesis.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoRegistry"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IGovernanceSettings.sol": {
+      "lastModificationDate": 1770473438776,
+      "contentHash": "f6967b01b555ac75de626dcadc1e2a8e",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IGovernanceSettings.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IGovernanceSettings"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IVoterWhitelister.sol": {
+      "lastModificationDate": 1770473438959,
+      "contentHash": "7b3f8f1bb60ceb5486e6256fbefce15e",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IVoterWhitelister.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IVoterWhitelister"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFlareAssetRegistry.sol": {
+      "lastModificationDate": 1770473438741,
+      "contentHash": "01450977964762aa4ba88cd6ba87c2b9",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFlareAssetRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFlareAssetRegistry"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IWNat.sol": {
+      "lastModificationDate": 1770473438967,
+      "contentHash": "a1d63c576e6858ec65ed993d21d71eaa",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IWNat.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IWNat"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IGovernanceVotePower.sol": {
+      "lastModificationDate": 1770473438777,
+      "contentHash": "d1aa604eafcddc5e69db7217982dd1a7",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IGovernanceVotePower.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IGovernanceVotePower"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/ISubmission.sol": {
+      "lastModificationDate": 1770473438946,
+      "contentHash": "91ece5bdc9c54e00394b5af07c65de2c",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/ISubmission.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IRandomProvider.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "ISubmission"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFtsoManager.sol": {
+      "lastModificationDate": 1770473438760,
+      "contentHash": "05cc3aaec3accd79df88bb35f56be841",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFtsoManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./ftso/interfaces/IIFtso.sol",
+        "./genesis/interfaces/IFtsoManagerGenesis.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IClaimSetupManager.sol": {
+      "lastModificationDate": 1770473438692,
+      "contentHash": "8962aec4ed8897a95ebd59694692614d",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IClaimSetupManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IDelegationAccount.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IClaimSetupManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IVoterRegistry.sol": {
+      "lastModificationDate": 1770473438957,
+      "contentHash": "3f8b859eca0862908ba4f22aac424eef",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IVoterRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IVoterRegistry"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IEntityManager.sol": {
+      "lastModificationDate": 1770473438717,
+      "contentHash": "4c43f0ecfd79d02e5034386750bdc7c2",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IEntityManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IEntityManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFlareSystemsManager.sol": {
+      "lastModificationDate": 1770473438750,
+      "contentHash": "ae19f2c5b344d6210d04e5ad5c9853c6",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFlareSystemsManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./ProtocolsV2Interface.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFlareSystemsManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFtsoInflationConfigurations.sol": {
+      "lastModificationDate": 1770473438759,
+      "contentHash": "dc601f20a4c9c2a6943d7de95613c3fb",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFtsoInflationConfigurations.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoInflationConfigurations"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFlareSystemsCalculator.sol": {
+      "lastModificationDate": 1770473438748,
+      "contentHash": "d874222e6a8ff461d3fa09bc0e68c20d",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFlareSystemsCalculator.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFlareSystemsCalculator"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IRewardManager.sol": {
+      "lastModificationDate": 1770473438939,
+      "contentHash": "cdace4c2bcb36fc79d2e260adb5dce75",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IRewardManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./RewardsV2Interface.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IRewardManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IWNatDelegationFee.sol": {
+      "lastModificationDate": 1770473438969,
+      "contentHash": "23edc7aaf0bf546e8de9ab42764b0baf",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IWNatDelegationFee.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IWNatDelegationFee"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFtsoRewardOffersManager.sol": {
+      "lastModificationDate": 1770473438771,
+      "contentHash": "c98ce967a8ff37de7d402a4a9bab14b7",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFtsoRewardOffersManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoRewardOffersManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFtsoFeedDecimals.sol": {
+      "lastModificationDate": 1770473438753,
+      "contentHash": "7600aab7f7c3b76632914fe5f606e597",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFtsoFeedDecimals.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoFeedDecimals"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFtsoFeedPublisher.sol": {
+      "lastModificationDate": 1770473438756,
+      "contentHash": "3a45805efd661713bcce1de3891eec5f",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFtsoFeedPublisher.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoFeedPublisher"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFtsoFeedIdConverter.sol": {
+      "lastModificationDate": 1770473438755,
+      "contentHash": "e5989139f4e1d213ca20f1f74698c67c",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFtsoFeedIdConverter.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoFeedIdConverter"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFastUpdateIncentiveManager.sol": {
+      "lastModificationDate": 1770473438726,
+      "contentHash": "7d0b80ac1bea3bd0f68129daa3cd9666",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFastUpdateIncentiveManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IFixedPointArithmetic.sol",
+        "./IFastUpdatesConfiguration.sol",
+        "./IIncreaseManager.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFastUpdateIncentiveManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFeeCalculator.sol": {
+      "lastModificationDate": 1770473438737,
+      "contentHash": "01ec4eed426e4f9f97700a32dccb2f33",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFeeCalculator.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFeeCalculator"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/ProtocolsV2Interface.sol": {
+      "lastModificationDate": 1770473438969,
+      "contentHash": "b8539f1e222aaa9e1cdd64b0b5caf3c5",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/ProtocolsV2Interface.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "ProtocolsV2Interface"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFastUpdatesConfiguration.sol": {
+      "lastModificationDate": 1770473438730,
+      "contentHash": "4889ee18752546cb33c638b1ed036ad4",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFastUpdatesConfiguration.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFastUpdatesConfiguration"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFastUpdater.sol": {
+      "lastModificationDate": 1770473438728,
+      "contentHash": "42bd7d6c27251ea2781fdcbf682532d2",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFastUpdater.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./ISortition.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFastUpdater"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/RewardsV2Interface.sol": {
+      "lastModificationDate": 1770473438975,
+      "contentHash": "fa1d1831fb77f446199ec3c130d765d8",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/RewardsV2Interface.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "RewardsV2Interface"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFdcHub.sol": {
+      "lastModificationDate": 1770473438732,
+      "contentHash": "e9e464314fd1536516935955ef6ef95a",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFdcHub.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IFdcInflationConfigurations.sol",
+        "./IFdcRequestFeeConfigurations.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFdcHub"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IAssetManagerController.sol": {
+      "lastModificationDate": 1770473438673,
+      "contentHash": "e7a767338d21e04b8d8963d6b50b4466",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IAssetManagerController.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IAssetManager.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IAssetManagerController"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFdcRequestFeeConfigurations.sol": {
+      "lastModificationDate": 1770473438735,
+      "contentHash": "529202622bb073a06af89675a3c306bc",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFdcRequestFeeConfigurations.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFdcRequestFeeConfigurations"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IGenericRewardManager.sol": {
+      "lastModificationDate": 1770473438773,
+      "contentHash": "137b375f98a437c097eba623bec6ead6",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IGenericRewardManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IGenericRewardManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/genesis/interfaces/IFtsoManagerGenesis.sol": {
+      "lastModificationDate": 1770473438762,
+      "contentHash": "83a0d9eb34b25959af12999cfb843038",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/genesis/interfaces/IFtsoManagerGenesis.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoManagerGenesis"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/genesis/interfaces/IFtsoRegistryGenesis.sol": {
+      "lastModificationDate": 1770473438766,
+      "contentHash": "28134afb04085c76bc6f4f1650542131",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/genesis/interfaces/IFtsoRegistryGenesis.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IFtsoGenesis.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoRegistryGenesis"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/genesis/interfaces/IFtsoGenesis.sol": {
+      "lastModificationDate": 1770473438757,
+      "contentHash": "0dbfcf02337920aaeaf05ea78a478e87",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/genesis/interfaces/IFtsoGenesis.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtsoGenesis"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/ftso/interfaces/IIFtso.sol": {
+      "lastModificationDate": 1770473438828,
+      "contentHash": "e051abb5950181214788812b7575ceea",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/ftso/interfaces/IIFtso.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../genesis/interfaces/IFtsoGenesis.sol",
+        "../../IFtso.sol",
+        "../../token/interfaces/IIVPToken.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IIFtso"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFtso.sol": {
+      "lastModificationDate": 1770473438751,
+      "contentHash": "007a0d51180305cb1ef2fec63c985769",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFtso.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFtso"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/token/interfaces/IIVPToken.sol": {
+      "lastModificationDate": 1770473438909,
+      "contentHash": "ad721548c489d99cf75b6dc55d687b2b",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/token/interfaces/IIVPToken.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../IVPToken.sol",
+        "../../IGovernanceVotePower.sol",
+        "./IIVPContract.sol",
+        "./IIGovernanceVotePower.sol",
+        "./IICleanable.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IIVPToken"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IVPToken.sol": {
+      "lastModificationDate": 1770473438963,
+      "contentHash": "5a8e290a4f3fc8b90ce62a024d82174e",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IVPToken.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol",
+        "./IGovernanceVotePower.sol",
+        "./IVPContractEvents.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IVPToken"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/token/interfaces/IIVPContract.sol": {
+      "lastModificationDate": 1770473438906,
+      "contentHash": "9e838ed2615f47122f821442f9089c96",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/token/interfaces/IIVPContract.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../IVPToken.sol",
+        "../../IVPContractEvents.sol",
+        "./IICleanable.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IIVPContract"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/token/interfaces/IIGovernanceVotePower.sol": {
+      "lastModificationDate": 1770473438848,
+      "contentHash": "76e70417d03d1fe64d2e88901a9d9b0d",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/token/interfaces/IIGovernanceVotePower.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../../IVPToken.sol",
+        "../../IPChainStakeMirror.sol",
+        "../../IGovernanceVotePower.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IIGovernanceVotePower"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/token/interfaces/IICleanable.sol": {
+      "lastModificationDate": 1770473438797,
+      "contentHash": "6a65dbc0adb80db3d7db7852ef8be17c",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/token/interfaces/IICleanable.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IICleanable"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IVPContractEvents.sol": {
+      "lastModificationDate": 1770473438960,
+      "contentHash": "824d113e57f78eb441c03bc69172f735",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IVPContractEvents.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IVPContractEvents"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IPChainStakeMirror.sol": {
+      "lastModificationDate": 1770473438917,
+      "contentHash": "5f2cd4eb08de4b09be8999ad3e688eb2",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IPChainStakeMirror.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IPChainVotePower.sol",
+        "./IPChainStakeMirrorVerifier.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IPChainStakeMirror"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IPChainStakeMirrorVerifier.sol": {
+      "lastModificationDate": 1770473438919,
+      "contentHash": "4fcc4823f80006d74243e701c3bf5cb7",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IPChainStakeMirrorVerifier.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IPChainStakeMirrorVerifier"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IPChainVotePower.sol": {
+      "lastModificationDate": 1770473438921,
+      "contentHash": "586c12486b67b9d777b3c385b9075f0a",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IPChainVotePower.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IPChainVotePower"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IRandomProvider.sol": {
+      "lastModificationDate": 1770473438931,
+      "contentHash": "9982275b4873144c53c662e195ff5eb2",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IRandomProvider.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IRandomProvider"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IDelegationAccount.sol": {
+      "lastModificationDate": 1770473438707,
+      "contentHash": "09cef4c02caf4a54a4675a03748f15f2",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IDelegationAccount.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IClaimSetupManager.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IDelegationAccount"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFixedPointArithmetic.sol": {
+      "lastModificationDate": 1770473438739,
+      "contentHash": "645c8c721d875976a3410b952ee7c979",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFixedPointArithmetic.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": []
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IIncreaseManager.sol": {
+      "lastModificationDate": 1770473438868,
+      "contentHash": "47af84282709dcad4ba3c29102ce7e4d",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IIncreaseManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IIncreaseManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/ISortition.sol": {
+      "lastModificationDate": 1770473438944,
+      "contentHash": "3c2a7ab9f54573161317df7e874568e7",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/ISortition.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IBn256.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": []
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IBn256.sol": {
+      "lastModificationDate": 1770473438684,
+      "contentHash": "e23c8a29c35bb2467b6c4cb7bb71a9b1",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IBn256.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": []
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IFdcInflationConfigurations.sol": {
+      "lastModificationDate": 1770473438733,
+      "contentHash": "52185746421737cb83526018ab75a997",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IFdcInflationConfigurations.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IFdcInflationConfigurations"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IAssetManager.sol": {
+      "lastModificationDate": 1770473438667,
+      "contentHash": "f3919f3e3d9ad3ac694855853ae4a5c8",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IAssetManager.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        ".//IFdcVerification.sol",
+        "@openzeppelin/contracts/utils/introspection/IERC165.sol",
+        "./diamond/interfaces/IDiamondLoupe.sol",
+        "./data/AssetManagerSettings.sol",
+        "./data/CollateralType.sol",
+        "./data/AgentInfo.sol",
+        "./data/AgentSettings.sol",
+        "./data/AvailableAgentInfo.sol",
+        "./data/RedemptionTicketInfo.sol",
+        "./data/RedemptionRequestInfo.sol",
+        "./data/CollateralReservationInfo.sol",
+        "./IAssetManagerEvents.sol",
+        "./IAgentPing.sol",
+        "./IRedemptionTimeExtension.sol",
+        "./ICoreVaultClient.sol",
+        "./ICoreVaultClientSettings.sol",
+        "./IAgentAlwaysAllowedMinters.sol",
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IAssetManager"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IAssetManagerEvents.sol": {
+      "lastModificationDate": 1770473438676,
+      "contentHash": "6af67886777eb38a5701bf032a640983",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IAssetManagerEvents.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IAssetManagerEvents"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IRedemptionTimeExtension.sol": {
+      "lastModificationDate": 1770473438932,
+      "contentHash": "6d21e822eeb763a4a825c07d5c609627",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IRedemptionTimeExtension.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IRedemptionTimeExtension"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/data/AssetManagerSettings.sol": {
+      "lastModificationDate": 1770473438610,
+      "contentHash": "6caabe63c57d00eff861d49503c53e72",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/data/AssetManagerSettings.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "AssetManagerSettings"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IAgentPing.sol": {
+      "lastModificationDate": 1770473438661,
+      "contentHash": "88a4ff418f885f119a3c6f76c1e263ca",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IAgentPing.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IAgentPing"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/ICoreVaultClient.sol": {
+      "lastModificationDate": 1770473438704,
+      "contentHash": "8906d1f9fbda9af10efced7c86c04f05",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/ICoreVaultClient.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        ".//IFdcVerification.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "ICoreVaultClient"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/data/CollateralType.sol": {
+      "lastModificationDate": 1770473438618,
+      "contentHash": "a8885197cfc383237df29a76927d6182",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/data/CollateralType.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "CollateralType"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/data/RedemptionRequestInfo.sol": {
+      "lastModificationDate": 1770473438972,
+      "contentHash": "ce266376c99f7b910370fa9c5f65a479",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/data/RedemptionRequestInfo.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "RedemptionRequestInfo"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/data/AgentInfo.sol": {
+      "lastModificationDate": 1770473438600,
+      "contentHash": "df39c6cdd6f59df795566b4a881f655b",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/data/AgentInfo.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "AgentInfo"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/ICoreVaultClientSettings.sol": {
+      "lastModificationDate": 1770473438706,
+      "contentHash": "99788ca0f93eda0d78bf8f1f6a189ff1",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/ICoreVaultClientSettings.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "ICoreVaultClientSettings"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/data/AgentSettings.sol": {
+      "lastModificationDate": 1770473438605,
+      "contentHash": "3b7e32b4140fb95c2a56beb1e1784efe",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/data/AgentSettings.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "@openzeppelin/contracts/token/ERC20/IERC20.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "AgentSettings"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/data/AvailableAgentInfo.sol": {
+      "lastModificationDate": 1770473438613,
+      "contentHash": "d9e89fbc271e0f0ac5edfa3ab535d877",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/data/AvailableAgentInfo.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./AgentInfo.sol"
+      ],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "AvailableAgentInfo"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/data/CollateralReservationInfo.sol": {
+      "lastModificationDate": 1770473438616,
+      "contentHash": "c36f0bb2735bff0c2dc0243a202770df",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/data/CollateralReservationInfo.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "CollateralReservationInfo"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/data/RedemptionTicketInfo.sol": {
+      "lastModificationDate": 1770473438973,
+      "contentHash": "7df564a6d650b5ab058f6cb569b073a1",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/data/RedemptionTicketInfo.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "RedemptionTicketInfo"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/diamond/interfaces/IDiamondLoupe.sol": {
+      "lastModificationDate": 1770473438712,
+      "contentHash": "6fd4ab8b357a4971eea00e9d8506d4bd",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/diamond/interfaces/IDiamondLoupe.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IDiamondLoupe"
+      ]
+    },
+    "/Users/viktoriiamatviiuk/src/eth-oxford/flare/node_modules/@flarenetwork/flare-periphery-contracts/flare/IAgentAlwaysAllowedMinters.sol": {
+      "lastModificationDate": 1770473438657,
+      "contentHash": "508772ebd19807dcd254b9d2536744d3",
+      "sourceName": "@flarenetwork/flare-periphery-contracts/flare/IAgentAlwaysAllowedMinters.sol",
+      "solcConfig": {
+        "version": "0.8.25",
+        "settings": {
+          "evmVersion": "cancun",
+          "viaIR": true,
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.7.6 <0.9"
+      ],
+      "artifacts": [
+        "IAgentAlwaysAllowedMinters"
       ]
     }
   }

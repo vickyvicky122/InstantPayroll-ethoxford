@@ -159,8 +159,8 @@ Workers can query their full payout history from Plasma via `getAllPayouts(addre
 
 | Contract | Network | Chain ID | Address |
 |----------|---------|----------|---------|
-| InstantPayroll | Flare Coston2 | 114 | [`0xB36B121e227CEfE4e0936a6223dB22923493EAE3`](https://coston2-explorer.flare.network/address/0xB36B121e227CEfE4e0936a6223dB22923493EAE3) |
-| InstantPayrollPayout | Plasma Testnet | 9746 | `0xe8B2dBb78b7A29d3D9E52Cc7Fdf02828Fa02a9c4` |
+| InstantPayroll | Flare Coston2 | 114 | [`0xcdACc7626de63B86C63b4F97EA7AfbB3610D927e`](https://coston2-explorer.flare.network/address/0xcdACc7626de63B86C63b4F97EA7AfbB3610D927e) |
+| InstantPayrollPayout | Plasma Testnet | 9746 | [`0xe8B2dBb78b7A29d3D9E52Cc7Fdf02828Fa02a9c4`](https://testnet.plasmascan.to/address/0xe8B2dBb78b7A29d3D9E52Cc7Fdf02828Fa02a9c4) |
 
 ---
 
@@ -212,15 +212,20 @@ npm install
 
 # Set up environment
 cp .env.example .env
-# Edit .env: add your PRIVATE_KEY
+# Edit .env: add your PRIVATE_KEY and deployed contract addresses
+
+# Set up frontend environment
+cd frontend
+npm install
+cp .env.example .env
+# Edit frontend/.env: add VITE_INSTANT_PAYROLL_ADDRESS (must match root .env)
+cd ..
 
 # Compile contracts
 npm run compile
 
 # Start the frontend
-cd frontend
-npm install
-npm run dev
+npm run frontend:dev
 # Open http://localhost:5173
 ```
 
@@ -233,7 +238,7 @@ npm run deploy:coston2
 # Deploy InstantPayrollPayout to Plasma Testnet
 npm run deploy:plasma
 
-# Update addresses in frontend/.env and root .env
+# Update addresses in BOTH frontend/.env and root .env (they must match)
 ```
 
 ### Create a Payment Stream (CLI)

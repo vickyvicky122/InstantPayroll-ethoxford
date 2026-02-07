@@ -1,11 +1,12 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.25;
 
-import {ContractRegistry} from "@flarenetwork/flare-periphery-contracts/coston2/ContractRegistry.sol";
-import {TestFtsoV2Interface} from "@flarenetwork/flare-periphery-contracts/coston2/TestFtsoV2Interface.sol";
-import {RandomNumberV2Interface} from "@flarenetwork/flare-periphery-contracts/coston2/RandomNumberV2Interface.sol";
-import {IFdcVerification} from "@flarenetwork/flare-periphery-contracts/coston2/IFdcVerification.sol";
-import {IWeb2Json} from "@flarenetwork/flare-periphery-contracts/coston2/IWeb2Json.sol";
+import {ContractRegistry} from "@flarenetwork/flare-periphery-contracts/flare/ContractRegistry.sol";
+import {FtsoV2Interface} from "@flarenetwork/flare-periphery-contracts/flare/FtsoV2Interface.sol";
+import {TestFtsoV2Interface} from "@flarenetwork/flare-periphery-contracts/flare/TestFtsoV2Interface.sol";
+import {RandomNumberV2Interface} from "@flarenetwork/flare-periphery-contracts/flare/RandomNumberV2Interface.sol";
+import {IFdcVerification} from "@flarenetwork/flare-periphery-contracts/flare/IFdcVerification.sol";
+import {IWeb2Json} from "@flarenetwork/flare-periphery-contracts/flare/IWeb2Json.sol";
 
 /**
  * @title InstantPayroll
@@ -131,9 +132,10 @@ contract InstantPayroll {
         );
         require(commitCount > 0, "No verified activity");
 
-        // 2. FTSO: Get current FLR/USD price
-        TestFtsoV2Interface ftsoV2 = ContractRegistry.getTestFtsoV2();
-        (uint256 flrUsdPrice, int8 decimals,) = ftsoV2.getFeedById(FLR_USD_FEED_ID);
+        // 2. FTSO: Get current FLR/USD price (payable interface for mainnet compatibility)
+        FtsoV2Interface ftsoV2 = ContractRegistry.getFtsoV2();
+        uint256 fee = ftsoV2.calculateFeeById(FLR_USD_FEED_ID);
+        (uint256 flrUsdPrice, int8 decimals,) = ftsoV2.getFeedById{value: fee}(FLR_USD_FEED_ID);
         require(flrUsdPrice > 0, "FTSO price unavailable");
 
         // Calculate FLR payout: usdRate / flrPrice
@@ -246,9 +248,10 @@ contract InstantPayroll {
         );
         require(_commitCount > 0, "No activity");
 
-        // FTSO: Get current FLR/USD price
-        TestFtsoV2Interface ftsoV2 = ContractRegistry.getTestFtsoV2();
-        (uint256 flrUsdPrice, int8 decimals,) = ftsoV2.getFeedById(FLR_USD_FEED_ID);
+        // FTSO: Get current FLR/USD price (payable interface for mainnet compatibility)
+        FtsoV2Interface ftsoV2 = ContractRegistry.getFtsoV2();
+        uint256 fee = ftsoV2.calculateFeeById(FLR_USD_FEED_ID);
+        (uint256 flrUsdPrice, int8 decimals,) = ftsoV2.getFeedById{value: fee}(FLR_USD_FEED_ID);
         require(flrUsdPrice > 0, "FTSO price unavailable");
 
         uint256 flrPayout = (stream.usdRatePerInterval * (10 ** uint8(decimals))) / flrUsdPrice;
@@ -288,4 +291,7 @@ contract InstantPayroll {
             _commitCount
         );
     }
+
+    /// @notice Accept potential FTSO fee refunds
+    receive() external payable {}
 }

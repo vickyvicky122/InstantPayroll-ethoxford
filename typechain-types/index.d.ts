@@ -73,6 +73,76 @@ import { IICleanableContract } from "./IICleanable";
 import { IIGovernanceVotePowerContract } from "./IIGovernanceVotePower";
 import { IIVPContractContract } from "./IIVPContract";
 import { IIVPTokenContract } from "./IIVPToken";
+import { IDiamondLoupeContract } from "./IDiamondLoupe";
+import { IIFtsoContract } from "./IIFtso";
+import { FtsoV2InterfaceContract } from "./FtsoV2Interface";
+import { IFtsoGenesisContract } from "./IFtsoGenesis";
+import { IFtsoManagerGenesisContract } from "./IFtsoManagerGenesis";
+import { IFtsoRegistryGenesisContract } from "./IFtsoRegistryGenesis";
+import { IAddressValidityVerificationContract } from "./IAddressValidityVerification";
+import { IAgentAlwaysAllowedMintersContract } from "./IAgentAlwaysAllowedMinters";
+import { IAgentPingContract } from "./IAgentPing";
+import { IAssetManagerContract } from "./IAssetManager";
+import { IAssetManagerControllerContract } from "./IAssetManagerController";
+import { IAssetManagerEventsContract } from "./IAssetManagerEvents";
+import { IBalanceDecreasingTransactionVerificationContract } from "./IBalanceDecreasingTransactionVerification";
+import { IClaimSetupManagerContract } from "./IClaimSetupManager";
+import { IConfirmedBlockHeightExistsVerificationContract } from "./IConfirmedBlockHeightExistsVerification";
+import { ICoreVaultClientContract } from "./ICoreVaultClient";
+import { ICoreVaultClientSettingsContract } from "./ICoreVaultClientSettings";
+import { IDelegationAccountContract } from "./IDelegationAccount";
+import { IEntityManagerContract } from "./IEntityManager";
+import { IEVMTransactionVerificationContract } from "./IEVMTransactionVerification";
+import { IFastUpdateIncentiveManagerContract } from "./IFastUpdateIncentiveManager";
+import { IFastUpdaterContract } from "./IFastUpdater";
+import { IFastUpdatesConfigurationContract } from "./IFastUpdatesConfiguration";
+import { IFdcHubContract } from "./IFdcHub";
+import { IFdcInflationConfigurationsContract } from "./IFdcInflationConfigurations";
+import { IFdcRequestFeeConfigurationsContract } from "./IFdcRequestFeeConfigurations";
+import { IFdcVerificationContract } from "./IFdcVerification";
+import { IFeeCalculatorContract } from "./IFeeCalculator";
+import { IFlareAssetRegistryContract } from "./IFlareAssetRegistry";
+import { IFlareContractRegistryContract } from "./IFlareContractRegistry";
+import { IFlareSystemsCalculatorContract } from "./IFlareSystemsCalculator";
+import { IFlareSystemsManagerContract } from "./IFlareSystemsManager";
+import { IFtsoContract } from "./IFtso";
+import { IFtsoFeedDecimalsContract } from "./IFtsoFeedDecimals";
+import { IFtsoFeedIdConverterContract } from "./IFtsoFeedIdConverter";
+import { IFtsoFeedPublisherContract } from "./IFtsoFeedPublisher";
+import { IFtsoInflationConfigurationsContract } from "./IFtsoInflationConfigurations";
+import { IFtsoManagerContract } from "./IFtsoManager";
+import { IFtsoRegistryContract } from "./IFtsoRegistry";
+import { IFtsoRewardManagerContract } from "./IFtsoRewardManager";
+import { IFtsoRewardOffersManagerContract } from "./IFtsoRewardOffersManager";
+import { IGenericRewardManagerContract } from "./IGenericRewardManager";
+import { IGovernanceSettingsContract } from "./IGovernanceSettings";
+import { IGovernanceVotePowerContract } from "./IGovernanceVotePower";
+import { IIncreaseManagerContract } from "./IIncreaseManager";
+import { IPaymentVerificationContract } from "./IPaymentVerification";
+import { IPChainStakeMirrorContract } from "./IPChainStakeMirror";
+import { IPChainVotePowerContract } from "./IPChainVotePower";
+import { IPriceSubmitterContract } from "./IPriceSubmitter";
+import { IRandomProviderContract } from "./IRandomProvider";
+import { IRedemptionTimeExtensionContract } from "./IRedemptionTimeExtension";
+import { IReferencedPaymentNonexistenceVerificationContract } from "./IReferencedPaymentNonexistenceVerification";
+import { IRelayContract } from "./IRelay";
+import { IRewardManagerContract } from "./IRewardManager";
+import { ISubmissionContract } from "./ISubmission";
+import { IVoterRegistryContract } from "./IVoterRegistry";
+import { IVoterWhitelisterContract } from "./IVoterWhitelister";
+import { IVPContractEventsContract } from "./IVPContractEvents";
+import { IVPTokenContract } from "./IVPToken";
+import { IWeb2JsonVerificationContract } from "./IWeb2JsonVerification";
+import { IWNatContract } from "./IWNat";
+import { IWNatDelegationFeeContract } from "./IWNatDelegationFee";
+import { ProtocolsV2InterfaceContract } from "./ProtocolsV2Interface";
+import { RandomNumberV2InterfaceContract } from "./RandomNumberV2Interface";
+import { RewardsV2InterfaceContract } from "./RewardsV2Interface";
+import { TestFtsoV2InterfaceContract } from "./TestFtsoV2Interface";
+import { IICleanableContract } from "./IICleanable";
+import { IIGovernanceVotePowerContract } from "./IIGovernanceVotePower";
+import { IIVPContractContract } from "./IIVPContract";
+import { IIVPTokenContract } from "./IIVPToken";
 import { IERC20Contract } from "./IERC20";
 import { IERC165Contract } from "./IERC165";
 import { InstantPayrollContract } from "./InstantPayroll";
@@ -151,6 +221,104 @@ declare global {
       require(name: "IGovernanceVotePower"): IGovernanceVotePowerContract;
       require(name: "IIncreaseManager"): IIncreaseManagerContract;
       require(name: "IJsonApiVerification"): IJsonApiVerificationContract;
+      require(name: "IPaymentVerification"): IPaymentVerificationContract;
+      require(name: "IPChainStakeMirror"): IPChainStakeMirrorContract;
+      require(name: "IPChainVotePower"): IPChainVotePowerContract;
+      require(name: "IPriceSubmitter"): IPriceSubmitterContract;
+      require(name: "IRandomProvider"): IRandomProviderContract;
+      require(
+        name: "IRedemptionTimeExtension"
+      ): IRedemptionTimeExtensionContract;
+      require(
+        name: "IReferencedPaymentNonexistenceVerification"
+      ): IReferencedPaymentNonexistenceVerificationContract;
+      require(name: "IRelay"): IRelayContract;
+      require(name: "IRewardManager"): IRewardManagerContract;
+      require(name: "ISubmission"): ISubmissionContract;
+      require(name: "IVoterRegistry"): IVoterRegistryContract;
+      require(name: "IVoterWhitelister"): IVoterWhitelisterContract;
+      require(name: "IVPContractEvents"): IVPContractEventsContract;
+      require(name: "IVPToken"): IVPTokenContract;
+      require(name: "IWeb2JsonVerification"): IWeb2JsonVerificationContract;
+      require(name: "IWNat"): IWNatContract;
+      require(name: "IWNatDelegationFee"): IWNatDelegationFeeContract;
+      require(name: "ProtocolsV2Interface"): ProtocolsV2InterfaceContract;
+      require(name: "RandomNumberV2Interface"): RandomNumberV2InterfaceContract;
+      require(name: "RewardsV2Interface"): RewardsV2InterfaceContract;
+      require(name: "TestFtsoV2Interface"): TestFtsoV2InterfaceContract;
+      require(name: "IICleanable"): IICleanableContract;
+      require(name: "IIGovernanceVotePower"): IIGovernanceVotePowerContract;
+      require(name: "IIVPContract"): IIVPContractContract;
+      require(name: "IIVPToken"): IIVPTokenContract;
+      require(name: "IDiamondLoupe"): IDiamondLoupeContract;
+      require(name: "IIFtso"): IIFtsoContract;
+      require(name: "FtsoV2Interface"): FtsoV2InterfaceContract;
+      require(name: "IFtsoGenesis"): IFtsoGenesisContract;
+      require(name: "IFtsoManagerGenesis"): IFtsoManagerGenesisContract;
+      require(name: "IFtsoRegistryGenesis"): IFtsoRegistryGenesisContract;
+      require(
+        name: "IAddressValidityVerification"
+      ): IAddressValidityVerificationContract;
+      require(
+        name: "IAgentAlwaysAllowedMinters"
+      ): IAgentAlwaysAllowedMintersContract;
+      require(name: "IAgentPing"): IAgentPingContract;
+      require(name: "IAssetManager"): IAssetManagerContract;
+      require(name: "IAssetManagerController"): IAssetManagerControllerContract;
+      require(name: "IAssetManagerEvents"): IAssetManagerEventsContract;
+      require(
+        name: "IBalanceDecreasingTransactionVerification"
+      ): IBalanceDecreasingTransactionVerificationContract;
+      require(name: "IClaimSetupManager"): IClaimSetupManagerContract;
+      require(
+        name: "IConfirmedBlockHeightExistsVerification"
+      ): IConfirmedBlockHeightExistsVerificationContract;
+      require(name: "ICoreVaultClient"): ICoreVaultClientContract;
+      require(
+        name: "ICoreVaultClientSettings"
+      ): ICoreVaultClientSettingsContract;
+      require(name: "IDelegationAccount"): IDelegationAccountContract;
+      require(name: "IEntityManager"): IEntityManagerContract;
+      require(
+        name: "IEVMTransactionVerification"
+      ): IEVMTransactionVerificationContract;
+      require(
+        name: "IFastUpdateIncentiveManager"
+      ): IFastUpdateIncentiveManagerContract;
+      require(name: "IFastUpdater"): IFastUpdaterContract;
+      require(
+        name: "IFastUpdatesConfiguration"
+      ): IFastUpdatesConfigurationContract;
+      require(name: "IFdcHub"): IFdcHubContract;
+      require(
+        name: "IFdcInflationConfigurations"
+      ): IFdcInflationConfigurationsContract;
+      require(
+        name: "IFdcRequestFeeConfigurations"
+      ): IFdcRequestFeeConfigurationsContract;
+      require(name: "IFdcVerification"): IFdcVerificationContract;
+      require(name: "IFeeCalculator"): IFeeCalculatorContract;
+      require(name: "IFlareAssetRegistry"): IFlareAssetRegistryContract;
+      require(name: "IFlareContractRegistry"): IFlareContractRegistryContract;
+      require(name: "IFlareSystemsCalculator"): IFlareSystemsCalculatorContract;
+      require(name: "IFlareSystemsManager"): IFlareSystemsManagerContract;
+      require(name: "IFtso"): IFtsoContract;
+      require(name: "IFtsoFeedDecimals"): IFtsoFeedDecimalsContract;
+      require(name: "IFtsoFeedIdConverter"): IFtsoFeedIdConverterContract;
+      require(name: "IFtsoFeedPublisher"): IFtsoFeedPublisherContract;
+      require(
+        name: "IFtsoInflationConfigurations"
+      ): IFtsoInflationConfigurationsContract;
+      require(name: "IFtsoManager"): IFtsoManagerContract;
+      require(name: "IFtsoRegistry"): IFtsoRegistryContract;
+      require(name: "IFtsoRewardManager"): IFtsoRewardManagerContract;
+      require(
+        name: "IFtsoRewardOffersManager"
+      ): IFtsoRewardOffersManagerContract;
+      require(name: "IGenericRewardManager"): IGenericRewardManagerContract;
+      require(name: "IGovernanceSettings"): IGovernanceSettingsContract;
+      require(name: "IGovernanceVotePower"): IGovernanceVotePowerContract;
+      require(name: "IIncreaseManager"): IIncreaseManagerContract;
       require(name: "IPaymentVerification"): IPaymentVerificationContract;
       require(name: "IPChainStakeMirror"): IPChainStakeMirrorContract;
       require(name: "IPChainVotePower"): IPChainVotePowerContract;
@@ -342,6 +510,235 @@ export {
   IJsonApiVerificationContract,
   IJsonApiVerificationInstance,
 } from "./IJsonApiVerification";
+export {
+  IPaymentVerificationContract,
+  IPaymentVerificationInstance,
+} from "./IPaymentVerification";
+export {
+  IPChainStakeMirrorContract,
+  IPChainStakeMirrorInstance,
+} from "./IPChainStakeMirror";
+export {
+  IPChainVotePowerContract,
+  IPChainVotePowerInstance,
+} from "./IPChainVotePower";
+export {
+  IPriceSubmitterContract,
+  IPriceSubmitterInstance,
+} from "./IPriceSubmitter";
+export {
+  IRandomProviderContract,
+  IRandomProviderInstance,
+} from "./IRandomProvider";
+export {
+  IRedemptionTimeExtensionContract,
+  IRedemptionTimeExtensionInstance,
+} from "./IRedemptionTimeExtension";
+export {
+  IReferencedPaymentNonexistenceVerificationContract,
+  IReferencedPaymentNonexistenceVerificationInstance,
+} from "./IReferencedPaymentNonexistenceVerification";
+export { IRelayContract, IRelayInstance } from "./IRelay";
+export {
+  IRewardManagerContract,
+  IRewardManagerInstance,
+} from "./IRewardManager";
+export { ISubmissionContract, ISubmissionInstance } from "./ISubmission";
+export {
+  IVoterRegistryContract,
+  IVoterRegistryInstance,
+} from "./IVoterRegistry";
+export {
+  IVoterWhitelisterContract,
+  IVoterWhitelisterInstance,
+} from "./IVoterWhitelister";
+export {
+  IVPContractEventsContract,
+  IVPContractEventsInstance,
+} from "./IVPContractEvents";
+export { IVPTokenContract, IVPTokenInstance } from "./IVPToken";
+export {
+  IWeb2JsonVerificationContract,
+  IWeb2JsonVerificationInstance,
+} from "./IWeb2JsonVerification";
+export { IWNatContract, IWNatInstance } from "./IWNat";
+export {
+  IWNatDelegationFeeContract,
+  IWNatDelegationFeeInstance,
+} from "./IWNatDelegationFee";
+export {
+  ProtocolsV2InterfaceContract,
+  ProtocolsV2InterfaceInstance,
+} from "./ProtocolsV2Interface";
+export {
+  RandomNumberV2InterfaceContract,
+  RandomNumberV2InterfaceInstance,
+} from "./RandomNumberV2Interface";
+export {
+  RewardsV2InterfaceContract,
+  RewardsV2InterfaceInstance,
+} from "./RewardsV2Interface";
+export {
+  TestFtsoV2InterfaceContract,
+  TestFtsoV2InterfaceInstance,
+} from "./TestFtsoV2Interface";
+export { IICleanableContract, IICleanableInstance } from "./IICleanable";
+export {
+  IIGovernanceVotePowerContract,
+  IIGovernanceVotePowerInstance,
+} from "./IIGovernanceVotePower";
+export { IIVPContractContract, IIVPContractInstance } from "./IIVPContract";
+export { IIVPTokenContract, IIVPTokenInstance } from "./IIVPToken";
+export { IDiamondLoupeContract, IDiamondLoupeInstance } from "./IDiamondLoupe";
+export { IIFtsoContract, IIFtsoInstance } from "./IIFtso";
+export {
+  FtsoV2InterfaceContract,
+  FtsoV2InterfaceInstance,
+} from "./FtsoV2Interface";
+export { IFtsoGenesisContract, IFtsoGenesisInstance } from "./IFtsoGenesis";
+export {
+  IFtsoManagerGenesisContract,
+  IFtsoManagerGenesisInstance,
+} from "./IFtsoManagerGenesis";
+export {
+  IFtsoRegistryGenesisContract,
+  IFtsoRegistryGenesisInstance,
+} from "./IFtsoRegistryGenesis";
+export {
+  IAddressValidityVerificationContract,
+  IAddressValidityVerificationInstance,
+} from "./IAddressValidityVerification";
+export {
+  IAgentAlwaysAllowedMintersContract,
+  IAgentAlwaysAllowedMintersInstance,
+} from "./IAgentAlwaysAllowedMinters";
+export { IAgentPingContract, IAgentPingInstance } from "./IAgentPing";
+export { IAssetManagerContract, IAssetManagerInstance } from "./IAssetManager";
+export {
+  IAssetManagerControllerContract,
+  IAssetManagerControllerInstance,
+} from "./IAssetManagerController";
+export {
+  IAssetManagerEventsContract,
+  IAssetManagerEventsInstance,
+} from "./IAssetManagerEvents";
+export {
+  IBalanceDecreasingTransactionVerificationContract,
+  IBalanceDecreasingTransactionVerificationInstance,
+} from "./IBalanceDecreasingTransactionVerification";
+export {
+  IClaimSetupManagerContract,
+  IClaimSetupManagerInstance,
+} from "./IClaimSetupManager";
+export {
+  IConfirmedBlockHeightExistsVerificationContract,
+  IConfirmedBlockHeightExistsVerificationInstance,
+} from "./IConfirmedBlockHeightExistsVerification";
+export {
+  ICoreVaultClientContract,
+  ICoreVaultClientInstance,
+} from "./ICoreVaultClient";
+export {
+  ICoreVaultClientSettingsContract,
+  ICoreVaultClientSettingsInstance,
+} from "./ICoreVaultClientSettings";
+export {
+  IDelegationAccountContract,
+  IDelegationAccountInstance,
+} from "./IDelegationAccount";
+export {
+  IEntityManagerContract,
+  IEntityManagerInstance,
+} from "./IEntityManager";
+export {
+  IEVMTransactionVerificationContract,
+  IEVMTransactionVerificationInstance,
+} from "./IEVMTransactionVerification";
+export {
+  IFastUpdateIncentiveManagerContract,
+  IFastUpdateIncentiveManagerInstance,
+} from "./IFastUpdateIncentiveManager";
+export { IFastUpdaterContract, IFastUpdaterInstance } from "./IFastUpdater";
+export {
+  IFastUpdatesConfigurationContract,
+  IFastUpdatesConfigurationInstance,
+} from "./IFastUpdatesConfiguration";
+export { IFdcHubContract, IFdcHubInstance } from "./IFdcHub";
+export {
+  IFdcInflationConfigurationsContract,
+  IFdcInflationConfigurationsInstance,
+} from "./IFdcInflationConfigurations";
+export {
+  IFdcRequestFeeConfigurationsContract,
+  IFdcRequestFeeConfigurationsInstance,
+} from "./IFdcRequestFeeConfigurations";
+export {
+  IFdcVerificationContract,
+  IFdcVerificationInstance,
+} from "./IFdcVerification";
+export {
+  IFeeCalculatorContract,
+  IFeeCalculatorInstance,
+} from "./IFeeCalculator";
+export {
+  IFlareAssetRegistryContract,
+  IFlareAssetRegistryInstance,
+} from "./IFlareAssetRegistry";
+export {
+  IFlareContractRegistryContract,
+  IFlareContractRegistryInstance,
+} from "./IFlareContractRegistry";
+export {
+  IFlareSystemsCalculatorContract,
+  IFlareSystemsCalculatorInstance,
+} from "./IFlareSystemsCalculator";
+export {
+  IFlareSystemsManagerContract,
+  IFlareSystemsManagerInstance,
+} from "./IFlareSystemsManager";
+export { IFtsoContract, IFtsoInstance } from "./IFtso";
+export {
+  IFtsoFeedDecimalsContract,
+  IFtsoFeedDecimalsInstance,
+} from "./IFtsoFeedDecimals";
+export {
+  IFtsoFeedIdConverterContract,
+  IFtsoFeedIdConverterInstance,
+} from "./IFtsoFeedIdConverter";
+export {
+  IFtsoFeedPublisherContract,
+  IFtsoFeedPublisherInstance,
+} from "./IFtsoFeedPublisher";
+export {
+  IFtsoInflationConfigurationsContract,
+  IFtsoInflationConfigurationsInstance,
+} from "./IFtsoInflationConfigurations";
+export { IFtsoManagerContract, IFtsoManagerInstance } from "./IFtsoManager";
+export { IFtsoRegistryContract, IFtsoRegistryInstance } from "./IFtsoRegistry";
+export {
+  IFtsoRewardManagerContract,
+  IFtsoRewardManagerInstance,
+} from "./IFtsoRewardManager";
+export {
+  IFtsoRewardOffersManagerContract,
+  IFtsoRewardOffersManagerInstance,
+} from "./IFtsoRewardOffersManager";
+export {
+  IGenericRewardManagerContract,
+  IGenericRewardManagerInstance,
+} from "./IGenericRewardManager";
+export {
+  IGovernanceSettingsContract,
+  IGovernanceSettingsInstance,
+} from "./IGovernanceSettings";
+export {
+  IGovernanceVotePowerContract,
+  IGovernanceVotePowerInstance,
+} from "./IGovernanceVotePower";
+export {
+  IIncreaseManagerContract,
+  IIncreaseManagerInstance,
+} from "./IIncreaseManager";
 export {
   IPaymentVerificationContract,
   IPaymentVerificationInstance,

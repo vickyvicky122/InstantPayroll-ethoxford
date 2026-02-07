@@ -1,8 +1,8 @@
-import { run } from "hardhat";
-
 const InstantPayrollPayout = artifacts.require("InstantPayrollPayout");
 
 // npx hardhat run scripts/deployPlasma.ts --network plasmaTestnet
+// Note: verify:verify is not called because Plasma Testnet (testnet.plasmascan.to) is not
+// configured in hardhat's etherscan plugin. Verify manually if needed.
 async function main() {
     const [deployer] = await web3.eth.getAccounts();
     console.log("Deploying with account:", deployer);
