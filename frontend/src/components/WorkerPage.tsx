@@ -8,6 +8,13 @@ import {
   flareProvider,
   plasmaProvider,
 } from "../config";
+import {
+  prepareGitHubAttestationRequest,
+  submitAttestationRequest,
+  waitForFinalization,
+  retrieveProof,
+  buildClaimProof,
+} from "../utils/fdc";
 
 interface Stream {
   id: number;
@@ -37,6 +44,30 @@ interface WorkerPageProps {
   isCoston2: boolean;
 }
 
+type FdcStep = "idle" | "preparing" | "submitting" | "finalizing" | "retrieving" | "claiming" | "done" | "error";
+
+const FDC_STEP_LABELS: Record<FdcStep, string> = {
+  idle: "",
+  preparing: "Preparing attestation request...",
+  submitting: "Submitting attestation to FDC...",
+  finalizing: "Waiting for round finalization (~90s)...",
+  retrieving: "Retrieving proof from DA layer...",
+  claiming: "Claiming payment on-chain...",
+  done: "Claim complete!",
+  error: "Error occurred",
+};
+
+const FDC_STEP_NUMBER: Record<FdcStep, number> = {
+  idle: 0,
+  preparing: 1,
+  submitting: 2,
+  finalizing: 3,
+  retrieving: 4,
+  claiming: 5,
+  done: 5,
+  error: 0,
+};
+
 export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
   const [streams, setStreams] = useState<Stream[]>([]);
   const [plasmaPayouts, setPlasmaPayouts] = useState<PlasmaPayout[]>([]);
@@ -49,6 +80,18 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
   const [priceDecimals, setPriceDecimals] = useState<number>(7);
   const [activeTab, setActiveTab] = useState<"flare" | "plasma">("flare");
   const [now, setNow] = useState(Math.floor(Date.now() / 1000));
+
+  // FDC state
+  const [githubRepo, setGithubRepo] = useState<string>(() => localStorage.getItem("githubRepo") || "");
+  const [fdcStep, setFdcStep] = useState<FdcStep>("idle");
+  const [fdcError, setFdcError] = useState<string | null>(null);
+  const [fdcProgress, setFdcProgress] = useState<string>("");
+  const [fdcClaimingStreamId, setFdcClaimingStreamId] = useState<number | null>(null);
+
+  // Persist githubRepo
+  useEffect(() => {
+    localStorage.setItem("githubRepo", githubRepo);
+  }, [githubRepo]);
 
   // Tick every second for live countdowns
   useEffect(() => {
@@ -162,6 +205,69 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
     }
   };
 
+  const handleFdcClaim = async (streamId: number) => {
+    if (!signer || !isCoston2 || !githubRepo.trim()) return;
+
+    setFdcClaimingStreamId(streamId);
+    setFdcError(null);
+    setFdcProgress("");
+
+    try {
+      // Step 1: Prepare
+      setFdcStep("preparing");
+      setFdcProgress("Calling FDC verifier API...");
+      const data = await prepareGitHubAttestationRequest(githubRepo.trim());
+      const abiEncodedRequest = data.abiEncodedRequest;
+
+      // Step 2: Submit
+      setFdcStep("submitting");
+      setFdcProgress("Submitting attestation transaction...");
+      const roundId = await submitAttestationRequest(signer, abiEncodedRequest);
+      setFdcProgress(`Attestation submitted. Round ID: ${roundId}`);
+
+      // Step 3: Wait for finalization
+      setFdcStep("finalizing");
+      await waitForFinalization(signer.provider!, roundId, (msg) => setFdcProgress(msg));
+
+      // Step 4: Retrieve proof
+      setFdcStep("retrieving");
+      setFdcProgress("Fetching proof from DA layer...");
+      const proofData = await retrieveProof(abiEncodedRequest, roundId, (msg) => setFdcProgress(msg));
+
+      // Step 5: Claim on-chain
+      setFdcStep("claiming");
+      setFdcProgress("Sending claim transaction...");
+      const proof = buildClaimProof(proofData.proof, proofData.response_hex);
+      const contract = new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, signer);
+      const tx = await contract.claim(streamId, proof);
+      await tx.wait();
+
+      // Done
+      setFdcStep("done");
+      setFdcProgress("Payment claimed successfully!");
+      await loadWorkerData();
+
+      // Reset after a short delay
+      setTimeout(() => {
+        setFdcStep("idle");
+        setFdcProgress("");
+        setFdcClaimingStreamId(null);
+      }, 5000);
+    } catch (e: any) {
+      console.error("FDC claim error:", e);
+      setFdcStep("error");
+      setFdcError(e.reason || e.message || "Unknown error");
+      setFdcClaimingStreamId(null);
+    }
+  };
+
+  const resetFdcState = () => {
+    setFdcStep("idle");
+    setFdcError(null);
+    setFdcProgress("");
+    setFdcClaimingStreamId(null);
+  };
+
   const getTimeUntilClaim = (stream: Stream) => {
     const nextClaim = stream.lastClaimTime + stream.claimInterval;
     if (BigInt(now) >= nextClaim) return 0;
@@ -173,6 +279,8 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
     const s = secs % 60;
     return m > 0 ? `${m}m ${s.toString().padStart(2, '0')}s` : `${s}s`;
   };
+
+  const isFdcBusy = fdcStep !== "idle" && fdcStep !== "done" && fdcStep !== "error";
 
   if (!address) {
     return (
@@ -224,6 +332,36 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
         )}
       </div>
 
+      {/* GitHub Repo Input */}
+      <div className="card">
+        <h3 style={{ marginBottom: 8 }}>GitHub Repository</h3>
+        <input
+          type="text"
+          className="input"
+          placeholder="owner/repo (e.g. myorg/myproject)"
+          value={githubRepo}
+          onChange={(e) => setGithubRepo(e.target.value)}
+          disabled={isFdcBusy}
+          style={{ width: "100%", maxWidth: 400 }}
+        />
+        <p className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
+          Used for FDC GitHub commit verification when claiming
+        </p>
+      </div>
+
+      {/* FDC Progress (global, shown when active) */}
+      {fdcStep === "error" && (
+        <div className="card" style={{ borderLeft: "3px solid #e74c3c" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <strong>FDC Claim Error</strong>
+              <p className="muted" style={{ marginTop: 4 }}>{fdcError}</p>
+            </div>
+            <button className="btn btn-secondary" onClick={resetFdcState}>Dismiss</button>
+          </div>
+        </div>
+      )}
+
       {/* Active Streams */}
       <div className="card">
         <h2>Your Payment Streams {loading && <span className="spinner" />}</h2>
@@ -237,6 +375,7 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
           const pctUsed = Number(s.totalDeposit) > 0
             ? (Number(s.totalClaimed) * 100) / Number(s.totalDeposit)
             : 0;
+          const isThisStreamFdcBusy = isFdcBusy && fdcClaimingStreamId === s.id;
 
           return (
             <div key={s.id} className={`stream-card ${s.active ? "active" : "ended"}`}>
@@ -259,15 +398,54 @@ export function WorkerPage({ address, signer, isCoston2 }: WorkerPageProps) {
                 <div className="claim-section">
                   {canClaim ? (
                     <div className="claim-ready">
-                      <button
-                        className="btn btn-primary"
-                        onClick={() => handleClaimDemo(s.id)}
-                        disabled={claiming === s.id || !isCoston2}
-                      >
-                        {claiming === s.id ? "Claiming..." : "Claim Payment"}
-                      </button>
+                      {/* FDC Progress for this stream */}
+                      {isThisStreamFdcBusy && (
+                        <div className="fdc-progress" style={{ marginBottom: 12 }}>
+                          <div style={{ fontSize: "0.85rem", fontWeight: 600, marginBottom: 4 }}>
+                            Step {FDC_STEP_NUMBER[fdcStep]}/5: {FDC_STEP_LABELS[fdcStep]}
+                          </div>
+                          <div className="progress-bar" style={{ height: 8 }}>
+                            <div
+                              className="progress-fill"
+                              style={{
+                                width: `${(FDC_STEP_NUMBER[fdcStep] / 5) * 100}%`,
+                                transition: "width 0.5s ease",
+                              }}
+                            />
+                          </div>
+                          {fdcProgress && (
+                            <div className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
+                              {fdcProgress}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {fdcStep === "done" && fdcClaimingStreamId === s.id && (
+                        <div style={{ marginBottom: 12, color: "#27ae60", fontWeight: 600 }}>
+                          Payment claimed successfully!
+                        </div>
+                      )}
+
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleFdcClaim(s.id)}
+                          disabled={isFdcBusy || claiming === s.id || !isCoston2 || !githubRepo.trim()}
+                          title={!githubRepo.trim() ? "Enter a GitHub repo above first" : "Verify GitHub commits via FDC and claim"}
+                        >
+                          {isThisStreamFdcBusy ? "FDC Claiming..." : "Claim with GitHub Proof"}
+                        </button>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => handleClaimDemo(s.id)}
+                          disabled={claiming === s.id || isFdcBusy || !isCoston2}
+                        >
+                          {claiming === s.id ? "Claiming..." : "Quick Claim (Demo)"}
+                        </button>
+                      </div>
                       <p className="muted" style={{ marginTop: 8, fontSize: "0.8rem" }}>
-                        Uses FTSO price feed + Secure Random bonus lottery
+                        GitHub Proof uses FDC attestation to verify commits. Demo uses hardcoded count.
                       </p>
                     </div>
                   ) : (
