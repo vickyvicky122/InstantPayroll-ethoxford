@@ -2,7 +2,7 @@ import { web3 } from "hardhat";
 import {
     prepareAttestationRequestBase,
     submitAttestationRequest,
-    retrieveDataAndProof,
+    retrieveDataAndProofWithRetry,
 } from "./utils/fdc";
 
 /**
@@ -17,8 +17,8 @@ import {
  */
 
 const {
-    VERIFIER_URL_TESTNET = "https://jq-verifier-test.flare.rocks",
-    VERIFIER_API_KEY_TESTNET = "TestXXXX",
+    VERIFIER_URL_TESTNET = "https://fdc-verifiers-testnet.flare.network",
+    VERIFIER_API_KEY_TESTNET = "00000000-0000-0000-0000-000000000000",
     COSTON2_DA_LAYER_URL = "https://ctn2-data-availability.flare.network",
     GITHUB_REPO = "",
     SINCE_TIMESTAMP = "",
@@ -123,7 +123,7 @@ async function main() {
     // Step 3: Wait for finalization and retrieve proof
     console.log("Step 3: Waiting for round finalization and proof...");
     const daLayerUrl = `${COSTON2_DA_LAYER_URL}/api/v1/fdc/proof-by-request-round-raw`;
-    const proof = await retrieveDataAndProof(daLayerUrl, abiEncodedRequest, roundId);
+    const proof = await retrieveDataAndProofWithRetry(daLayerUrl, abiEncodedRequest, roundId);
     console.log("Proof retrieved!\n");
 
     // Step 4: Claim payment with proof

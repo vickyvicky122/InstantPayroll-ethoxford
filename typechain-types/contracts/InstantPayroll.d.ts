@@ -168,6 +168,29 @@ export interface InstantPayrollInstance extends Truffle.ContractInstance {
     ): Promise<number>;
   };
 
+  claimDemo: {
+    (
+      _streamId: number | BN | string,
+      _commitCount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<Truffle.TransactionResponse<AllEvents>>;
+    call(
+      _streamId: number | BN | string,
+      _commitCount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<void>;
+    sendTransaction(
+      _streamId: number | BN | string,
+      _commitCount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<string>;
+    estimateGas(
+      _streamId: number | BN | string,
+      _commitCount: number | BN | string,
+      txDetails?: Truffle.TransactionDetails
+    ): Promise<number>;
+  };
+
   createStream: {
     (
       _worker: string,
@@ -352,6 +375,29 @@ export interface InstantPayrollInstance extends Truffle.ContractInstance {
             responseBody: { abiEncodedData: string };
           };
         },
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<number>;
+    };
+
+    claimDemo: {
+      (
+        _streamId: number | BN | string,
+        _commitCount: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<Truffle.TransactionResponse<AllEvents>>;
+      call(
+        _streamId: number | BN | string,
+        _commitCount: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<void>;
+      sendTransaction(
+        _streamId: number | BN | string,
+        _commitCount: number | BN | string,
+        txDetails?: Truffle.TransactionDetails
+      ): Promise<string>;
+      estimateGas(
+        _streamId: number | BN | string,
+        _commitCount: number | BN | string,
         txDetails?: Truffle.TransactionDetails
       ): Promise<number>;
     };

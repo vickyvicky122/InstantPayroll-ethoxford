@@ -223,4 +223,69 @@ contract InstantPayroll {
         (randomNumber, isSecure,) = randomV2.getRandomNumber();
         wouldTrigger = isSecure && (randomNumber % BONUS_DIVISOR == 0);
     }
+
+    /**
+     * @notice Demo claim: employer approves a claim with commit count (bypasses FDC).
+     * Uses FTSO + Secure Random. For demo when FDC testnet is unavailable.
+     * @param _streamId The stream to claim from
+     * @param _commitCount Employer-attested commit count
+     */
+    function claimDemo(
+        uint256 _streamId,
+        uint256 _commitCount
+    ) external {
+        Stream storage stream = streams[_streamId];
+        require(stream.active, "Stream not active");
+        require(
+            msg.sender == stream.worker || msg.sender == stream.employer,
+            "Not authorized"
+        );
+        require(
+            block.timestamp >= stream.lastClaimTime + stream.claimInterval,
+            "Too early to claim"
+        );
+        require(_commitCount > 0, "No activity");
+
+        // FTSO: Get current FLR/USD price
+        TestFtsoV2Interface ftsoV2 = ContractRegistry.getTestFtsoV2();
+        (uint256 flrUsdPrice, int8 decimals,) = ftsoV2.getFeedById(FLR_USD_FEED_ID);
+        require(flrUsdPrice > 0, "FTSO price unavailable");
+
+        uint256 flrPayout = (stream.usdRatePerInterval * (10 ** uint8(decimals))) / flrUsdPrice;
+
+        // Secure Random: Bonus lottery
+        RandomNumberV2Interface randomV2 = ContractRegistry.getRandomNumberV2();
+        (uint256 randomNumber, bool isSecure,) = randomV2.getRandomNumber();
+        bool bonusTriggered = false;
+        if (isSecure && (randomNumber % BONUS_DIVISOR == 0)) {
+            flrPayout *= BONUS_MULTIPLIER;
+            bonusTriggered = true;
+        }
+
+        uint256 remaining = stream.totalDeposit - stream.totalClaimed;
+        if (flrPayout > remaining) {
+            flrPayout = remaining;
+        }
+        require(flrPayout > 0, "Stream depleted");
+
+        stream.totalClaimed += flrPayout;
+        stream.lastClaimTime = block.timestamp;
+
+        if (stream.totalClaimed >= stream.totalDeposit) {
+            stream.active = false;
+        }
+
+        (bool sent,) = payable(stream.worker).call{value: flrPayout}("");
+        require(sent, "Transfer failed");
+
+        emit PaymentClaimed(
+            _streamId,
+            stream.worker,
+            flrPayout,
+            stream.usdRatePerInterval,
+            flrUsdPrice,
+            bonusTriggered,
+            _commitCount
+        );
+    }
 }

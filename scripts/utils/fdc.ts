@@ -53,6 +53,10 @@ export async function calculateRoundId(transaction: any) {
     const firstVotingRoundStartTs = BigInt(await flareSystemsManager.firstVotingRoundStartTs());
     const votingEpochDurationSeconds = BigInt(await flareSystemsManager.votingEpochDurationSeconds());
 
+    console.log("Block timestamp:", blockTimestamp);
+    console.log("First voting round start ts:", firstVotingRoundStartTs);
+    console.log("Voting epoch duration seconds:", votingEpochDurationSeconds);
+
     const roundId = Number((blockTimestamp - firstVotingRoundStartTs) / votingEpochDurationSeconds);
     console.log("Calculated round id:", roundId, "\n");
     return roundId;
@@ -80,7 +84,10 @@ export async function postRequestToDALayer(url: string, request: any, watchStatu
         body: JSON.stringify(request),
     });
     if (watchStatus && response.status !== 200) {
-        throw new Error(`Response status is not OK, status ${response.status} ${response.statusText}\n`);
+        const body = await response.text();
+        throw new Error(`DA Layer error: status ${response.status} - ${body}\n`);
+    } else if (watchStatus) {
+        console.log("DA Layer response OK\n");
     }
     return await response.json();
 }
@@ -101,6 +108,7 @@ export async function retrieveDataAndProof(url: string, abiEncodedRequest: strin
         votingRoundId: roundId,
         requestBytes: abiEncodedRequest,
     };
+    console.log("DA Layer request:", request, "\n");
 
     await sleep(10000);
     let proof = await postRequestToDALayer(url, request, true);
@@ -110,5 +118,24 @@ export async function retrieveDataAndProof(url: string, abiEncodedRequest: strin
         proof = await postRequestToDALayer(url, request, false);
     }
     console.log("Proof generated!\n");
+    console.log("Proof:", proof, "\n");
     return proof;
+}
+
+export async function retrieveDataAndProofWithRetry(
+    url: string,
+    abiEncodedRequest: string,
+    roundId: number,
+    attempts: number = 10
+) {
+    for (let i = 0; i < attempts; i++) {
+        try {
+            return await retrieveDataAndProof(url, abiEncodedRequest, roundId);
+        } catch (e: any) {
+            console.log(`Attempt ${i + 1}/${attempts} failed:`, e.message);
+            console.log(`Retrying in 20s...\n`);
+            await sleep(20000);
+        }
+    }
+    throw new Error(`Failed to retrieve data and proof after ${attempts} attempts`);
 }
