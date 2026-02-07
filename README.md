@@ -75,7 +75,7 @@ flrPayout = (usdRatePerInterval * 10^decimals) / flrUsdPrice
 
 This ensures workers always receive the correct USD-equivalent value regardless of FLR price volatility. The price feed updates continuously through Flare's decentralized oracle network.
 
-**Contract usage:** `InstantPayroll.sol` lines 135-141 (full claim) and 250-254 (demo claim)
+**Contract usage:** `InstantPayroll.sol` lines 134-141 (full claim) and 250-254 (demo claim)
 
 ### FDC (Flare Data Connector)
 
@@ -115,7 +115,7 @@ if (isSecure && (randomNumber % BONUS_DIVISOR == 0)) {
 
 The bonus status is also visible in the frontend dashboard, so workers can see whether the current random state would trigger a bonus before claiming.
 
-**Contract usage:** `InstantPayroll.sol` lines 144-150 (full claim) and 257-263 (demo claim)
+**Contract usage:** `InstantPayroll.sol` lines 143-150 (full claim) and 256-263 (demo claim)
 
 ---
 
@@ -168,9 +168,12 @@ Workers can query their full payout history from Plasma via `getAllPayouts(addre
 
 ```
 frontend/                          React + TypeScript + ethers.js v6
-  EmployerPage ──────────────────> createStream(), endStream()
-  WorkerPage ────────────────────> claimDemo(), getStream(), events
-  useWallet ─────────────────────> MetaMask provider + auto-reconnect
+  main.tsx ────────────────────> React entry point (StrictMode)
+  App.tsx ─────────────────────> Router, ErrorBoundary, layout
+  config.ts ───────────────────> ABIs, addresses, providers, network configs
+  EmployerPage ────────────────> createStream(), endStream()
+  WorkerPage ──────────────────> claimDemo(), getStream(), events
+  useWallet ───────────────────> MetaMask provider + auto-reconnect
 
 contracts/
   InstantPayroll.sol (Coston2) ──> FTSO + FDC + Secure Random
@@ -182,6 +185,7 @@ scripts/
   createStream.ts ───────────────> Create payment stream (CLI)
   claimDemo.ts ──────────────────> Demo claim: FTSO + Random (CLI)
   fdcGithub.ts ──────────────────> Full FDC claim with GitHub proof (CLI)
+  fdcTest.ts ────────────────────> Test FDC attestation flow (CLI)
   relayer.ts ────────────────────> Cross-chain event bridge (Flare -> Plasma)
   utils/fdc.ts ──────────────────> FDC attestation helpers
   utils/getters.ts ──────────────> Flare contract registry lookups
@@ -295,6 +299,7 @@ The contract supports two claim paths:
 | | Demo Mode (`claimDemo`) | Full Mode (`claim`) |
 |---|---|---|
 | **Work verification** | Commit count passed as parameter | FDC Web2Json proof of GitHub API |
+| **Who can call** | Worker or employer | Worker only |
 | **FTSO price feed** | Yes | Yes |
 | **Secure Random bonus** | Yes | Yes |
 | **Use case** | Testing, hackathon demos | Production, real verification |
