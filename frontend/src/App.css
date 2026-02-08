@@ -491,6 +491,48 @@
 }
 
 /* ==========================================
+   ACCOUNT HEADER
+   ========================================== */
+
+.account-header {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.account-greeting {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.account-address {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.address-link {
+  color: var(--accent-light);
+  text-decoration: none;
+  transition: color var(--duration-fast) ease;
+}
+
+.address-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+
+.account-balance {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+/* ==========================================
    STATS ROW
    ========================================== */
 
@@ -1014,6 +1056,17 @@
   color: var(--text-primary);
   background: var(--surface-active);
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.network-badge {
+  padding: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  background: rgba(230, 32, 88, 0.1);
+  border: 1px solid rgba(230, 32, 88, 0.25);
+  border-radius: var(--radius-sm);
+  letter-spacing: 0.04em;
 }
 
 /* ==========================================

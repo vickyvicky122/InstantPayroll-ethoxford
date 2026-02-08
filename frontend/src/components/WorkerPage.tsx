@@ -6,12 +6,9 @@ import {
   INSTANT_PAYROLL_ABI,
   PLASMA_PAYOUT_ADDRESS,
   PLASMA_PAYOUT_ABI,
-  PLASMA_PAYROLL_ADDRESS,
-  PLASMA_PAYROLL_ABI,
-  MOCK_USDC_ADDRESS,
-  MOCK_USDC_ABI,
   GOOGLE_CLIENT_ID,
   CURRENCY_SYMBOL,
+  FLARE_EXPLORER,
   flareProvider,
   plasmaProvider,
 } from "../config";
@@ -39,19 +36,6 @@ interface Stream {
   active: boolean;
 }
 
-interface PlasmaStream {
-  id: number;
-  employer: string;
-  worker: string;
-  usdcPerInterval: bigint;
-  claimInterval: bigint;
-  totalDeposit: bigint;
-  totalClaimed: bigint;
-  lastClaimTime: bigint;
-  createdAt: bigint;
-  active: boolean;
-}
-
 interface PlasmaPayout {
   flareStreamId: bigint;
   amountFLR: bigint;
@@ -64,12 +48,8 @@ interface PlasmaPayout {
 interface WorkerPageProps {
   address: string;
   signer: ethers.Signer | null;
-  isCorrectNetwork: boolean;
   isFlareNetwork: boolean;
-  isPlasmaNetwork: boolean;
-  activeNetwork: "flare" | "plasma" | "unknown";
   switchToFlare: () => void;
-  switchToPlasma: () => void;
 }
 
 type FdcStep = "idle" | "preparing" | "submitting" | "finalizing" | "retrieving" | "claiming" | "done" | "error";
@@ -97,10 +77,8 @@ const FDC_STEP_NUMBER: Record<FdcStep, number> = {
 };
 
 export function WorkerPage({
-  address, signer, isCorrectNetwork, isFlareNetwork, isPlasmaNetwork,
-  activeNetwork, switchToFlare, switchToPlasma,
+  address, signer, isFlareNetwork, switchToFlare,
 }: WorkerPageProps) {
-  const [payrollTab, setPayrollTab] = useState<"flare" | "plasma">("plasma");
   const [streams, setStreams] = useState<Stream[]>([]);
   const [plasmaPayouts, setPlasmaPayouts] = useState<PlasmaPayout[]>([]);
   const [totalEarnedUSD, setTotalEarnedUSD] = useState<bigint>(0n);
@@ -112,6 +90,11 @@ export function WorkerPage({
   const [priceDecimals, setPriceDecimals] = useState<number>(7);
   const [historyTab, setHistoryTab] = useState<"flare" | "plasma">("flare");
   const [now, setNow] = useState(Math.floor(Date.now() / 1000));
+
+  const [displayName] = useState(() => {
+    try { const u = JSON.parse(localStorage.getItem("instantPayrollUser") || ""); return u?.displayName || ""; } catch { return ""; }
+  });
+  const [flrBalance, setFlrBalance] = useState<string | null>(null);
 
   // FDC state
   const [githubRepo, setGithubRepo] = useState<string>(() => localStorage.getItem("githubRepo") || "");
@@ -126,13 +109,6 @@ export function WorkerPage({
   const [googleDocInput, setGoogleDocInput] = useState<string>(() => localStorage.getItem("googleDocInput") || "");
   const [googleToken, setGoogleToken] = useState<string | null>(null);
   const [googleSigningIn, setGoogleSigningIn] = useState(false);
-
-  // Plasma payroll state
-  const [plasmaStreams, setPlasmaStreams] = useState<PlasmaStream[]>([]);
-  const [plasmaStreamLoading, setPlasmaStreamLoading] = useState(false);
-  const [plasmaClaimingId, setPlasmaClaimingId] = useState<number | null>(null);
-  const [plasmaClaimEvents, setPlasmaClaimEvents] = useState<any[]>([]);
-  const [usdcBalance, setUsdcBalance] = useState<bigint>(0n);
 
   // Persist settings
   useEffect(() => {
@@ -230,79 +206,28 @@ export function WorkerPage({
     }
   }, [address]);
 
-  const loadPlasmaStreams = useCallback(async () => {
-    if (!address || !PLASMA_PAYROLL_ADDRESS) return;
-    setPlasmaStreamLoading(true);
+  const loadBalance = useCallback(async () => {
+    if (!address) return;
     try {
-      const contract = new ethers.Contract(PLASMA_PAYROLL_ADDRESS, PLASMA_PAYROLL_ABI, plasmaProvider);
-      const nextId = await contract.nextStreamId();
-      const count = Number(nextId);
-      const results = await Promise.allSettled(
-        Array.from({ length: count }, (_, i) => contract.getStream(i))
-      );
-      const found: PlasmaStream[] = results
-        .map((r, i) => ({ r, i }))
-        .filter((x): x is { r: PromiseFulfilledResult<any>; i: number } => x.r.status === "fulfilled")
-        .map(({ r, i }) => ({
-          id: i,
-          employer: r.value.employer,
-          worker: r.value.worker,
-          usdcPerInterval: r.value.usdcPerInterval,
-          claimInterval: r.value.claimInterval,
-          totalDeposit: r.value.totalDeposit,
-          totalClaimed: r.value.totalClaimed,
-          lastClaimTime: r.value.lastClaimTime,
-          createdAt: r.value.createdAt,
-          active: r.value.active,
-        }))
-        .filter((s) => s.worker.toLowerCase() === address.toLowerCase());
-      setPlasmaStreams(found);
-
-      // Load claim events
-      try {
-        const filter = contract.filters.PaymentClaimed(null, address);
-        let events;
-        try {
-          events = await contract.queryFilter(filter, -10000);
-        } catch {
-          events = await contract.queryFilter(filter);
-        }
-        setPlasmaClaimEvents(events.map((e: any) => e.args));
-      } catch (e) { console.error("Plasma claim events error:", e); }
-    } catch (e: any) {
-      console.error("Load plasma streams error:", e);
-    } finally {
-      setPlasmaStreamLoading(false);
-    }
-  }, [address]);
-
-  const loadUsdcBalance = useCallback(async () => {
-    if (!address || !MOCK_USDC_ADDRESS) return;
-    try {
-      const usdc = new ethers.Contract(MOCK_USDC_ADDRESS, MOCK_USDC_ABI, plasmaProvider);
-      const bal = await usdc.balanceOf(address);
-      setUsdcBalance(bal);
-    } catch (e: any) {
-      console.error("USDC balance error:", e);
-    }
+      const bal = await flareProvider.getBalance(address);
+      setFlrBalance(parseFloat(ethers.formatEther(bal)).toFixed(2));
+    } catch (e) { console.error("Balance error:", e); }
   }, [address]);
 
   useEffect(() => {
     loadWorkerData();
     loadPlasmaData();
-    loadPlasmaStreams();
-    loadUsdcBalance();
+    loadBalance();
     const timer = setInterval(() => {
       loadWorkerData();
       loadPlasmaData();
-      loadPlasmaStreams();
-      loadUsdcBalance();
+      loadBalance();
     }, 15000);
     return () => clearInterval(timer);
-  }, [loadWorkerData, loadPlasmaData, loadPlasmaStreams, loadUsdcBalance]);
+  }, [loadWorkerData, loadPlasmaData, loadBalance]);
 
   const handleClaimDemo = async (streamId: number) => {
-    if (!signer || !isCorrectNetwork) return;
+    if (!signer || !isFlareNetwork) return;
     setClaiming(streamId);
     try {
       const contract = new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, signer);
@@ -332,7 +257,7 @@ export function WorkerPage({
   };
 
   const handleFdcClaim = async (streamId: number) => {
-    if (!signer || !isCorrectNetwork) return;
+    if (!signer || !isFlareNetwork) return;
     if (workSource === "github" && !githubRepo.trim()) return;
     if (workSource === "google" && !googleDocInput.trim()) return;
 
@@ -402,8 +327,9 @@ export function WorkerPage({
 
       // Done
       setFdcStep("done");
-      setFdcProgress(`Payment claimed! Verified ${verifiedCount} ${workSource === "google" ? "revision" : "commit"}${verifiedCount !== 1 ? "s" : ""}.`);
+      setFdcProgress(`Payment claimed! Verified ${verifiedCount} ${workSource === "google" ? "revision" : "commit"}${verifiedCount !== 1 ? "s" : ""}. Receipt stored on Plasma.`);
       await loadWorkerData();
+      await loadPlasmaData();
 
       // Reset after a short delay
       setTimeout(() => {
@@ -417,23 +343,6 @@ export function WorkerPage({
       setFdcStep("error");
       setFdcError(e.reason || e.message || "Unknown error");
       setFdcClaimingStreamId(null);
-    }
-  };
-
-  const handlePlasmaClaimUsdc = async (streamId: number) => {
-    if (!signer || !isPlasmaNetwork) return;
-    setPlasmaClaimingId(streamId);
-    try {
-      const contract = new ethers.Contract(PLASMA_PAYROLL_ADDRESS, PLASMA_PAYROLL_ABI, signer);
-      const tx = await contract.claim(streamId);
-      await tx.wait();
-      await loadPlasmaStreams();
-      await loadUsdcBalance();
-    } catch (e: any) {
-      console.error("Plasma claim error:", e);
-      alert("Claim error: " + (e.reason || e.message));
-    } finally {
-      setPlasmaClaimingId(null);
     }
   };
 
@@ -474,16 +383,7 @@ export function WorkerPage({
     const rows = plasmaPayouts.map((p) =>
       `${p.flareStreamId.toString()},${ethers.formatEther(p.amountFLR)},${ethers.formatEther(p.amountUSD)},${new Date(Number(p.timestamp) * 1000).toISOString()},${p.bonusTriggered ? "Yes" : "No"},${p.commitCount.toString()}`
     ).join("\n");
-    downloadCsv(header + rows, "plasma-payment-history.csv");
-  };
-
-  const exportUsdcCsv = () => {
-    if (plasmaClaimEvents.length === 0) return;
-    const header = "Stream ID,Amount (USDC),Intervals\n";
-    const rows = plasmaClaimEvents.map((ev) =>
-      `${ev.streamId.toString()},${ethers.formatUnits(ev.amount, 6)},${ev.intervalsCount.toString()}`
-    ).join("\n");
-    downloadCsv(header + rows, "usdc-payment-history.csv");
+    downloadCsv(header + rows, "plasma-receipts.csv");
   };
 
   const downloadCsv = (csv: string, filename: string) => {
@@ -522,467 +422,336 @@ export function WorkerPage({
   }
 
   const totalClaimedFLR = streams.reduce((sum, s) => sum + s.totalClaimed, 0n);
-  const totalPlasmaUsdcEarned = plasmaStreams.reduce((sum, s) => sum + s.totalClaimed, 0n);
 
   return (
     <div className="page">
-      {/* Top-level payroll tab bar */}
-      <div className="payroll-tabs">
-        <button
-          className={`tab ${payrollTab === "plasma" ? "tab-active" : ""}`}
-          onClick={() => setPayrollTab("plasma")}
-        >
-          Stablecoin Payroll (USDC)
-        </button>
-        <button
-          className={`tab ${payrollTab === "flare" ? "tab-active" : ""}`}
-          onClick={() => setPayrollTab("flare")}
-        >
-          Verified Payroll (FLR)
-        </button>
-      </div>
+      {!isFlareNetwork && (
+        <div className="network-banner">
+          Switch to Flare network to claim payments.{" "}
+          <button className="btn btn-warning" onClick={switchToFlare}>Switch to Flare</button>
+        </div>
+      )}
 
-      {/* ============ FLARE TAB ============ */}
-      {payrollTab === "flare" && (
-        <>
-          {!isFlareNetwork && activeNetwork !== "unknown" && (
-            <div className="network-banner">
-              You are on {activeNetwork === "plasma" ? "Plasma" : "another"} network.{" "}
-              <button className="btn btn-warning" onClick={switchToFlare}>Switch to Flare</button>
+      {/* Account Header */}
+      <div className="card account-header">
+        <div className="account-greeting">
+          {displayName ? `Welcome, ${displayName}` : "Worker Dashboard"}
+        </div>
+        <div className="account-address">
+          <a className="address-link" href={`${FLARE_EXPLORER}/address/${address}`} target="_blank" rel="noopener noreferrer">
+            {address}
+          </a>
+        </div>
+        {flrBalance !== null && (
+          <div className="account-balance">Balance: {flrBalance} {CURRENCY_SYMBOL}</div>
+        )}
+        <div className="stats-row">
+          <div className="stat-card">
+            <div className="stat-label">Total Earned (FLR)</div>
+            <div className="stat-value">{ethers.formatEther(totalClaimedFLR)}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">FLR/USD Price</div>
+            <div className="stat-value">${price || "..."}</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-label">Bonus Lottery</div>
+            <div className={`stat-value ${bonusStatus?.wouldTrigger ? "bonus-active" : ""}`}>
+              {bonusStatus?.wouldTrigger ? "2x ACTIVE!" : "Normal"}
+            </div>
+          </div>
+          {PLASMA_PAYOUT_ADDRESS && (
+            <div className="stat-card">
+              <div className="stat-label">Lifetime (USD)</div>
+              <div className="stat-value">${ethers.formatEther(totalEarnedUSD)}</div>
             </div>
           )}
+        </div>
+      </div>
 
-          {/* Stats Row */}
-          <div className="stats-row">
-            <div className="stat-card">
-              <div className="stat-label">Total Earned (FLR)</div>
-              <div className="stat-value">{ethers.formatEther(totalClaimedFLR)}</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">FLR/USD Price</div>
-              <div className="stat-value">${price || "..."}</div>
-            </div>
-            <div className="stat-card">
-              <div className="stat-label">Bonus Lottery</div>
-              <div className={`stat-value ${bonusStatus?.wouldTrigger ? "bonus-active" : ""}`}>
-                {bonusStatus?.wouldTrigger ? "2x ACTIVE!" : "Normal"}
-              </div>
-            </div>
-            {PLASMA_PAYOUT_ADDRESS && (
-              <div className="stat-card">
-                <div className="stat-label">Plasma Total (USD)</div>
-                <div className="stat-value">${ethers.formatEther(totalEarnedUSD)}</div>
-              </div>
-            )}
+      {/* Work Verification Source */}
+      <div className="card">
+        <h3 style={{ marginBottom: 8 }}>Work Verification</h3>
+        <div className="tabs" style={{ marginBottom: 12 }}>
+          <button
+            className={`tab ${workSource === "github" ? "tab-active" : ""}`}
+            onClick={() => setWorkSource("github")}
+            disabled={isFdcBusy}
+          >
+            GitHub
+          </button>
+          <button
+            className={`tab ${workSource === "google" ? "tab-active" : ""}`}
+            onClick={() => setWorkSource("google")}
+            disabled={isFdcBusy}
+          >
+            Google Docs
+          </button>
+        </div>
+
+        {workSource === "github" && (
+          <div>
+            <input
+              type="text"
+              className="input"
+              placeholder="owner/repo (e.g. myorg/myproject)"
+              value={githubRepo}
+              onChange={(e) => setGithubRepo(e.target.value)}
+              disabled={isFdcBusy}
+              style={{ width: "100%", maxWidth: 400 }}
+            />
+            <p className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
+              FDC verifies GitHub commit count as proof of work
+            </p>
           </div>
+        )}
 
-          {/* Work Verification Source */}
-          <div className="card">
-            <h3 style={{ marginBottom: 8 }}>Work Verification</h3>
-            <div className="tabs" style={{ marginBottom: 12 }}>
-              <button
-                className={`tab ${workSource === "github" ? "tab-active" : ""}`}
-                onClick={() => setWorkSource("github")}
-                disabled={isFdcBusy}
-              >
-                GitHub
-              </button>
-              <button
-                className={`tab ${workSource === "google" ? "tab-active" : ""}`}
-                onClick={() => setWorkSource("google")}
-                disabled={isFdcBusy}
-              >
-                Google Docs
-              </button>
-            </div>
-
-            {workSource === "github" && (
-              <div>
+        {workSource === "google" && (
+          <div>
+            {!GOOGLE_CLIENT_ID ? (
+              <p className="muted" style={{ color: "#e67e22" }}>
+                Set VITE_GOOGLE_CLIENT_ID in your .env to enable Google Docs verification.
+              </p>
+            ) : (
+              <>
                 <input
                   type="text"
                   className="input"
-                  placeholder="owner/repo (e.g. myorg/myproject)"
-                  value={githubRepo}
-                  onChange={(e) => setGithubRepo(e.target.value)}
+                  placeholder="Google Doc URL or file ID"
+                  value={googleDocInput}
+                  onChange={(e) => setGoogleDocInput(e.target.value)}
                   disabled={isFdcBusy}
-                  style={{ width: "100%", maxWidth: 400 }}
+                  style={{ width: "100%", maxWidth: 400, marginBottom: 8 }}
                 />
-                <p className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
-                  FDC verifies GitHub commit count as proof of work
-                </p>
-              </div>
-            )}
-
-            {workSource === "google" && (
-              <div>
-                {!GOOGLE_CLIENT_ID ? (
-                  <p className="muted" style={{ color: "#e67e22" }}>
-                    Set VITE_GOOGLE_CLIENT_ID in your .env to enable Google Docs verification.
-                  </p>
-                ) : (
-                  <>
-                    <input
-                      type="text"
-                      className="input"
-                      placeholder="Google Doc URL or file ID"
-                      value={googleDocInput}
-                      onChange={(e) => setGoogleDocInput(e.target.value)}
-                      disabled={isFdcBusy}
-                      style={{ width: "100%", maxWidth: 400, marginBottom: 8 }}
-                    />
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      {googleToken ? (
-                        <span style={{ color: "#27ae60", fontSize: "0.85rem", fontWeight: 600 }}>
-                          Signed in with Google
-                        </span>
-                      ) : (
-                        <button
-                          className="btn btn-secondary"
-                          onClick={handleGoogleSignIn}
-                          disabled={googleSigningIn || isFdcBusy}
-                        >
-                          {googleSigningIn ? "Signing in..." : "Sign in with Google"}
-                        </button>
-                      )}
-                    </div>
-                    <p className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
-                      FDC verifies Google Doc revision count as proof of work
-                    </p>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* FDC Progress (global, shown when active) */}
-          {fdcStep === "error" && (
-            <div className="card" style={{ borderLeft: "3px solid #e74c3c" }}>
-              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                <div>
-                  <strong>FDC Claim Error</strong>
-                  <p className="muted" style={{ marginTop: 4 }}>{fdcError}</p>
-                </div>
-                <button className="btn btn-secondary" onClick={resetFdcState}>Dismiss</button>
-              </div>
-            </div>
-          )}
-
-          {/* Active Streams */}
-          <div className="card">
-            <h2>Your Payment Streams {loading && <span className="spinner" />}</h2>
-            {streams.length === 0 && !loading && (
-              <p className="muted">No streams assigned to your address.</p>
-            )}
-            {streams.map((s) => {
-              const secsLeft = getTimeUntilClaim(s);
-              const canClaim = secsLeft === 0 && s.active;
-              const remaining = s.totalDeposit - s.totalClaimed;
-              const pctUsed = Number(s.totalDeposit) > 0
-                ? (Number(s.totalClaimed) * 100) / Number(s.totalDeposit)
-                : 0;
-              const isThisStreamFdcBusy = isFdcBusy && fdcClaimingStreamId === s.id;
-
-              return (
-                <div key={s.id} className={`stream-card ${s.active ? "active" : "ended"}`}>
-                  <div className="stream-header">
-                    <span className="stream-id">Stream #{s.id}</span>
-                    <span className={`badge ${s.active ? "badge-active" : "badge-ended"}`}>
-                      {s.active ? "Active" : "Ended"}
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  {googleToken ? (
+                    <span style={{ color: "#27ae60", fontSize: "0.85rem", fontWeight: 600 }}>
+                      Signed in with Google
                     </span>
-                  </div>
-                  <div className="stream-details">
-                    <div><strong>Employer:</strong> {s.employer.slice(0, 8)}...{s.employer.slice(-6)}</div>
-                    <div><strong>Rate:</strong> ${ethers.formatEther(s.usdRatePerInterval)} / {s.claimInterval.toString()}s</div>
-                    <div><strong>Remaining:</strong> {ethers.formatEther(remaining)} {CURRENCY_SYMBOL}</div>
-                    <div className="progress-bar">
-                      <div className="progress-fill" style={{ width: `${pctUsed}%` }} />
-                    </div>
-                  </div>
-
-                  {s.active && (
-                    <div className="claim-section">
-                      {canClaim ? (
-                        <div className="claim-ready">
-                          {/* FDC Progress for this stream */}
-                          {isThisStreamFdcBusy && (
-                            <div className="fdc-progress" style={{ marginBottom: 12 }}>
-                              <div style={{ fontSize: "0.85rem", fontWeight: 600, marginBottom: 4 }}>
-                                Step {FDC_STEP_NUMBER[fdcStep]}/5: {FDC_STEP_LABELS[fdcStep]}
-                              </div>
-                              <div className="progress-bar" style={{ height: 8 }}>
-                                <div
-                                  className="progress-fill"
-                                  style={{
-                                    width: `${(FDC_STEP_NUMBER[fdcStep] / 5) * 100}%`,
-                                    transition: "width 0.5s ease",
-                                  }}
-                                />
-                              </div>
-                              {fdcProgress && (
-                                <div className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
-                                  {fdcProgress}
-                                </div>
-                              )}
-                            </div>
-                          )}
-
-                          {fdcStep === "done" && fdcClaimingStreamId === s.id && (
-                            <div style={{ marginBottom: 12, color: "#27ae60", fontWeight: 600 }}>
-                              Payment claimed! {fdcCommitCount !== null && `(${fdcCommitCount} ${workSource === "google" ? "revision" : "commit"}${fdcCommitCount !== 1 ? "s" : ""} verified)`}
-                            </div>
-                          )}
-
-                          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                            <button
-                              className="btn btn-primary"
-                              onClick={() => handleFdcClaim(s.id)}
-                              disabled={
-                                isFdcBusy ||
-                                claiming === s.id ||
-                                !isFlareNetwork ||
-                                (workSource === "github" && !githubRepo.trim()) ||
-                                (workSource === "google" && (!googleDocInput.trim() || !googleToken || !GOOGLE_CLIENT_ID))
-                              }
-                              title={
-                                workSource === "github" && !githubRepo.trim()
-                                  ? "Enter a GitHub repo above first"
-                                  : workSource === "google" && !googleToken
-                                    ? "Sign in with Google first"
-                                    : workSource === "google"
-                                      ? "Verify Google Doc revisions via FDC and claim"
-                                      : "Verify GitHub commits via FDC and claim"
-                              }
-                            >
-                              {isThisStreamFdcBusy
-                                ? "FDC Claiming..."
-                                : workSource === "google"
-                                  ? "Claim with Google Docs Proof"
-                                  : "Claim with GitHub Proof"}
-                            </button>
-                            <button
-                              className="btn btn-secondary"
-                              onClick={() => handleClaimDemo(s.id)}
-                              disabled={claiming === s.id || isFdcBusy || !isFlareNetwork}
-                            >
-                              {claiming === s.id ? "Claiming..." : "Quick Claim (Demo)"}
-                            </button>
-                          </div>
-                          <p className="muted" style={{ marginTop: 8, fontSize: "0.8rem" }}>
-                            {workSource === "google"
-                              ? "Google Docs Proof uses FDC attestation to verify document revisions. Demo uses hardcoded count."
-                              : "GitHub Proof uses FDC attestation to verify commits. Demo uses hardcoded count."}
-                          </p>
-                        </div>
-                      ) : (
-                        <div className="claim-wait">
-                          Next claim in: <span className="countdown">{formatCountdown(secsLeft)}</span>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Tabs: Flare Claims / Plasma Payouts */}
-          <div className="card">
-            <div className="tabs">
-              <button
-                className={`tab ${historyTab === "flare" ? "tab-active" : ""}`}
-                onClick={() => setHistoryTab("flare")}
-              >
-                Flare Claims ({claimEvents.length})
-              </button>
-              {PLASMA_PAYOUT_ADDRESS && (
-                <button
-                  className={`tab ${historyTab === "plasma" ? "tab-active" : ""}`}
-                  onClick={() => setHistoryTab("plasma")}
-                >
-                  Plasma Payouts ({plasmaPayouts.length})
-                </button>
-              )}
-            </div>
-
-            {historyTab === "flare" && (
-              <div className="events-list">
-                {claimEvents.length > 0 && (
-                  <button className="btn btn-secondary" style={{ alignSelf: "flex-end", marginBottom: 8 }} onClick={exportFlareCsv}>
-                    Export CSV
-                  </button>
-                )}
-                {claimEvents.length === 0 ? (
-                  <p className="muted">No claims yet.</p>
-                ) : (
-                  claimEvents.map((ev, i) => (
-                    <div key={i} className={`event-row ${ev.bonusTriggered ? "bonus-row" : ""}`}>
-                      <div className="event-main">
-                        <span className="event-amount">{ethers.formatEther(ev.amountFLR)} FLR</span>
-                        <span className="event-stream">Stream #{ev.streamId.toString()}</span>
-                        {ev.bonusTriggered && <span className="bonus-badge">2x BONUS</span>}
-                      </div>
-                      <div className="event-sub">
-                        {ev.commitCount.toString()} commits | FLR/USD: {ethers.formatUnits(ev.flrUsdPrice, priceDecimals)}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-
-            {historyTab === "plasma" && (
-              <div className="events-list">
-                {plasmaPayouts.length > 0 && (
-                  <button className="btn btn-secondary" style={{ alignSelf: "flex-end", marginBottom: 8 }} onClick={exportPlasmaCsv}>
-                    Export CSV
-                  </button>
-                )}
-                {plasmaPayouts.length === 0 ? (
-                  <p className="muted">No Plasma payouts recorded yet.</p>
-                ) : (
-                  plasmaPayouts.map((p, i) => (
-                    <div key={i} className={`event-row ${p.bonusTriggered ? "bonus-row" : ""}`}>
-                      <div className="event-main">
-                        <span className="event-amount">{ethers.formatEther(p.amountFLR)} FLR</span>
-                        <span className="event-usd">(${ethers.formatEther(p.amountUSD)})</span>
-                        {p.bonusTriggered && <span className="bonus-badge">2x BONUS</span>}
-                      </div>
-                      <div className="event-sub">
-                        {p.commitCount.toString()} commits | {new Date(Number(p.timestamp) * 1000).toLocaleString()}
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            )}
-          </div>
-        </>
-      )}
-
-      {/* ============ PLASMA TAB ============ */}
-      {payrollTab === "plasma" && (
-        <>
-          {!isPlasmaNetwork && (
-            <div className="network-banner">
-              Switch to Plasma network to claim USDC.{" "}
-              <button className="btn btn-warning" onClick={switchToPlasma}>Switch to Plasma</button>
-            </div>
-          )}
-
-          {!PLASMA_PAYROLL_ADDRESS || !MOCK_USDC_ADDRESS ? (
-            <div className="card">
-              <h2>Plasma Payroll (USDC)</h2>
-              <p className="muted">
-                Deploy PlasmaPayroll and MockUSDC contracts first, then set
-                VITE_PLASMA_PAYROLL_ADDRESS and VITE_MOCK_USDC_ADDRESS in your .env.
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* Stats Row */}
-              <div className="stats-row">
-                <div className="stat-card">
-                  <div className="stat-label">Total USDC Earned</div>
-                  <div className="stat-value">{ethers.formatUnits(totalPlasmaUsdcEarned, 6)}</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-label">USDC Balance</div>
-                  <div className="stat-value">{ethers.formatUnits(usdcBalance, 6)}</div>
-                </div>
-                <div className="stat-card">
-                  <div className="stat-label">Active Streams</div>
-                  <div className="stat-value">{plasmaStreams.filter(s => s.active).length}</div>
-                </div>
-              </div>
-
-              {/* Active Plasma Streams */}
-              <div className="card">
-                <h2>USDC Payment Streams {plasmaStreamLoading && <span className="spinner" />}</h2>
-                {plasmaStreams.length === 0 && !plasmaStreamLoading && (
-                  <p className="muted">No USDC streams assigned to your address.</p>
-                )}
-                {plasmaStreams.map((s) => {
-                  const secsLeft = getTimeUntilClaim(s);
-                  const canClaim = secsLeft === 0 && s.active;
-                  const remaining = s.totalDeposit - s.totalClaimed;
-                  const pctUsed = Number(s.totalDeposit) > 0
-                    ? (Number(s.totalClaimed) * 100) / Number(s.totalDeposit)
-                    : 0;
-
-                  return (
-                    <div key={s.id} className={`stream-card ${s.active ? "active" : "ended"}`}>
-                      <div className="stream-header">
-                        <span className="stream-id">Stream #{s.id}</span>
-                        <span className={`badge ${s.active ? "badge-active" : "badge-ended"}`}>
-                          {s.active ? "Active" : "Ended"}
-                        </span>
-                      </div>
-                      <div className="stream-details">
-                        <div><strong>Employer:</strong> {s.employer.slice(0, 8)}...{s.employer.slice(-6)}</div>
-                        <div><strong>Rate:</strong> {ethers.formatUnits(s.usdcPerInterval, 6)} USDC / {s.claimInterval.toString()}s</div>
-                        <div><strong>Remaining:</strong> {ethers.formatUnits(remaining, 6)} USDC</div>
-                        <div className="progress-bar">
-                          <div className="progress-fill" style={{ width: `${pctUsed}%` }} />
-                        </div>
-                      </div>
-
-                      {s.active && (
-                        <div className="claim-section">
-                          {canClaim ? (
-                            <div className="claim-ready">
-                              <button
-                                className="btn btn-primary"
-                                onClick={() => handlePlasmaClaimUsdc(s.id)}
-                                disabled={plasmaClaimingId === s.id || !isPlasmaNetwork}
-                              >
-                                {plasmaClaimingId === s.id ? "Claiming..." : "Claim USDC"}
-                              </button>
-                              <p className="muted" style={{ marginTop: 8, fontSize: "0.8rem" }}>
-                                One click, one transaction. No FDC proof needed.
-                              </p>
-                            </div>
-                          ) : (
-                            <div className="claim-wait">
-                              Next claim in: <span className="countdown">{formatCountdown(secsLeft)}</span>
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-
-              {/* USDC Claim History */}
-              <div className="card">
-                <h2>USDC Claim History</h2>
-                <div className="events-list">
-                  {plasmaClaimEvents.length > 0 && (
-                    <button className="btn btn-secondary" style={{ alignSelf: "flex-end", marginBottom: 8 }} onClick={exportUsdcCsv}>
-                      Export CSV
+                  ) : (
+                    <button
+                      className="btn btn-secondary"
+                      onClick={handleGoogleSignIn}
+                      disabled={googleSigningIn || isFdcBusy}
+                    >
+                      {googleSigningIn ? "Signing in..." : "Sign in with Google"}
                     </button>
                   )}
-                  {plasmaClaimEvents.length === 0 ? (
-                    <p className="muted">No USDC claims yet.</p>
-                  ) : (
-                    plasmaClaimEvents.map((ev, i) => (
-                      <div key={i} className="event-row">
-                        <div className="event-main">
-                          <span className="event-amount">{ethers.formatUnits(ev.amount, 6)} USDC</span>
-                          <span className="event-stream">Stream #{ev.streamId.toString()}</span>
-                        </div>
-                        <div className="event-sub">
-                          {ev.intervalsCount.toString()} interval{Number(ev.intervalsCount) !== 1 ? "s" : ""}
-                        </div>
-                      </div>
-                    ))
-                  )}
+                </div>
+                <p className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
+                  FDC verifies Google Doc revision count as proof of work
+                </p>
+              </>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* FDC Progress (global, shown when active) */}
+      {fdcStep === "error" && (
+        <div className="card" style={{ borderLeft: "3px solid #e74c3c" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <strong>FDC Claim Error</strong>
+              <p className="muted" style={{ marginTop: 4 }}>{fdcError}</p>
+            </div>
+            <button className="btn btn-secondary" onClick={resetFdcState}>Dismiss</button>
+          </div>
+        </div>
+      )}
+
+      {/* Active Streams */}
+      <div className="card">
+        <h2>Your Payment Streams {loading && <span className="spinner" />}</h2>
+        {streams.length === 0 && !loading && (
+          <p className="muted">No streams assigned to your address.</p>
+        )}
+        {streams.map((s) => {
+          const secsLeft = getTimeUntilClaim(s);
+          const canClaim = secsLeft === 0 && s.active;
+          const remaining = s.totalDeposit - s.totalClaimed;
+          const pctUsed = Number(s.totalDeposit) > 0
+            ? (Number(s.totalClaimed) * 100) / Number(s.totalDeposit)
+            : 0;
+          const isThisStreamFdcBusy = isFdcBusy && fdcClaimingStreamId === s.id;
+
+          return (
+            <div key={s.id} className={`stream-card ${s.active ? "active" : "ended"}`}>
+              <div className="stream-header">
+                <span className="stream-id">Stream #{s.id}</span>
+                <span className={`badge ${s.active ? "badge-active" : "badge-ended"}`}>
+                  {s.active ? "Active" : "Ended"}
+                </span>
+              </div>
+              <div className="stream-details">
+                <div><strong>Employer:</strong> {s.employer.slice(0, 8)}...{s.employer.slice(-6)}</div>
+                <div><strong>Rate:</strong> ${ethers.formatEther(s.usdRatePerInterval)} / {s.claimInterval.toString()}s</div>
+                <div><strong>Remaining:</strong> {ethers.formatEther(remaining)} {CURRENCY_SYMBOL}</div>
+                <div className="progress-bar">
+                  <div className="progress-fill" style={{ width: `${pctUsed}%` }} />
                 </div>
               </div>
-            </>
+
+              {s.active && (
+                <div className="claim-section">
+                  {canClaim ? (
+                    <div className="claim-ready">
+                      {/* FDC Progress for this stream */}
+                      {isThisStreamFdcBusy && (
+                        <div className="fdc-progress" style={{ marginBottom: 12 }}>
+                          <div style={{ fontSize: "0.85rem", fontWeight: 600, marginBottom: 4 }}>
+                            Step {FDC_STEP_NUMBER[fdcStep]}/5: {FDC_STEP_LABELS[fdcStep]}
+                          </div>
+                          <div className="progress-bar" style={{ height: 8 }}>
+                            <div
+                              className="progress-fill"
+                              style={{
+                                width: `${(FDC_STEP_NUMBER[fdcStep] / 5) * 100}%`,
+                                transition: "width 0.5s ease",
+                              }}
+                            />
+                          </div>
+                          {fdcProgress && (
+                            <div className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
+                              {fdcProgress}
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {fdcStep === "done" && fdcClaimingStreamId === s.id && (
+                        <div style={{ marginBottom: 12, color: "#27ae60", fontWeight: 600 }}>
+                          Payment claimed! {fdcCommitCount !== null && `(${fdcCommitCount} ${workSource === "google" ? "revision" : "commit"}${fdcCommitCount !== 1 ? "s" : ""} verified)`}
+                        </div>
+                      )}
+
+                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                        <button
+                          className="btn btn-primary"
+                          onClick={() => handleFdcClaim(s.id)}
+                          disabled={
+                            isFdcBusy ||
+                            claiming === s.id ||
+                            !isFlareNetwork ||
+                            (workSource === "github" && !githubRepo.trim()) ||
+                            (workSource === "google" && (!googleDocInput.trim() || !googleToken || !GOOGLE_CLIENT_ID))
+                          }
+                          title={
+                            workSource === "github" && !githubRepo.trim()
+                              ? "Enter a GitHub repo above first"
+                              : workSource === "google" && !googleToken
+                                ? "Sign in with Google first"
+                                : workSource === "google"
+                                  ? "Verify Google Doc revisions via FDC and claim"
+                                  : "Verify GitHub commits via FDC and claim"
+                          }
+                        >
+                          {isThisStreamFdcBusy
+                            ? "FDC Claiming..."
+                            : workSource === "google"
+                              ? "Claim with Google Docs Proof"
+                              : "Claim with GitHub Proof"}
+                        </button>
+                        <button
+                          className="btn btn-secondary"
+                          onClick={() => handleClaimDemo(s.id)}
+                          disabled={claiming === s.id || isFdcBusy || !isFlareNetwork}
+                        >
+                          {claiming === s.id ? "Claiming..." : "Quick Claim (Demo)"}
+                        </button>
+                      </div>
+                      <p className="muted" style={{ marginTop: 8, fontSize: "0.8rem" }}>
+                        {workSource === "google"
+                          ? "Google Docs Proof uses FDC attestation to verify document revisions. Demo uses hardcoded count."
+                          : "GitHub Proof uses FDC attestation to verify commits. Demo uses hardcoded count."}
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="claim-wait">
+                      Next claim in: <span className="countdown">{formatCountdown(secsLeft)}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Payment History */}
+      <div className="card">
+        <div className="tabs">
+          <button
+            className={`tab ${historyTab === "flare" ? "tab-active" : ""}`}
+            onClick={() => setHistoryTab("flare")}
+          >
+            Flare Claims ({claimEvents.length})
+          </button>
+          {PLASMA_PAYOUT_ADDRESS && (
+            <button
+              className={`tab ${historyTab === "plasma" ? "tab-active" : ""}`}
+              onClick={() => setHistoryTab("plasma")}
+            >
+              Plasma Receipts ({plasmaPayouts.length})
+            </button>
           )}
-        </>
-      )}
+        </div>
+
+        {historyTab === "flare" && (
+          <div className="events-list">
+            {claimEvents.length > 0 && (
+              <button className="btn btn-secondary" style={{ alignSelf: "flex-end", marginBottom: 8 }} onClick={exportFlareCsv}>
+                Export CSV
+              </button>
+            )}
+            {claimEvents.length === 0 ? (
+              <p className="muted">No claims yet.</p>
+            ) : (
+              claimEvents.map((ev, i) => (
+                <div key={i} className={`event-row ${ev.bonusTriggered ? "bonus-row" : ""}`}>
+                  <div className="event-main">
+                    <span className="event-amount">{ethers.formatEther(ev.amountFLR)} FLR</span>
+                    <span className="event-stream">Stream #{ev.streamId.toString()}</span>
+                    {ev.bonusTriggered && <span className="bonus-badge">2x BONUS</span>}
+                  </div>
+                  <div className="event-sub">
+                    {ev.commitCount.toString()} commits | FLR/USD: {ethers.formatUnits(ev.flrUsdPrice, priceDecimals)}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {historyTab === "plasma" && (
+          <div className="events-list">
+            <p className="muted" style={{ fontSize: "0.8rem", marginBottom: 12 }}>
+              Free permanent receipts stored on Plasma (zero gas cost). Updated by the cross-chain relayer.
+            </p>
+            {plasmaPayouts.length > 0 && (
+              <button className="btn btn-secondary" style={{ alignSelf: "flex-end", marginBottom: 8 }} onClick={exportPlasmaCsv}>
+                Export CSV
+              </button>
+            )}
+            {plasmaPayouts.length === 0 ? (
+              <p className="muted">No Plasma receipts recorded yet. The relayer bridges claim data from Flare automatically.</p>
+            ) : (
+              plasmaPayouts.map((p, i) => (
+                <div key={i} className={`event-row ${p.bonusTriggered ? "bonus-row" : ""}`}>
+                  <div className="event-main">
+                    <span className="event-amount">{ethers.formatEther(p.amountFLR)} FLR</span>
+                    <span className="event-usd">(${ethers.formatEther(p.amountUSD)})</span>
+                    {p.bonusTriggered && <span className="bonus-badge">2x BONUS</span>}
+                  </div>
+                  <div className="event-sub">
+                    {p.commitCount.toString()} commits | {new Date(Number(p.timestamp) * 1000).toLocaleString()}
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
