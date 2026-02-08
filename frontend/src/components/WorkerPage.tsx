@@ -91,9 +91,10 @@ export function WorkerPage({
   const [historyTab, setHistoryTab] = useState<"flare" | "plasma">("flare");
   const [now, setNow] = useState(Math.floor(Date.now() / 1000));
 
-  const [displayName] = useState(() => {
-    try { const u = JSON.parse(localStorage.getItem("instantPayrollUser") || ""); return u?.displayName || ""; } catch { return ""; }
+  const [displayName, setDisplayName] = useState(() => {
+    try { const u = JSON.parse(localStorage.getItem("instantPayrollUser") || ""); return u?.role === "worker" ? (u?.displayName || "") : ""; } catch { return ""; }
   });
+  const [nameInput, setNameInput] = useState("");
   const [flrBalance, setFlrBalance] = useState<string | null>(null);
 
   // FDC state
@@ -498,6 +499,40 @@ export function WorkerPage({
           <Link to="/login" className="btn btn-primary" style={{ marginTop: 16, display: "inline-flex" }}>
             Connect Wallet
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!displayName) {
+    const handleSetName = () => {
+      if (!nameInput.trim()) return;
+      const name = nameInput.trim();
+      localStorage.setItem("instantPayrollUser", JSON.stringify({ role: "worker", displayName: name }));
+      setDisplayName(name);
+    };
+    return (
+      <div className="page">
+        <div className="card" style={{ maxWidth: 420, margin: "80px auto", textAlign: "center" }}>
+          <h2>Worker Dashboard</h2>
+          <p className="muted" style={{ marginBottom: 16 }}>Enter your name to continue.</p>
+          <input
+            type="text"
+            className="input"
+            placeholder="Your name"
+            value={nameInput}
+            onChange={(e) => setNameInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSetName()}
+            autoFocus
+            style={{ width: "100%", marginBottom: 12 }}
+          />
+          <button
+            className="btn btn-primary btn-full"
+            onClick={handleSetName}
+            disabled={!nameInput.trim()}
+          >
+            Continue
+          </button>
         </div>
       </div>
     );
