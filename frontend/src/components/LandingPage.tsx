@@ -22,6 +22,7 @@ export function LandingPage({ onConnect, connecting, address }: LandingPageProps
   useEffect(() => {
     if (!pendingConnect || !address || !selectedRole || !displayName.trim()) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ role: selectedRole, displayName: displayName.trim() }));
+    localStorage.setItem(`instantPayroll_${selectedRole}_name`, displayName.trim());
     navigate(`/${selectedRole}`);
   }, [address, pendingConnect, selectedRole, displayName, navigate]);
 
@@ -31,6 +32,7 @@ export function LandingPage({ onConnect, connecting, address }: LandingPageProps
     if (address) {
       // Wallet already connected — save and go
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ role: selectedRole, displayName: displayName.trim() }));
+      localStorage.setItem(`instantPayroll_${selectedRole}_name`, displayName.trim());
       navigate(`/${selectedRole}`);
     } else {
       onConnect();

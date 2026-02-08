@@ -92,6 +92,8 @@ export function WorkerPage({
   const [now, setNow] = useState(Math.floor(Date.now() / 1000));
 
   const [displayName, setDisplayName] = useState(() => {
+    const name = localStorage.getItem("instantPayroll_worker_name");
+    if (name) return name;
     try { const u = JSON.parse(localStorage.getItem("instantPayrollUser") || ""); return u?.role === "worker" ? (u?.displayName || "") : ""; } catch { return ""; }
   });
   const [nameInput, setNameInput] = useState("");
@@ -508,6 +510,7 @@ export function WorkerPage({
     const handleSetName = () => {
       if (!nameInput.trim()) return;
       const name = nameInput.trim();
+      localStorage.setItem("instantPayroll_worker_name", name);
       localStorage.setItem("instantPayrollUser", JSON.stringify({ role: "worker", displayName: name }));
       setDisplayName(name);
     };

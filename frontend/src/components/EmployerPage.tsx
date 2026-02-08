@@ -42,9 +42,12 @@ export function EmployerPage({
   const [loading, setLoading] = useState(false);
   const [ending, setEnding] = useState<number | null>(null);
   const [price, setPrice] = useState<{ price: string; decimals: number } | null>(null);
-  const [displayName] = useState(() => {
-    try { const u = JSON.parse(localStorage.getItem("instantPayrollUser") || ""); return u?.displayName || ""; } catch { return ""; }
+  const [displayName, setDisplayName] = useState(() => {
+    const name = localStorage.getItem("instantPayroll_employer_name");
+    if (name) return name;
+    try { const u = JSON.parse(localStorage.getItem("instantPayrollUser") || ""); return u?.role === "employer" ? (u?.displayName || "") : ""; } catch { return ""; }
   });
+  const [nameInput, setNameInput] = useState("");
   const [flrBalance, setFlrBalance] = useState<string | null>(null);
 
   const readContract = useMemo(
@@ -178,6 +181,41 @@ export function EmployerPage({
           <Link to="/login" className="btn btn-primary" style={{ marginTop: 16, display: "inline-flex" }}>
             Connect Wallet
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!displayName) {
+    const handleSetName = () => {
+      if (!nameInput.trim()) return;
+      const name = nameInput.trim();
+      localStorage.setItem("instantPayroll_employer_name", name);
+      localStorage.setItem("instantPayrollUser", JSON.stringify({ role: "employer", displayName: name }));
+      setDisplayName(name);
+    };
+    return (
+      <div className="page">
+        <div className="card" style={{ maxWidth: 420, margin: "80px auto", textAlign: "center" }}>
+          <h2>Employer Dashboard</h2>
+          <p className="muted" style={{ marginBottom: 16 }}>Enter your name to continue.</p>
+          <input
+            type="text"
+            className="input"
+            placeholder="Your name"
+            value={nameInput}
+            onChange={(e) => setNameInput(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleSetName()}
+            autoFocus
+            style={{ width: "100%", marginBottom: 12 }}
+          />
+          <button
+            className="btn btn-primary btn-full"
+            onClick={handleSetName}
+            disabled={!nameInput.trim()}
+          >
+            Continue
+          </button>
         </div>
       </div>
     );
