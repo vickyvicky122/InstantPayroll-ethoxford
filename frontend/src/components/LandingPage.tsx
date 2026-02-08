@@ -15,17 +15,19 @@ const STORAGE_KEY = "instantPayrollUser";
 export function LandingPage({ onConnect, connecting, address }: LandingPageProps) {
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [displayName, setDisplayName] = useState("");
+  const [pendingConnect, setPendingConnect] = useState(false);
   const navigate = useNavigate();
 
-  // After wallet connects during the flow, save profile and navigate
+  // After wallet connects (async), save profile and navigate
   useEffect(() => {
-    if (!address || !selectedRole || !displayName.trim()) return;
+    if (!pendingConnect || !address || !selectedRole || !displayName.trim()) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ role: selectedRole, displayName: displayName.trim() }));
     navigate(`/${selectedRole}`);
-  }, [address, selectedRole, displayName, navigate]);
+  }, [address, pendingConnect, selectedRole, displayName, navigate]);
 
   function handleContinue() {
     if (!displayName.trim()) return;
+    setPendingConnect(true);
     if (address) {
       // Wallet already connected — save and go
       localStorage.setItem(STORAGE_KEY, JSON.stringify({ role: selectedRole, displayName: displayName.trim() }));
@@ -39,10 +41,10 @@ export function LandingPage({ onConnect, connecting, address }: LandingPageProps
     <div className="landing">
       <div className="landing-hero">
         <h1 className="landing-title">
-          Instant stablecoin payments for global teams
+          Instant payments for verified work
         </h1>
         <p className="landing-subtitle">
-          Zero-fee USDC streaming on Plasma. Verified payroll on Flare. Claim earnings in real time.
+          Stream USDC on Plasma. Prove work on Flare. Get paid the moment your commits land.
         </p>
       </div>
 

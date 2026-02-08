@@ -40,7 +40,8 @@ function AutoRedirect({ address }: { address: string }) {
 
   useEffect(() => {
     if (hasRedirected.current || !address) return;
-    if (location.pathname !== "/" && location.pathname !== "/login") return;
+    // Only auto-redirect from homepage, not from /login (user may be switching roles)
+    if (location.pathname !== "/") return;
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {

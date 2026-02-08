@@ -54,12 +54,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 0 32px;
-  background: rgba(8, 8, 14, 0.8);
+  background: rgba(8, 8, 14, 0.7);
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-bottom: 1px solid var(--border);
   z-index: 100;
-  animation: slideDown 0.5s var(--ease-out) both;
+  animation: slideDown 0.6s var(--ease-out) both;
 }
 
 @keyframes slideDown {
@@ -86,14 +86,15 @@
 }
 
 .github-link {
-  color: var(--muted);
-  transition: color 0.2s;
+  color: var(--text-muted);
+  transition: color 0.2s, transform 0.2s var(--ease-spring);
   display: flex;
   align-items: center;
 }
 
 .github-link:hover {
-  color: var(--text);
+  color: var(--text-primary);
+  transform: scale(1.1);
 }
 
 /* ==========================================
@@ -219,6 +220,7 @@
   cursor: pointer;
   transition: all var(--duration-normal) var(--ease-out);
   white-space: nowrap;
+  text-decoration: none;
 }
 
 .btn:disabled {
@@ -231,6 +233,24 @@
   background: linear-gradient(135deg, var(--accent), var(--accent-light));
   color: white;
   box-shadow: 0 0 20px var(--accent-glow);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shimmer effect on primary buttons */
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover:not(:disabled)::before {
+  left: 100%;
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -289,6 +309,12 @@
   border-radius: var(--radius-md);
 }
 
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
+}
+
 /* ==========================================
    WALLET ADDRESS CHIP
    ========================================== */
@@ -329,6 +355,7 @@
 .page > *:nth-child(3) { animation: fadeUp 0.5s var(--ease-out) 0.19s both; }
 .page > *:nth-child(4) { animation: fadeUp 0.5s var(--ease-out) 0.26s both; }
 .page > *:nth-child(5) { animation: fadeUp 0.5s var(--ease-out) 0.33s both; }
+.page > *:nth-child(6) { animation: fadeUp 0.5s var(--ease-out) 0.40s both; }
 
 /* ==========================================
    CARDS — glass morphism
@@ -341,11 +368,13 @@
   padding: 28px;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  transition: border-color var(--duration-normal) ease, box-shadow var(--duration-normal) ease;
+  transition: border-color var(--duration-normal) ease, box-shadow var(--duration-normal) ease, transform var(--duration-normal) var(--ease-out);
+  position: relative;
 }
 
 .card:hover {
   border-color: var(--border-hover);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.12);
 }
 
 .card h2 {
@@ -414,7 +443,7 @@
 
 .form-group input:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px var(--accent-subtle);
+  box-shadow: 0 0 0 3px var(--accent-subtle), 0 0 20px rgba(230, 32, 88, 0.06);
   background: var(--bg-tertiary);
 }
 
@@ -560,6 +589,7 @@
   width: 3px;
   height: 100%;
   border-radius: 0 2px 2px 0;
+  transition: box-shadow var(--duration-normal) ease;
 }
 
 .stream-card.active::before {
@@ -578,6 +608,7 @@
 .stream-card:hover {
   border-color: var(--border-hover);
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+  transform: translateX(3px);
 }
 
 .stream-card:last-child {
@@ -644,6 +675,20 @@
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3));
   border-radius: 0 3px 3px 0;
+}
+
+/* Animated shimmer on progress bars */
+.progress-fill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
+  animation: progressShimmer 2.5s ease-in-out infinite;
+}
+
+@keyframes progressShimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
 }
 
 /* ==========================================
@@ -731,6 +776,7 @@
   border-radius: 6px;
   cursor: pointer;
   transition: all var(--duration-normal) var(--ease-out);
+  position: relative;
 }
 
 .tab:hover {
@@ -908,7 +954,7 @@
 @keyframes fadeUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(24px);
   }
   to {
     opacity: 1;

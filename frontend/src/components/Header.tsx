@@ -1,4 +1,4 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   address: string;
@@ -17,6 +17,12 @@ export function Header({
   onConnect, onSwitchFlare, onSwitchPlasma,
 }: HeaderProps) {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem("instantPayrollUser");
+    navigate("/login");
+  };
   const isHomepage = location.pathname === "/";
   const isLogin = location.pathname === "/login";
   const isDashboard = location.pathname === "/employer" || location.pathname === "/worker";
@@ -84,9 +90,14 @@ export function Header({
               </div>
             )}
             {address ? (
-              <span className="wallet-address">
-                {address.slice(0, 6)}...{address.slice(-4)}
-              </span>
+              <>
+                <span className="wallet-address">
+                  {address.slice(0, 6)}...{address.slice(-4)}
+                </span>
+                <button className="btn btn-secondary btn-sm" onClick={handleLogout}>
+                  Log Out
+                </button>
+              </>
             ) : (
               <button className="btn btn-primary" onClick={onConnect} disabled={connecting}>
                 {connecting ? "Connecting..." : "Connect Wallet"}

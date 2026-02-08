@@ -329,8 +329,8 @@ export function EmployerPage({
         <div className="card">
           <h2>Employer Dashboard</h2>
           <p className="muted">Connect your wallet to create payment streams.</p>
-          <Link to="/login" className="btn btn-primary" style={{ marginTop: 16, display: "inline-flex" }} onClick={() => localStorage.removeItem("instantPayrollUser")}>
-            Back to Login
+          <Link to="/login" className="btn btn-primary" style={{ marginTop: 16, display: "inline-flex" }}>
+            Connect Wallet
           </Link>
         </div>
       </div>
