@@ -421,6 +421,103 @@
 }
 
 /* ==========================================
+   ARCHITECTURE DIAGRAM (Cross-Chain)
+   ========================================== */
+
+.about-arch {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin-top: 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-secondary);
+}
+
+.about-arch-chain {
+  flex: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.about-arch-label {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 5px 14px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: white;
+  border-radius: 6px;
+}
+
+.about-arch-box {
+  padding: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.about-arch-box strong {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.about-arch-items {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.about-arch-items span {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.about-arch-event {
+  margin-top: 8px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--accent-light);
+  letter-spacing: 0.02em;
+}
+
+.about-arch-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px 8px;
+  flex-shrink: 0;
+  min-width: 80px;
+}
+
+.about-arch-arrow-line {
+  width: 2px;
+  height: 24px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-light));
+  border-radius: 1px;
+}
+
+.about-arch-arrow-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+
+/* ==========================================
    CTA
    ========================================== */
 
@@ -460,6 +557,21 @@
   .about-nav-btn {
     padding: 8px 12px;
     font-size: 0.76rem;
+  }
+
+  .about-arch {
+    flex-direction: column;
+  }
+
+  .about-arch-arrow {
+    flex-direction: row;
+    padding: 8px 16px;
+    min-width: unset;
+  }
+
+  .about-arch-arrow-line {
+    width: 24px;
+    height: 2px;
   }
 }
 
