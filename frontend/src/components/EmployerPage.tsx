@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { ethers } from "ethers";
 import {
   INSTANT_PAYROLL_ADDRESS,
@@ -150,6 +151,9 @@ export function EmployerPage({ address, signer, isCorrectNetwork }: EmployerPage
         <div className="card">
           <h2>Employer Dashboard</h2>
           <p className="muted">Connect your wallet to create payment streams.</p>
+          <Link to="/" className="btn btn-primary" style={{ marginTop: 16, display: "inline-flex" }} onClick={() => localStorage.removeItem("instantPayrollUser")}>
+            Back to Home
+          </Link>
         </div>
       </div>
     );
