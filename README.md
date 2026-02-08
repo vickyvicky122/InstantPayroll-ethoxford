@@ -13,7 +13,7 @@ Built at ETH Oxford 2026.
   - **FTSO v2** — Real-time FLR/USD price oracle for USD-denominated payroll
   - **FDC (Web2Json)** — On-chain verification of GitHub commits and Google Docs revisions as proof of work
   - **Secure Random v2** — Provably fair bonus lottery (1-in-10 chance of 2x payout)
-- **Demo:** http://localhost:5173 (run `npm run frontend:dev` after setup — see [Quick Start](#quick-start) below)
+- **Live Demo:** [https://flare-psi.vercel.app](https://flare-psi.vercel.app)
 - **Setup:** See [Quick Start](#quick-start) for full install and run instructions
 - **Smart Contracts:**
 
@@ -244,8 +244,23 @@ scripts/
 
 ### Prerequisites
 
+**To use the live demo ([flare-psi.vercel.app](https://flare-psi.vercel.app)):**
+
+- **Google Chrome** (or any Chromium-based browser — Brave, Edge, Arc)
+- **MetaMask browser extension** — [install from metamask.io](https://metamask.io/download/)
+- **Flare Coston2 testnet** added to MetaMask — the app will prompt you to switch automatically, or add manually:
+  - Network name: `Flare Testnet Coston2`
+  - RPC URL: `https://coston2-api.flare.network/ext/C/rpc`
+  - Chain ID: `114`
+  - Currency: `C2FLR`
+  - Explorer: `https://coston2-explorer.flare.network`
+- **Testnet C2FLR** from the [Flare Faucet](https://faucet.flare.network/coston2) — you need tokens in two accounts (employer + worker) to test the full flow
+- **A GitHub repo** with recent commits to use as proof of work (or use `vickyvicky122/InstantPayroll-ethoxford`)
+
+**To run locally (development):**
+
 - Node.js 18+
-- MetaMask with [Coston2 network](https://dev.flare.network/network/overview#coston2) configured
+- MetaMask with Coston2 configured (see above)
 - C2FLR from [Flare Faucet](https://faucet.flare.network/coston2)
 
 ### Install and Run
