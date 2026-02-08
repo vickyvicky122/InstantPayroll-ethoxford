@@ -19,10 +19,13 @@ export function AboutPage() {
   return (
     <div className="about">
       <div className="about-hero">
-        <h1 className="about-title">About InstantPayroll</h1>
+        <h1 className="about-title">InstantPayroll</h1>
         <p className="about-subtitle">
           Zero-fee stablecoin settlement on Plasma &mdash; verified payroll on Flare &mdash; exportable payment records
         </p>
+        <Link to="/login" className="btn btn-primary" style={{ marginTop: 24, fontSize: "1.1rem", padding: "12px 32px" }}>
+          Get Started
+        </Link>
       </div>
 
       <nav className="about-nav">
@@ -523,7 +526,7 @@ export function AboutPage() {
       </div>
 
       <div className="about-cta">
-        <Link to="/" className="btn btn-primary">Get Started</Link>
+        <Link to="/login" className="btn btn-primary">Get Started</Link>
       </div>
     </div>
   );

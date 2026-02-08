@@ -1,6 +1,6 @@
-import { Component } from "react";
+import { Component, useEffect, useRef } from "react";
 import type { ErrorInfo, ReactNode } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "./components/Header";
 import { LandingPage } from "./components/LandingPage";
 import { EmployerPage } from "./components/EmployerPage";
@@ -31,6 +31,33 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
   }
 }
 
+const STORAGE_KEY = "instantPayrollUser";
+
+function AutoRedirect({ address }: { address: string }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const hasRedirected = useRef(false);
+
+  useEffect(() => {
+    if (hasRedirected.current || !address) return;
+    if (location.pathname !== "/" && location.pathname !== "/login") return;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        const { role } = JSON.parse(saved);
+        if (role === "employer" || role === "worker") {
+          hasRedirected.current = true;
+          navigate(`/${role}`);
+        }
+      }
+    } catch {
+      // ignore invalid localStorage data
+    }
+  }, [address, navigate, location.pathname]);
+
+  return null;
+}
+
 function App() {
   const {
     address, signer, isCorrectNetwork, isFlareNetwork, isPlasmaNetwork,
@@ -40,6 +67,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="app">
+        <AutoRedirect address={address} />
         <Header
           address={address}
           connecting={connecting}
@@ -54,8 +82,9 @@ function App() {
         <main className="main">
           <ErrorBoundary>
             <Routes>
+              <Route path="/" element={<AboutPage />} />
               <Route
-                path="/"
+                path="/login"
                 element={<LandingPage onConnect={connect} connecting={connecting} address={address} />}
               />
               <Route
@@ -88,7 +117,6 @@ function App() {
                   />
                 }
               />
-              <Route path="/about" element={<AboutPage />} />
             </Routes>
           </ErrorBoundary>
         </main>

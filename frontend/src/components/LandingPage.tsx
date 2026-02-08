@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LandingPage.css";
 
@@ -16,25 +16,6 @@ export function LandingPage({ onConnect, connecting, address }: LandingPageProps
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
   const [displayName, setDisplayName] = useState("");
   const navigate = useNavigate();
-  const hasAutoRedirected = useRef(false);
-
-  // Auto-redirect if wallet already connected + profile exists
-  useEffect(() => {
-    if (hasAutoRedirected.current) return;
-    if (!address) return;
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        const { role } = JSON.parse(saved);
-        if (role === "employer" || role === "worker") {
-          hasAutoRedirected.current = true;
-          navigate(`/${role}`);
-        }
-      }
-    } catch {
-      // ignore invalid localStorage data
-    }
-  }, [address, navigate]);
 
   // After wallet connects during the flow, save profile and navigate
   useEffect(() => {

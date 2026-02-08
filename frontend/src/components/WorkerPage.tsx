@@ -480,8 +480,8 @@ export function WorkerPage({
         <div className="card">
           <h2>Worker Dashboard</h2>
           <p className="muted">Connect your wallet to view your payment streams.</p>
-          <Link to="/" className="btn btn-primary" style={{ marginTop: 16, display: "inline-flex" }} onClick={() => localStorage.removeItem("instantPayrollUser")}>
-            Back to Home
+          <Link to="/login" className="btn btn-primary" style={{ marginTop: 16, display: "inline-flex" }} onClick={() => localStorage.removeItem("instantPayrollUser")}>
+            Back to Login
           </Link>
         </div>
       </div>
