@@ -85,6 +85,17 @@
   gap: 12px;
 }
 
+.github-link {
+  color: var(--muted);
+  transition: color 0.2s;
+  display: flex;
+  align-items: center;
+}
+
+.github-link:hover {
+  color: var(--text);
+}
+
 /* ==========================================
    LOGO
    ========================================== */
