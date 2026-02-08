@@ -63,9 +63,11 @@ export async function prepareGitHubAttestationRequest(
   repo: string,
   since?: string
 ): Promise<{ abiEncodedRequest: string }> {
-  const params = new URLSearchParams({ per_page: "100" });
-  if (since) params.set("since", since);
-  const apiUrl = `https://api.github.com/repos/${repo}/commits?${params.toString()}`;
+  // Query params must go in the queryParams field (not the URL) for the FDC verifier.
+  // FDC verifier has ~100KB response size limit; GitHub commits are ~3.5KB each, so max ~20.
+  const apiUrl = `https://api.github.com/repos/${repo}/commits`;
+  const qp: Record<string, string> = { per_page: "20" };
+  if (since) qp.since = since;
 
   const postProcessJq = `{commitCount: . | length}`;
   const abiSignature = `{"components": [{"internalType": "uint256", "name": "commitCount", "type": "uint256"}], "name": "task", "type": "tuple"}`;
@@ -80,7 +82,7 @@ export async function prepareGitHubAttestationRequest(
       url: apiUrl,
       httpMethod: "GET",
       headers: "{}",
-      queryParams: "{}",
+      queryParams: JSON.stringify(qp),
       body: "{}",
       postProcessJq,
       abiSignature,
@@ -102,7 +104,11 @@ export async function prepareGitHubAttestationRequest(
     throw new Error(`Verifier error: ${response.status} ${response.statusText} — ${text}`);
   }
 
-  return await response.json();
+  const data = await response.json();
+  if (data.status !== "VALID") {
+    throw new Error(`Verifier rejected request: ${data.status}`);
+  }
+  return data;
 }
 
 /**
@@ -144,6 +150,7 @@ export async function submitAttestationRequest(
 
 /**
  * Step 3: Wait for the voting round to be finalized on-chain.
+ * Matches official Flare implementation: polls every 30s, times out after 10 min.
  */
 export async function waitForFinalization(
   provider: ethers.Provider,
@@ -160,19 +167,42 @@ export async function waitForFinalization(
   const protocolId: bigint = await fdcVerification.fdcProtocolId();
 
   const startTime = Date.now();
+  const TIMEOUT_MS = 10 * 60 * 1000; // 10 minutes
   while (true) {
     const finalized = await relay.isFinalized(protocolId, roundId);
     if (finalized) break;
     const elapsed = Math.floor((Date.now() - startTime) / 1000);
+    if (Date.now() - startTime > TIMEOUT_MS) {
+      throw new Error(`Round #${roundId} did not finalize within 10 minutes`);
+    }
     onProgress?.(`Waiting for round finalization... (${elapsed}s elapsed)`);
-    await sleep(10000);
+    await sleep(30000); // 30s between checks, per official Flare implementation
   }
 }
 
 /**
- * Step 4: Retrieve the proof from the DA layer.
+ * Step 4: Retrieve the proof from the DA layer with retry logic.
+ * Matches official Flare retrieveDataAndProofBaseWithRetry pattern.
  */
 export async function retrieveProof(
+  abiEncodedRequest: string,
+  roundId: number,
+  onProgress?: FdcProgressCallback
+): Promise<{ proof: string[]; response_hex: string; proofDepth: number }> {
+  const MAX_ATTEMPTS = 10;
+  for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+    try {
+      return await retrieveProofOnce(abiEncodedRequest, roundId, onProgress);
+    } catch (e: any) {
+      if (attempt === MAX_ATTEMPTS) throw e;
+      onProgress?.(`DA layer attempt ${attempt}/${MAX_ATTEMPTS} failed, retrying...`);
+      await sleep(20000);
+    }
+  }
+  throw new Error(`Failed to retrieve proof after ${MAX_ATTEMPTS} attempts`);
+}
+
+async function retrieveProofOnce(
   abiEncodedRequest: string,
   roundId: number,
   onProgress?: FdcProgressCallback
@@ -187,22 +217,31 @@ export async function retrieveProof(
   // Initial wait for DA layer to process
   await sleep(10000);
 
-  let proof = await postToDALayer(url, request);
-  while (proof.response_hex === undefined) {
+  let proof = await postToDALayer(url, request, true);
+  const MAX_POLLS = 30; // max ~5 min of polling
+  for (let i = 0; i < MAX_POLLS; i++) {
+    if (proof.response_hex !== undefined) break;
     onProgress?.("Waiting for DA layer to generate proof...");
     await sleep(10000);
-    proof = await postToDALayer(url, request);
+    proof = await postToDALayer(url, request, false);
+  }
+
+  if (proof.response_hex === undefined) {
+    throw new Error("DA layer did not return a proof in time");
   }
 
   return { ...proof, proofDepth: proof.proof.length };
 }
 
-async function postToDALayer(url: string, request: object): Promise<any> {
+async function postToDALayer(url: string, request: object, checkStatus: boolean = false): Promise<any> {
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(request),
   });
+  if (checkStatus && !response.ok) {
+    throw new Error(`DA layer error: ${response.status} ${response.statusText}`);
+  }
   return await response.json();
 }
 
@@ -260,8 +299,9 @@ export async function prepareGoogleDocsAttestationRequest(
   accessToken: string,
   since?: string
 ): Promise<{ abiEncodedRequest: string }> {
+  // Query params must go in the queryParams field (not the URL) for the FDC verifier
+  const apiUrl = `https://www.googleapis.com/drive/v3/files/${fileId}/revisions`;
   const fields = since ? "revisions(id,modifiedTime)" : "revisions(id)";
-  const apiUrl = `https://www.googleapis.com/drive/v3/files/${fileId}/revisions?fields=${fields}`;
 
   const postProcessJq = since
     ? `{commitCount: [.revisions[] | select(.modifiedTime > "${since}")] | length}`
@@ -278,7 +318,7 @@ export async function prepareGoogleDocsAttestationRequest(
       url: apiUrl,
       httpMethod: "GET",
       headers: JSON.stringify({ Authorization: "Bearer " + accessToken }),
-      queryParams: "{}",
+      queryParams: JSON.stringify({ fields }),
       body: "{}",
       postProcessJq,
       abiSignature,
@@ -300,5 +340,9 @@ export async function prepareGoogleDocsAttestationRequest(
     throw new Error(`Verifier error: ${response.status} ${response.statusText} — ${text}`);
   }
 
-  return await response.json();
+  const data = await response.json();
+  if (data.status !== "VALID") {
+    throw new Error(`Verifier rejected request: ${data.status}`);
+  }
+  return data;
 }

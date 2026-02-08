@@ -6,6 +6,27 @@ Built at ETH Oxford 2026.
 
 ---
 
+## Built on Flare
+
+- **Network:** Flare Coston2 Testnet (Chain ID 114) + Plasma Testnet (Chain ID 9746)
+- **Integrations:**
+  - **FTSO v2** — Real-time FLR/USD price oracle for USD-denominated payroll
+  - **FDC (Web2Json)** — On-chain verification of GitHub commits and Google Docs revisions as proof of work
+  - **Secure Random v2** — Provably fair bonus lottery (1-in-10 chance of 2x payout)
+- **Demo:** http://localhost:5173 (run `npm run frontend:dev` after setup — see [Quick Start](#quick-start) below)
+- **Setup:** See [Quick Start](#quick-start) for full install and run instructions
+- **Smart Contracts:**
+
+| Contract | Network | Address |
+|----------|---------|---------|
+| InstantPayroll | Flare Coston2 | [`0xcdACc7626de63B86C63b4F97EA7AfbB3610D927e`](https://coston2-explorer.flare.network/address/0xcdACc7626de63B86C63b4F97EA7AfbB3610D927e) |
+| InstantPayrollPayout | Plasma Testnet | [`0xe8B2dBb78b7A29d3D9E52Cc7Fdf02828Fa02a9c4`](https://testnet.plasmascan.to/address/0xe8B2dBb78b7A29d3D9E52Cc7Fdf02828Fa02a9c4) |
+
+- **Environment Variables:** See `.env.example` (root) and `frontend/.env.example`
+- **License:** MIT
+
+---
+
 ## The Problem
 
 Paying global contributors is still broken — and the $1.5 trillion freelance economy is paying the price.

@@ -177,16 +177,45 @@ export function WorkerPage({
         setBonusStatus({ wouldTrigger: bonus.wouldTrigger, isSecure: bonus.isSecure });
       } catch (e) { console.error("Bonus status error:", e); }
 
-      // Load past claim events for this worker
+      // Load past claim events for this worker (paginated — RPC limits to 30 blocks per query)
       try {
         const filter = readContract.filters.PaymentClaimed(null, address);
-        let events;
-        try {
-          events = await readContract.queryFilter(filter, -10000);
-        } catch {
-          events = await readContract.queryFilter(filter);
+        const currentBlock = await flareProvider.getBlockNumber();
+        const MAX_RANGE = 30;
+        const LOOKBACK = 3000;
+        const fromBlock = Math.max(0, currentBlock - LOOKBACK);
+
+        const chunks: [number, number][] = [];
+        for (let start = fromBlock; start <= currentBlock; start += MAX_RANGE) {
+          chunks.push([start, Math.min(start + MAX_RANGE - 1, currentBlock)]);
         }
-        setClaimEvents(events.map((e: any) => e.args));
+
+        const BATCH_SIZE = 10;
+        const allEvents: any[] = [];
+        for (let i = 0; i < chunks.length; i += BATCH_SIZE) {
+          const batch = chunks.slice(i, i + BATCH_SIZE);
+          const results = await Promise.allSettled(
+            batch.map(([from, to]) => readContract.queryFilter(filter, from, to))
+          );
+          for (const r of results) {
+            if (r.status === "fulfilled") allEvents.push(...r.value);
+          }
+        }
+        // Fetch block timestamps for each event
+        const uniqueBlocks = [...new Set(allEvents.map((e: any) => e.blockNumber))];
+        const blockTimestamps: Record<number, number> = {};
+        await Promise.all(
+          uniqueBlocks.map(async (bn) => {
+            try {
+              const block = await flareProvider.getBlock(bn);
+              if (block) blockTimestamps[bn] = block.timestamp;
+            } catch { /* skip */ }
+          })
+        );
+        setClaimEvents(allEvents.map((e: any) => ({
+          ...e.args,
+          _timestamp: blockTimestamps[e.blockNumber] || 0,
+        })));
       } catch (e) { console.error("Claim events error:", e); }
 
     } catch (e: any) {
@@ -716,14 +745,12 @@ export function WorkerPage({
           >
             Flare Claims ({claimEvents.length})
           </button>
-          {PLASMA_PAYOUT_ADDRESS && (
-            <button
-              className={`tab ${historyTab === "plasma" ? "tab-active" : ""}`}
-              onClick={() => setHistoryTab("plasma")}
-            >
-              Plasma Receipts ({plasmaPayouts.length})
-            </button>
-          )}
+          <button
+            className={`tab ${historyTab === "plasma" ? "tab-active" : ""}`}
+            onClick={() => setHistoryTab("plasma")}
+          >
+            Plasma Receipts ({plasmaPayouts.length > 0 ? plasmaPayouts.length : claimEvents.length})
+          </button>
         </div>
 
         {historyTab === "flare" && (
@@ -745,6 +772,7 @@ export function WorkerPage({
                   </div>
                   <div className="event-sub">
                     {ev.commitCount.toString()} commits | FLR/USD: {ethers.formatUnits(ev.flrUsdPrice, priceDecimals)}
+                    {ev._timestamp > 0 && ` | ${new Date(ev._timestamp * 1000).toLocaleString()}`}
                   </div>
                 </div>
               ))
@@ -754,29 +782,48 @@ export function WorkerPage({
 
         {historyTab === "plasma" && (
           <div className="events-list">
-            <p className="muted" style={{ fontSize: "0.8rem", marginBottom: 12 }}>
-              Free permanent receipts stored on Plasma (zero gas cost). Updated by the cross-chain relayer.
-            </p>
-            {plasmaPayouts.length > 0 && (
-              <button className="btn btn-secondary" style={{ alignSelf: "flex-end", marginBottom: 8 }} onClick={exportPlasmaCsv}>
-                Export CSV
-              </button>
-            )}
-            {plasmaPayouts.length === 0 ? (
-              <p className="muted">No Plasma receipts recorded yet. The relayer bridges claim data from Flare automatically.</p>
+            {plasmaPayouts.length > 0 ? (
+              <>
+                <p className="muted" style={{ fontSize: "0.8rem", marginBottom: 12 }}>
+                  Free permanent receipts stored on Plasma (zero gas cost). Updated by the cross-chain relayer.
+                </p>
+                <button className="btn btn-secondary" style={{ alignSelf: "flex-end", marginBottom: 8 }} onClick={exportPlasmaCsv}>
+                  Export CSV
+                </button>
+                {plasmaPayouts.map((p, i) => (
+                  <div key={i} className={`event-row ${p.bonusTriggered ? "bonus-row" : ""}`}>
+                    <div className="event-main">
+                      <span className="event-amount">{ethers.formatEther(p.amountFLR)} FLR</span>
+                      <span className="event-usd">(${ethers.formatEther(p.amountUSD)})</span>
+                      {p.bonusTriggered && <span className="bonus-badge">2x BONUS</span>}
+                    </div>
+                    <div className="event-sub">
+                      {p.commitCount.toString()} commits | {new Date(Number(p.timestamp) * 1000).toLocaleString()}
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : claimEvents.length > 0 ? (
+              <>
+                <p className="muted" style={{ fontSize: "0.8rem", marginBottom: 12 }}>
+                  Relayer not active — showing Flare claim data as receipts. Start the relayer to store permanent receipts on Plasma.
+                </p>
+                {claimEvents.map((ev, i) => (
+                  <div key={i} className={`event-row ${ev.bonusTriggered ? "bonus-row" : ""}`}>
+                    <div className="event-main">
+                      <span className="event-amount">{ethers.formatEther(ev.amountFLR)} FLR</span>
+                      <span className="event-usd">(${ethers.formatEther(ev.amountUSD)})</span>
+                      {ev.bonusTriggered && <span className="bonus-badge">2x BONUS</span>}
+                    </div>
+                    <div className="event-sub">
+                      {ev.commitCount.toString()} commits
+                      {ev._timestamp > 0 && ` | ${new Date(ev._timestamp * 1000).toLocaleString()}`}
+                    </div>
+                  </div>
+                ))}
+              </>
             ) : (
-              plasmaPayouts.map((p, i) => (
-                <div key={i} className={`event-row ${p.bonusTriggered ? "bonus-row" : ""}`}>
-                  <div className="event-main">
-                    <span className="event-amount">{ethers.formatEther(p.amountFLR)} FLR</span>
-                    <span className="event-usd">(${ethers.formatEther(p.amountUSD)})</span>
-                    {p.bonusTriggered && <span className="bonus-badge">2x BONUS</span>}
-                  </div>
-                  <div className="event-sub">
-                    {p.commitCount.toString()} commits | {new Date(Number(p.timestamp) * 1000).toLocaleString()}
-                  </div>
-                </div>
-              ))
+              <p className="muted">No receipts yet. Make a claim on Flare first.</p>
             )}
           </div>
         )}

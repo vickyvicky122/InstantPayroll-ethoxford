@@ -65,6 +65,7 @@ export const FLARE_NETWORK = {
   blockExplorerUrls: [NETWORK_CONFIG.explorerUrl],
 };
 
+// Flare testnet default key — valid for rate-limited development use
 export const FDC_API_KEY =
   import.meta.env.VITE_FDC_API_KEY || "00000000-0000-0000-0000-000000000000";
 
