@@ -213,7 +213,13 @@ export function WorkerPage({
           })
         );
         setClaimEvents(allEvents.map((e: any) => ({
-          ...e.args,
+          streamId: e.args.streamId,
+          worker: e.args.worker,
+          amountFLR: e.args.amountFLR,
+          amountUSD: e.args.amountUSD,
+          flrUsdPrice: e.args.flrUsdPrice,
+          bonusTriggered: e.args.bonusTriggered,
+          commitCount: e.args.commitCount,
           _timestamp: blockTimestamps[e.blockNumber] || 0,
         })));
       } catch (e) { console.error("Claim events error:", e); }
