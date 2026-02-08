@@ -135,13 +135,13 @@ Click **"Get Started"**.
 
 **What you see:**
 - Two tabs: **GitHub** | **Google Docs**
-- GitHub selected — repo input with **"Verify"** button
-- Type `vickyvicky122/InstantPayroll-ethoxford` → click **"Verify"**
-- Shows green "Valid" badge with repo description, language, stars
+- GitHub selected — repo input with **"Confirm"** button
+- Paste `https://github.com/vickyvicky122/InstantPayroll-ethoxford` → click **"Confirm"**
+- Auto-parses the URL to `owner/repo`, shows green "Confirmed" badge with repo description, language, stars
 
 | UI Element | Powered By |
 |-----------|------------|
-| **GitHub tab** — repo input + Verify button | GitHub REST API (client-side) |
+| **GitHub tab** — repo input + Confirm button | GitHub REST API (client-side) |
 | **Google Docs tab** — Doc URL + Google OAuth sign-in | Google Drive API via OAuth 2.0 |
 | **FDC attestation** (happens on claim) | **Flare FDC** — Web2Json attestation type |
 
@@ -260,7 +260,7 @@ Click **"Export CSV"** → downloads `plasma-receipts.csv`
 | CSV export (Flare) | Flare Claims tab | Flare event data | — |
 | CSV export (Plasma) | Plasma Receipts tab | — | Plasma receipt data |
 | Cross-chain bridging | Background process | Flare events (source) | Plasma writes (dest) |
-| Repo verification | Work Verification card | — (GitHub API direct) | — |
+| Repo confirmation | Work Verification card | — (GitHub API direct) | — |
 
 ---
 
