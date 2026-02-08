@@ -1,13 +1,12 @@
 import { ethers } from "ethers";
-import { FDC_API_KEY, NETWORK_CONFIG } from "../config";
+import { FDC_API_KEY } from "../config";
 
 // --- Constants ---
 
-// In dev mode, Vite proxies /api/* to the real endpoints (see vite.config.ts).
-// In production, use the direct URLs from NETWORK_CONFIG.
-const VERIFIER_BASE = import.meta.env.DEV ? "/api/fdc-verifier" : NETWORK_CONFIG.fdcVerifierUrl;
+// Proxy paths work in both dev (Vite proxy) and production (Vercel rewrites).
+const VERIFIER_BASE = "/api/fdc-verifier";
 const VERIFIER_API_KEY = FDC_API_KEY;
-const DA_LAYER_BASE = import.meta.env.DEV ? "/api/da-layer" : NETWORK_CONFIG.daLayerUrl;
+const DA_LAYER_BASE = "/api/da-layer";
 
 export const FLARE_CONTRACT_REGISTRY_ADDRESS = "0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019";
 

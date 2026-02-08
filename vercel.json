@@ -1,0 +1,20 @@
+{
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
+  "installCommand": "cd frontend && npm install",
+  "framework": "vite",
+  "rewrites": [
+    {
+      "source": "/api/fdc-verifier/:path*",
+      "destination": "https://fdc-verifiers-testnet.flare.network/:path*"
+    },
+    {
+      "source": "/api/da-layer/:path*",
+      "destination": "https://ctn2-data-availability.flare.network/:path*"
+    },
+    {
+      "source": "/((?!assets/).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
