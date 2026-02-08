@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from "react";
 import { ethers } from "ethers";
-import { FLARE_CHAIN_ID, FLARE_NETWORK } from "../config";
+import { FLARE_CHAIN_ID, FLARE_NETWORK, PLASMA_TESTNET_CHAIN_ID, PLASMA_NETWORK } from "../config";
 
 export function useWallet() {
   const [address, setAddress] = useState<string>("");
@@ -69,6 +69,32 @@ export function useWallet() {
     }
   }, [connect, getProvider]);
 
+  const switchToPlasma = useCallback(async () => {
+    const eth = getProvider();
+    if (!eth) return;
+    try {
+      await eth.request({
+        method: "wallet_switchEthereumChain",
+        params: [{ chainId: PLASMA_NETWORK.chainId }],
+      });
+      await connect();
+    } catch (err: any) {
+      if (err.code === 4902) {
+        try {
+          await eth.request({
+            method: "wallet_addEthereumChain",
+            params: [PLASMA_NETWORK],
+          });
+          await connect();
+        } catch (addErr: any) {
+          console.error("Failed to add Plasma network:", addErr);
+        }
+      } else {
+        console.error("Failed to switch to Plasma:", err);
+      }
+    }
+  }, [connect, getProvider]);
+
   // Auto-reconnect if wallet is already authorized (no popup)
   useEffect(() => {
     const eth = getProvider();
@@ -102,8 +128,24 @@ export function useWallet() {
     };
   }, [connect, getProvider]);
 
-  const isCorrectNetwork = chainId === FLARE_CHAIN_ID;
+  const isFlareNetwork = chainId === FLARE_CHAIN_ID;
+  const isPlasmaNetwork = chainId === PLASMA_TESTNET_CHAIN_ID;
+  const isCorrectNetwork = isFlareNetwork; // backward compat
+  const activeNetwork: "flare" | "plasma" | "unknown" = isFlareNetwork ? "flare" : isPlasmaNetwork ? "plasma" : "unknown";
   const networkName = FLARE_NETWORK.chainName;
 
-  return { address, signer, chainId, isCorrectNetwork, connecting, connect, switchToFlare, networkName };
+  return {
+    address,
+    signer,
+    chainId,
+    isCorrectNetwork,
+    isFlareNetwork,
+    isPlasmaNetwork,
+    activeNetwork,
+    connecting,
+    connect,
+    switchToFlare,
+    switchToPlasma,
+    networkName,
+  };
 }

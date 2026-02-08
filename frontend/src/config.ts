@@ -80,10 +80,14 @@ export const PLASMA_TESTNET_RPC = "https://testnet-rpc.plasma.to";
 export const PLASMA_NETWORK = {
   chainId: "0x" + PLASMA_TESTNET_CHAIN_ID.toString(16),
   chainName: "Plasma Testnet",
-  nativeCurrency: { name: "ETH", symbol: "ETH", decimals: 18 },
+  nativeCurrency: { name: "Plasma", symbol: "XPL", decimals: 18 },
   rpcUrls: [PLASMA_TESTNET_RPC],
   blockExplorerUrls: ["https://testnet.plasmascan.to"],
 };
+
+// Plasma Payroll (USDC streaming) config
+export const PLASMA_PAYROLL_ADDRESS = import.meta.env.VITE_PLASMA_PAYROLL_ADDRESS || "";
+export const MOCK_USDC_ADDRESS = import.meta.env.VITE_MOCK_USDC_ADDRESS || "";
 
 // Contract ABIs (minimal — only what frontend needs)
 export const INSTANT_PAYROLL_ABI = [
@@ -105,6 +109,25 @@ export const PLASMA_PAYOUT_ABI = [
   "function getPayoutCount(address _worker) external view returns (uint256)",
   "function totalEarnedUSD(address) external view returns (uint256)",
   "event PayoutRecorded(address indexed worker, uint256 indexed flareStreamId, uint256 amountFLR, uint256 amountUSD, bool bonusTriggered, uint256 commitCount)",
+];
+
+export const MOCK_USDC_ABI = [
+  "function balanceOf(address) external view returns (uint256)",
+  "function allowance(address owner, address spender) external view returns (uint256)",
+  "function approve(address spender, uint256 amount) external returns (bool)",
+  "function faucet() external",
+  "function decimals() external view returns (uint8)",
+];
+
+export const PLASMA_PAYROLL_ABI = [
+  "function createStream(address _worker, uint256 _usdcPerInterval, uint256 _claimInterval, uint256 _totalDeposit) external returns (uint256)",
+  "function claim(uint256 _streamId) external",
+  "function endStream(uint256 _streamId) external",
+  "function getStream(uint256 _streamId) external view returns (tuple(address employer, address worker, uint256 usdcPerInterval, uint256 claimInterval, uint256 totalDeposit, uint256 totalClaimed, uint256 lastClaimTime, uint256 createdAt, bool active))",
+  "function nextStreamId() external view returns (uint256)",
+  "event StreamCreated(uint256 indexed streamId, address indexed employer, address indexed worker, uint256 usdcPerInterval, uint256 claimInterval, uint256 totalDeposit)",
+  "event PaymentClaimed(uint256 indexed streamId, address indexed worker, uint256 amount, uint256 intervalsCount)",
+  "event StreamEnded(uint256 indexed streamId, uint256 totalClaimed, uint256 refunded)",
 ];
 
 // Read-only providers

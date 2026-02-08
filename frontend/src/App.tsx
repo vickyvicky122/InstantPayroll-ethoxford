@@ -31,7 +31,10 @@ class ErrorBoundary extends Component<{ children: ReactNode }, { hasError: boole
 }
 
 function App() {
-  const { address, signer, isCorrectNetwork, connecting, connect, switchToFlare, networkName } = useWallet();
+  const {
+    address, signer, isCorrectNetwork, isFlareNetwork, isPlasmaNetwork,
+    activeNetwork, connecting, connect, switchToFlare, switchToPlasma, networkName,
+  } = useWallet();
 
   return (
     <BrowserRouter>
@@ -39,10 +42,13 @@ function App() {
         <Header
           address={address}
           connecting={connecting}
-          isCorrectNetwork={isCorrectNetwork}
+          isFlareNetwork={isFlareNetwork}
+          isPlasmaNetwork={isPlasmaNetwork}
+          activeNetwork={activeNetwork}
           networkName={networkName}
           onConnect={connect}
-          onSwitchNetwork={switchToFlare}
+          onSwitchFlare={switchToFlare}
+          onSwitchPlasma={switchToPlasma}
         />
         <main className="main">
           <ErrorBoundary>
@@ -53,11 +59,33 @@ function App() {
               />
               <Route
                 path="/employer"
-                element={<EmployerPage address={address} signer={signer} isCorrectNetwork={isCorrectNetwork} />}
+                element={
+                  <EmployerPage
+                    address={address}
+                    signer={signer}
+                    isCorrectNetwork={isCorrectNetwork}
+                    isFlareNetwork={isFlareNetwork}
+                    isPlasmaNetwork={isPlasmaNetwork}
+                    activeNetwork={activeNetwork}
+                    switchToFlare={switchToFlare}
+                    switchToPlasma={switchToPlasma}
+                  />
+                }
               />
               <Route
                 path="/worker"
-                element={<WorkerPage address={address} signer={signer} isCorrectNetwork={isCorrectNetwork} />}
+                element={
+                  <WorkerPage
+                    address={address}
+                    signer={signer}
+                    isCorrectNetwork={isCorrectNetwork}
+                    isFlareNetwork={isFlareNetwork}
+                    isPlasmaNetwork={isPlasmaNetwork}
+                    activeNetwork={activeNetwork}
+                    switchToFlare={switchToFlare}
+                    switchToPlasma={switchToPlasma}
+                  />
+                }
               />
             </Routes>
           </ErrorBoundary>

@@ -911,6 +911,73 @@
 }
 
 /* ==========================================
+   NETWORK SWITCHER
+   ========================================== */
+
+.network-switcher {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+.network-btn {
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.network-btn:hover {
+  color: var(--text-secondary);
+  background: var(--surface-hover);
+}
+
+.network-btn-active {
+  color: var(--text-primary);
+  background: var(--surface-active);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================
+   PAYROLL TABS (top-level Flare/Plasma)
+   ========================================== */
+
+.payroll-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+/* ==========================================
+   NETWORK BANNER
+   ========================================== */
+
+.network-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(245, 158, 11, 0.06);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: var(--warning);
+  font-weight: 500;
+}
+
+/* ==========================================
    RESPONSIVE
    ========================================== */
 

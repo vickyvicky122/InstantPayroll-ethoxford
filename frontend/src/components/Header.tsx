@@ -3,13 +3,19 @@ import { Link, useLocation } from "react-router-dom";
 interface HeaderProps {
   address: string;
   connecting: boolean;
-  isCorrectNetwork: boolean;
+  isFlareNetwork: boolean;
+  isPlasmaNetwork: boolean;
+  activeNetwork: "flare" | "plasma" | "unknown";
   networkName: string;
   onConnect: () => void;
-  onSwitchNetwork: () => void;
+  onSwitchFlare: () => void;
+  onSwitchPlasma: () => void;
 }
 
-export function Header({ address, connecting, isCorrectNetwork, networkName, onConnect, onSwitchNetwork }: HeaderProps) {
+export function Header({
+  address, connecting, isFlareNetwork, isPlasmaNetwork, activeNetwork,
+  onConnect, onSwitchFlare, onSwitchPlasma,
+}: HeaderProps) {
   const location = useLocation();
   const isLanding = location.pathname === "/";
 
@@ -32,10 +38,26 @@ export function Header({ address, connecting, isCorrectNetwork, networkName, onC
       </div>
       {!isLanding && (
         <div className="header-right">
-          {address && !isCorrectNetwork && (
-            <button className="btn btn-warning" onClick={onSwitchNetwork}>
-              Switch to {networkName}
-            </button>
+          {address && (
+            <div className="network-switcher">
+              <button
+                className={`network-btn ${isFlareNetwork ? "network-btn-active" : ""}`}
+                onClick={onSwitchFlare}
+              >
+                Flare
+              </button>
+              <button
+                className={`network-btn ${isPlasmaNetwork ? "network-btn-active" : ""}`}
+                onClick={onSwitchPlasma}
+              >
+                Plasma
+              </button>
+              {activeNetwork === "unknown" && (
+                <span className="network-btn" style={{ color: "var(--warning)", cursor: "default" }}>
+                  Wrong Network
+                </span>
+              )}
+            </div>
           )}
           {address ? (
             <span className="wallet-address">
