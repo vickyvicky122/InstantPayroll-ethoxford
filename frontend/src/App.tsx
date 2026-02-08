@@ -5,6 +5,7 @@ import { Header } from "./components/Header";
 import { LandingPage } from "./components/LandingPage";
 import { EmployerPage } from "./components/EmployerPage";
 import { WorkerPage } from "./components/WorkerPage";
+import { AboutPage } from "./components/AboutPage";
 import { useWallet } from "./hooks/useWallet";
 import "./App.css";
 
@@ -87,6 +88,7 @@ function App() {
                   />
                 }
               />
+              <Route path="/about" element={<AboutPage />} />
             </Routes>
           </ErrorBoundary>
         </main>

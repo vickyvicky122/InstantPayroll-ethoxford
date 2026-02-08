@@ -33,6 +33,9 @@ export function Header({
             <Link to="/worker" className={location.pathname === "/worker" ? "active" : ""}>
               Worker
             </Link>
+            <Link to="/about" className={location.pathname === "/about" ? "active" : ""}>
+              About
+            </Link>
           </nav>
         )}
       </div>
