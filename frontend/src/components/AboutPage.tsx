@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./AboutPage.css";
 
-type Section = "overview" | "flare" | "plasma" | "bridge" | "flow" | "stack";
+type Section = "problem" | "overview" | "flare" | "plasma" | "bridge" | "flow" | "stack";
 
 const SECTIONS: { id: Section; label: string }[] = [
+  { id: "problem", label: "Why" },
   { id: "overview", label: "Overview" },
   { id: "flare", label: "Why Flare" },
   { id: "plasma", label: "Why Plasma" },
@@ -14,7 +15,7 @@ const SECTIONS: { id: Section; label: string }[] = [
 ];
 
 export function AboutPage() {
-  const [active, setActive] = useState<Section>("overview");
+  const [active, setActive] = useState<Section>("problem");
 
   return (
     <div className="about">
@@ -41,6 +42,117 @@ export function AboutPage() {
       </nav>
 
       <div className="about-content">
+        {/* ============ THE PROBLEM ============ */}
+        {active === "problem" && (
+          <div className="about-section">
+            <div className="about-card about-card-highlight">
+              <h2>Remote Work Is Broken Without Proof of Work</h2>
+              <p>
+                The freelance economy is worth over <strong>$1.5 trillion</strong> globally, and remote teams are now the
+                norm. But the payment infrastructure hasn't kept up. Employers pay monthly or biweekly &mdash; long after
+                work is done &mdash; and have no reliable way to verify what was actually delivered. Freelancers wait weeks
+                for invoices to clear, deal with payment disputes, and lose income to intermediary fees and currency conversion.
+              </p>
+              <p style={{ marginTop: 12 }}>
+                This isn't just inconvenient. It's a structural problem that costs both sides money and trust.
+              </p>
+            </div>
+
+            <div className="about-features">
+              <div className="about-feature">
+                <div className="about-feature-num" style={{ background: "linear-gradient(135deg, #e62058, #ff7094)" }}>!</div>
+                <h3>Employers Overpay for Unverified Work</h3>
+                <p>Without proof of output, businesses pay based on hours reported, not work delivered. Remote managers have no on-chain evidence that a contractor actually committed code, edited documents, or completed tasks before payment flows.</p>
+              </div>
+              <div className="about-feature">
+                <div className="about-feature-num" style={{ background: "linear-gradient(135deg, #e62058, #ff7094)" }}>!</div>
+                <h3>Freelancers Wait Weeks to Get Paid</h3>
+                <p>Monthly pay cycles mean freelancers finance their own work for 30+ days. Cross-border transfers add more delays. When disputes arise, payments freeze entirely. Continuous streaming eliminates the wait &mdash; earnings accrue in real time.</p>
+              </div>
+              <div className="about-feature">
+                <div className="about-feature-num" style={{ background: "linear-gradient(135deg, #e62058, #ff7094)" }}>!</div>
+                <h3>No Accountability for Remote Teams</h3>
+                <p>Managing distributed contractors across time zones is hard. Traditional tools show presence, not productivity. Employers need verifiable proof that work happened &mdash; tied directly to the payment flow &mdash; not another dashboard to check.</p>
+              </div>
+              <div className="about-feature">
+                <div className="about-feature-num" style={{ background: "linear-gradient(135deg, #e62058, #ff7094)" }}>!</div>
+                <h3>Fees Eat Into Micro-Payments</h3>
+                <p>Paying a contractor $5 for a quick task costs $3+ in wire fees, FX conversion, and platform cuts. Traditional rails make frequent small payments irrational. Zero-fee stablecoin streams change the economics entirely.</p>
+              </div>
+            </div>
+
+            <div className="about-card">
+              <h2>How InstantPayroll Fixes This</h2>
+              <div className="about-tech-list">
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(39,174,96,0.12)", color: "#27ae60", borderColor: "rgba(39,174,96,0.25)" }}>1</div>
+                  <div>
+                    <strong>Pay Continuously, Not Monthly</strong>
+                    <p>
+                      Streaming payments mean workers earn every minute, not every month. Employers deposit funds into
+                      an escrow stream, and workers claim accumulated earnings at any interval they choose. No invoicing,
+                      no payment runs, no 30-day waits. Cash flow becomes real-time for both sides.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(39,174,96,0.12)", color: "#27ae60", borderColor: "rgba(39,174,96,0.25)" }}>2</div>
+                  <div>
+                    <strong>Require Proof Before Payment</strong>
+                    <p>
+                      On Flare, every claim requires cryptographic proof of work &mdash; verified GitHub commits or Google Docs
+                      revisions attested by the Flare validator set via FDC. The smart contract won't release funds unless the
+                      proof checks out. Employers stop paying for unverified hours; workers get paid the moment they can prove delivery.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(39,174,96,0.12)", color: "#27ae60", borderColor: "rgba(39,174,96,0.25)" }}>3</div>
+                  <div>
+                    <strong>Accurate Pay, Zero Overspend</strong>
+                    <p>
+                      USD-denominated rates with live oracle pricing mean workers receive exactly the right value regardless of
+                      crypto volatility. Employers set budgets in dollars and know precisely what they're spending. Streams can be
+                      ended at any time to recover unused funds &mdash; no more paying out a full month when a contract ends on day 12.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(39,174,96,0.12)", color: "#27ae60", borderColor: "rgba(39,174,96,0.25)" }}>4</div>
+                  <div>
+                    <strong>Audit-Ready Records From Day One</strong>
+                    <p>
+                      Every payment is recorded on-chain with full context: amount, timestamp, work proof, exchange rate, and
+                      bonus status. Workers export CSV for tax filing. Employers get a verifiable ledger that no one can
+                      retroactively edit. Accountants and auditors query the blockchain directly.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="about-card">
+              <h2>Who This Is For</h2>
+              <div className="about-duo">
+                <div className="about-duo-item">
+                  <div className="about-duo-icon" style={{ background: "linear-gradient(135deg, #e62058, #ff7094)" }}>B</div>
+                  <div>
+                    <strong>Businesses with Remote Teams</strong>
+                    <p>Startups, DAOs, and distributed companies that hire globally and need to verify output, control spend, and pay accurately across borders without intermediaries or banking delays.</p>
+                  </div>
+                </div>
+                <div className="about-duo-item">
+                  <div className="about-duo-icon" style={{ background: "linear-gradient(135deg, #3b82f6, #60a5fa)" }}>F</div>
+                  <div>
+                    <strong>Freelancers &amp; Contractors</strong>
+                    <p>Independent workers who want to get paid the moment they deliver, in stable currency, with a provable payment history they own &mdash; not locked inside a platform they don't control.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* ============ OVERVIEW ============ */}
         {active === "overview" && (
           <div className="about-section">

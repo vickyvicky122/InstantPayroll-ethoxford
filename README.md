@@ -8,7 +8,25 @@ Built at ETH Oxford 2026.
 
 ## The Problem
 
-Paying global contributors is still broken. Workers wait weeks for payment. Freelancers deal with delayed invoices and disputes. Cross-border transfers incur conversion fees and settlement delays. And there's no standard way to produce a verifiable, on-chain payment history that workers, accountants, or tax tools can query.
+Paying global contributors is still broken — and the $1.5 trillion freelance economy is paying the price.
+
+**Employers overpay for unverified work.** Remote managers have no reliable way to verify what a contractor actually delivered before payment runs. They pay based on reported hours, not proven output. When a freelancer underdelivers, the employer has already paid. When a contract ends on day 12, the employer has already wired the full month.
+
+**Freelancers wait weeks to get paid.** Monthly and biweekly pay cycles mean freelancers finance their own work for 30+ days. Cross-border bank transfers add more delays. When disputes arise, payments freeze entirely. The people doing the work are the last to see the money.
+
+**Remote teams have no accountability layer.** Traditional tools show presence (Slack online, hours logged) — not productivity. Employers need verifiable proof that work actually happened, tied directly to the payment flow, not another dashboard to check. Without this, managing distributed contractors across time zones becomes a trust exercise.
+
+**Fees make frequent payments irrational.** Paying a contractor $5 for a quick task costs $3+ in wire fees, FX conversion, and platform cuts. This forces employers into infrequent batch payments, which delays freelancer income and makes micro-task compensation uneconomical.
+
+## Why Continuous Proof-of-Work Payroll
+
+The fix isn't faster invoicing. It's a fundamentally different model: **continuous payment streams gated by cryptographic proof of work**.
+
+- **Pay continuously, not monthly.** Workers earn every minute, not every month. Employers deposit into escrow streams, workers claim accumulated earnings at any interval. No invoicing, no payment runs, no 30-day waits. Cash flow becomes real-time for both sides.
+- **Require proof before payment.** Every claim can require cryptographic proof — verified GitHub commits or Google Docs revisions attested by the Flare validator set via FDC. The smart contract won't release funds unless the proof checks out. Employers stop paying for unverified hours; workers get paid the moment they can prove delivery.
+- **Accurate pay, zero overspend.** USD-denominated rates with live oracle pricing mean workers receive exactly the right value regardless of crypto volatility. Employers set budgets in dollars. Streams can be ended at any time to recover unused funds — no more paying out a full month when a contract ends early.
+- **Zero-fee micro-payments.** On Plasma, transactions cost nothing. Paying $0.50 per minute is economically viable because no fees eat into the payment. This unlocks pay-per-task and pay-per-minute models that traditional rails make impossible.
+- **Audit-ready records from day one.** Every payment is recorded on-chain with full context: amount, timestamp, work proof, exchange rate, and bonus status. Workers export CSV for tax filing. Employers get a verifiable ledger that no one can retroactively edit.
 
 ## The Solution
 
