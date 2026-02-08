@@ -18,8 +18,18 @@ export default defineConfig(({ mode }) => {
   const network = (env.VITE_NETWORK || 'coston2') as keyof typeof PROXY_TARGETS;
   const targets = PROXY_TARGETS[network] || PROXY_TARGETS.coston2;
 
+  // Merge process.env VITE_* vars (from Vercel) into Vite's define so they're
+  // available via import.meta.env at build time.
+  const define: Record<string, string> = {};
+  for (const key of Object.keys(process.env)) {
+    if (key.startsWith('VITE_')) {
+      define[`import.meta.env.${key}`] = JSON.stringify(process.env[key]);
+    }
+  }
+
   return {
     plugins: [react()],
+    define,
     server: {
       proxy: {
         '/api/fdc-verifier': {
