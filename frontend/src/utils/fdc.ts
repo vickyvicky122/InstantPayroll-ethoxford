@@ -54,13 +54,16 @@ export type FdcProgressCallback = (message: string) => void;
 
 /**
  * Step 1: Prepare a GitHub attestation request via the FDC verifier API.
+ * @param repo GitHub repo in "owner/repo" format
+ * @param since ISO 8601 timestamp — only count commits after this date
  */
 export async function prepareGitHubAttestationRequest(
   repo: string,
   since?: string
 ): Promise<{ abiEncodedRequest: string }> {
-  const sinceParam = since ? `?since=${since}` : "";
-  const apiUrl = `https://api.github.com/repos/${repo}/commits${sinceParam}`;
+  const params = new URLSearchParams({ per_page: "100" });
+  if (since) params.set("since", since);
+  const apiUrl = `https://api.github.com/repos/${repo}/commits?${params.toString()}`;
 
   const postProcessJq = `{commitCount: . | length}`;
   const abiSignature = `{"components": [{"internalType": "uint256", "name": "commitCount", "type": "uint256"}], "name": "task", "type": "tuple"}`;
@@ -229,16 +232,38 @@ export function buildClaimProof(
 }
 
 /**
+ * Extract the verified commit count from a proof's response hex.
+ */
+export function extractCommitCount(responseHex: string): number {
+  try {
+    const decoded = decodeProof(responseHex) as any;
+    const abiEncodedData = decoded.responseBody.abiEncodedData;
+    const coder = ethers.AbiCoder.defaultAbiCoder();
+    const [count] = coder.decode(["uint256"], abiEncodedData);
+    return Number(count);
+  } catch {
+    return 0;
+  }
+}
+
+/**
  * Step 1 (Google Docs variant): Prepare an attestation request using Google Drive Revisions API.
  * Counts document revisions as the commitCount for FDC proof.
+ * @param fileId Google Drive file ID
+ * @param accessToken OAuth access token
+ * @param since ISO 8601 timestamp — only count revisions after this date
  */
 export async function prepareGoogleDocsAttestationRequest(
   fileId: string,
-  accessToken: string
+  accessToken: string,
+  since?: string
 ): Promise<{ abiEncodedRequest: string }> {
-  const apiUrl = `https://www.googleapis.com/drive/v3/files/${fileId}/revisions?fields=revisions(id)`;
+  const fields = since ? "revisions(id,modifiedTime)" : "revisions(id)";
+  const apiUrl = `https://www.googleapis.com/drive/v3/files/${fileId}/revisions?fields=${fields}`;
 
-  const postProcessJq = `{commitCount: .revisions | length}`;
+  const postProcessJq = since
+    ? `{commitCount: [.revisions[] | select(.modifiedTime > "${since}")] | length}`
+    : `{commitCount: .revisions | length}`;
   const abiSignature = `{"components": [{"internalType": "uint256", "name": "commitCount", "type": "uint256"}], "name": "task", "type": "tuple"}`;
 
   const attestationType = toUtf8HexString("Web2Json");

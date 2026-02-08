@@ -22,6 +22,7 @@ import {
   waitForFinalization,
   retrieveProof,
   buildClaimProof,
+  extractCommitCount,
 } from "../utils/fdc";
 import { requestGoogleAccessToken, parseGoogleDocId } from "../utils/google-auth";
 
@@ -118,6 +119,7 @@ export function WorkerPage({
   const [fdcError, setFdcError] = useState<string | null>(null);
   const [fdcProgress, setFdcProgress] = useState<string>("");
   const [fdcClaimingStreamId, setFdcClaimingStreamId] = useState<number | null>(null);
+  const [fdcCommitCount, setFdcCommitCount] = useState<number | null>(null);
 
   // Google Docs state
   const [workSource, setWorkSource] = useState<"github" | "google">(() => (localStorage.getItem("workSource") as "github" | "google") || "github");
@@ -339,21 +341,35 @@ export function WorkerPage({
       return;
     }
 
+    // Find the stream to get lastClaimTime for the `since` filter
+    const stream = streams.find(s => s.id === streamId);
+    if (!stream) return;
+
+    // For first claim (no previous claims), count all work; for subsequent claims, only new work
+    const isFirstClaim = stream.totalClaimed === 0n;
+    const sinceDate = isFirstClaim
+      ? undefined
+      : new Date(Number(stream.lastClaimTime) * 1000).toISOString();
+
     setFdcClaimingStreamId(streamId);
     setFdcError(null);
     setFdcProgress("");
+    setFdcCommitCount(null);
 
     try {
       // Step 1: Prepare
       setFdcStep("preparing");
-      setFdcProgress("Calling FDC verifier API...");
+      setFdcProgress(sinceDate
+        ? `Verifying ${workSource === "google" ? "revisions" : "commits"} since ${new Date(sinceDate).toLocaleString()}...`
+        : `Verifying all ${workSource === "google" ? "revisions" : "commits"}...`
+      );
       let abiEncodedRequest: string;
       if (workSource === "google") {
         const fileId = parseGoogleDocId(googleDocInput.trim());
-        const data = await prepareGoogleDocsAttestationRequest(fileId, googleToken!);
+        const data = await prepareGoogleDocsAttestationRequest(fileId, googleToken!, sinceDate);
         abiEncodedRequest = data.abiEncodedRequest;
       } else {
-        const data = await prepareGitHubAttestationRequest(githubRepo.trim());
+        const data = await prepareGitHubAttestationRequest(githubRepo.trim(), sinceDate);
         abiEncodedRequest = data.abiEncodedRequest;
       }
 
@@ -372,9 +388,13 @@ export function WorkerPage({
       setFdcProgress("Fetching proof from DA layer...");
       const proofData = await retrieveProof(abiEncodedRequest, roundId, (msg) => setFdcProgress(msg));
 
+      // Extract and display verified commit count
+      const verifiedCount = extractCommitCount(proofData.response_hex);
+      setFdcCommitCount(verifiedCount);
+
       // Step 5: Claim on-chain
       setFdcStep("claiming");
-      setFdcProgress("Sending claim transaction...");
+      setFdcProgress(`Verified ${verifiedCount} ${workSource === "google" ? "revision" : "commit"}${verifiedCount !== 1 ? "s" : ""}. Sending claim transaction...`);
       const proof = buildClaimProof(proofData.proof, proofData.response_hex);
       const contract = new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, signer);
       const tx = await contract.claim(streamId, proof);
@@ -382,7 +402,7 @@ export function WorkerPage({
 
       // Done
       setFdcStep("done");
-      setFdcProgress("Payment claimed successfully!");
+      setFdcProgress(`Payment claimed! Verified ${verifiedCount} ${workSource === "google" ? "revision" : "commit"}${verifiedCount !== 1 ? "s" : ""}.`);
       await loadWorkerData();
 
       // Reset after a short delay
@@ -390,6 +410,7 @@ export function WorkerPage({
         setFdcStep("idle");
         setFdcProgress("");
         setFdcClaimingStreamId(null);
+        setFdcCommitCount(null);
       }, 5000);
     } catch (e: any) {
       console.error("FDC claim error:", e);
@@ -421,6 +442,7 @@ export function WorkerPage({
     setFdcError(null);
     setFdcProgress("");
     setFdcClaimingStreamId(null);
+    setFdcCommitCount(null);
   };
 
   const getTimeUntilClaim = (stream: { lastClaimTime: bigint; claimInterval: bigint }) => {
@@ -706,7 +728,7 @@ export function WorkerPage({
 
                           {fdcStep === "done" && fdcClaimingStreamId === s.id && (
                             <div style={{ marginBottom: 12, color: "#27ae60", fontWeight: 600 }}>
-                              Payment claimed successfully!
+                              Payment claimed! {fdcCommitCount !== null && `(${fdcCommitCount} ${workSource === "google" ? "revision" : "commit"}${fdcCommitCount !== 1 ? "s" : ""} verified)`}
                             </div>
                           )}
 
