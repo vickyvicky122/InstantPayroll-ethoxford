@@ -1,13 +1,15 @@
 import { ethers } from "ethers";
-import { FDC_API_KEY } from "../config";
+import { FDC_API_KEY, NETWORK_CONFIG } from "../config";
 
 // --- Constants ---
 
-const VERIFIER_URL = "/api/fdc-verifier";
+// In dev mode, Vite proxies /api/* to the real endpoints (see vite.config.ts).
+// In production, use the direct URLs from NETWORK_CONFIG.
+const VERIFIER_BASE = import.meta.env.DEV ? "/api/fdc-verifier" : NETWORK_CONFIG.fdcVerifierUrl;
 const VERIFIER_API_KEY = FDC_API_KEY;
-const DA_LAYER_URL = "/api/da-layer";
+const DA_LAYER_BASE = import.meta.env.DEV ? "/api/da-layer" : NETWORK_CONFIG.daLayerUrl;
 
-const FLARE_CONTRACT_REGISTRY_ADDRESS = "0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019";
+export const FLARE_CONTRACT_REGISTRY_ADDRESS = "0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019";
 
 // Minimal ABIs (human-readable)
 const REGISTRY_ABI = ["function getContractAddressByName(string) view returns (address)"];
@@ -85,7 +87,7 @@ export async function prepareGitHubAttestationRequest(
     },
   };
 
-  const url = `${VERIFIER_URL}/verifier/web2/Web2Json/prepareRequest`;
+  const url = `${VERIFIER_BASE}/verifier/web2/Web2Json/prepareRequest`;
   const response = await fetch(url, {
     method: "POST",
     headers: {
@@ -109,7 +111,7 @@ export async function prepareGitHubAttestationRequest(
 export async function submitAttestationRequest(
   signer: ethers.Signer,
   abiEncodedRequest: string
-): Promise<number> {
+): Promise<{ roundId: number; txHash: string; requestFee: string }> {
   const provider = signer.provider!;
 
   // Resolve contract addresses
@@ -137,7 +139,7 @@ export async function submitAttestationRequest(
   const votingEpochDurationSeconds = BigInt(await systemsManager.votingEpochDurationSeconds());
 
   const roundId = Number((blockTimestamp - firstVotingRoundStartTs) / votingEpochDurationSeconds);
-  return roundId;
+  return { roundId, txHash: receipt!.hash, requestFee: ethers.formatEther(requestFee) };
 }
 
 /**
@@ -174,8 +176,8 @@ export async function retrieveProof(
   abiEncodedRequest: string,
   roundId: number,
   onProgress?: FdcProgressCallback
-): Promise<{ proof: string[]; response_hex: string }> {
-  const url = `${DA_LAYER_URL}/api/v1/fdc/proof-by-request-round-raw`;
+): Promise<{ proof: string[]; response_hex: string; proofDepth: number }> {
+  const url = `${DA_LAYER_BASE}/api/v1/fdc/proof-by-request-round-raw`;
 
   const request = {
     votingRoundId: roundId,
@@ -192,7 +194,7 @@ export async function retrieveProof(
     proof = await postToDALayer(url, request);
   }
 
-  return proof;
+  return { ...proof, proofDepth: proof.proof.length };
 }
 
 async function postToDALayer(url: string, request: object): Promise<any> {
@@ -283,7 +285,7 @@ export async function prepareGoogleDocsAttestationRequest(
     },
   };
 
-  const url = `${VERIFIER_URL}/verifier/web2/Web2Json/prepareRequest`;
+  const url = `${VERIFIER_BASE}/verifier/web2/Web2Json/prepareRequest`;
   const response = await fetch(url, {
     method: "POST",
     headers: {

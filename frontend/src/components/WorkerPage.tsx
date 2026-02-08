@@ -103,6 +103,9 @@ export function WorkerPage({
   const [fdcProgress, setFdcProgress] = useState<string>("");
   const [fdcClaimingStreamId, setFdcClaimingStreamId] = useState<number | null>(null);
   const [fdcCommitCount, setFdcCommitCount] = useState<number | null>(null);
+  const [fdcRoundId, setFdcRoundId] = useState<number | null>(null);
+  const [fdcTxHash, setFdcTxHash] = useState<string | null>(null);
+  const [fdcProofDepth, setFdcProofDepth] = useState<number | null>(null);
 
   // Google Docs state
   const [workSource, setWorkSource] = useState<"github" | "google">(() => (localStorage.getItem("workSource") as "github" | "google") || "github");
@@ -280,6 +283,9 @@ export function WorkerPage({
     setFdcError(null);
     setFdcProgress("");
     setFdcCommitCount(null);
+    setFdcRoundId(null);
+    setFdcTxHash(null);
+    setFdcProofDepth(null);
 
     try {
       // Step 1: Prepare
@@ -301,17 +307,20 @@ export function WorkerPage({
       // Step 2: Submit
       setFdcStep("submitting");
       setFdcProgress("Submitting attestation transaction...");
-      const roundId = await submitAttestationRequest(signer, abiEncodedRequest);
-      setFdcProgress(`Attestation submitted. Round ID: ${roundId}`);
+      const { roundId, txHash, requestFee } = await submitAttestationRequest(signer, abiEncodedRequest);
+      setFdcRoundId(roundId);
+      setFdcTxHash(txHash);
+      setFdcProgress(`Attestation submitted — Round #${roundId} (fee: ${requestFee} ${CURRENCY_SYMBOL})`);
 
       // Step 3: Wait for finalization
       setFdcStep("finalizing");
-      await waitForFinalization(signer.provider!, roundId, (msg) => setFdcProgress(msg));
+      await waitForFinalization(signer.provider!, roundId, (msg) => setFdcProgress(`Waiting for round #${roundId} finalization... ${msg.match(/\(.*\)/)?.[0] || ""}`));
 
       // Step 4: Retrieve proof
       setFdcStep("retrieving");
-      setFdcProgress("Fetching proof from DA layer...");
+      setFdcProgress("Retrieving Merkle proof from DA layer...");
       const proofData = await retrieveProof(abiEncodedRequest, roundId, (msg) => setFdcProgress(msg));
+      setFdcProofDepth(proofData.proofDepth);
 
       // Extract and display verified commit count
       const verifiedCount = extractCommitCount(proofData.response_hex);
@@ -319,7 +328,9 @@ export function WorkerPage({
 
       // Step 5: Claim on-chain
       setFdcStep("claiming");
-      setFdcProgress(`Verified ${verifiedCount} ${workSource === "google" ? "revision" : "commit"}${verifiedCount !== 1 ? "s" : ""}. Sending claim transaction...`);
+      const unitLabel = workSource === "google" ? "revision" : "commit";
+      const unitPlural = verifiedCount !== 1 ? "s" : "";
+      setFdcProgress(`Verified ${verifiedCount} ${unitLabel}${unitPlural} — Merkle proof depth: ${proofData.proofDepth}. Sending claim transaction...`);
       const proof = buildClaimProof(proofData.proof, proofData.response_hex);
       const contract = new ethers.Contract(INSTANT_PAYROLL_ADDRESS, INSTANT_PAYROLL_ABI, signer);
       const tx = await contract.claim(streamId, proof);
@@ -327,7 +338,7 @@ export function WorkerPage({
 
       // Done
       setFdcStep("done");
-      setFdcProgress(`Payment claimed! Verified ${verifiedCount} ${workSource === "google" ? "revision" : "commit"}${verifiedCount !== 1 ? "s" : ""}. Receipt stored on Plasma.`);
+      setFdcProgress(`Payment claimed! Verified ${verifiedCount} ${unitLabel}${unitPlural}. Receipt stored on Plasma.`);
       await loadWorkerData();
       await loadPlasmaData();
 
@@ -337,6 +348,9 @@ export function WorkerPage({
         setFdcProgress("");
         setFdcClaimingStreamId(null);
         setFdcCommitCount(null);
+        setFdcRoundId(null);
+        setFdcTxHash(null);
+        setFdcProofDepth(null);
       }, 5000);
     } catch (e: any) {
       console.error("FDC claim error:", e);
@@ -352,6 +366,9 @@ export function WorkerPage({
     setFdcProgress("");
     setFdcClaimingStreamId(null);
     setFdcCommitCount(null);
+    setFdcRoundId(null);
+    setFdcTxHash(null);
+    setFdcProofDepth(null);
   };
 
   const getTimeUntilClaim = (stream: { lastClaimTime: bigint; claimInterval: bigint }) => {
@@ -616,54 +633,66 @@ export function WorkerPage({
                               {fdcProgress}
                             </div>
                           )}
+                          {fdcTxHash && (
+                            <div style={{ marginTop: 4, fontSize: "0.8rem" }}>
+                              <a href={`${FLARE_EXPLORER}/tx/${fdcTxHash}`} target="_blank" rel="noopener noreferrer" style={{ color: "#3b82f6" }}>
+                                View attestation tx
+                              </a>
+                            </div>
+                          )}
                         </div>
                       )}
 
                       {fdcStep === "done" && fdcClaimingStreamId === s.id && (
-                        <div style={{ marginBottom: 12, color: "#27ae60", fontWeight: 600 }}>
-                          Payment claimed! {fdcCommitCount !== null && `(${fdcCommitCount} ${workSource === "google" ? "revision" : "commit"}${fdcCommitCount !== 1 ? "s" : ""} verified)`}
+                        <div style={{ marginBottom: 12, padding: "8px 12px", background: "rgba(39,174,96,0.08)", borderRadius: 8, border: "1px solid rgba(39,174,96,0.2)" }}>
+                          <div style={{ color: "#27ae60", fontWeight: 600 }}>
+                            Payment claimed! {fdcCommitCount !== null && `(${fdcCommitCount} ${workSource === "google" ? "revision" : "commit"}${fdcCommitCount !== 1 ? "s" : ""} verified)`}
+                          </div>
+                          <div className="muted" style={{ fontSize: "0.8rem", marginTop: 4 }}>
+                            Verified by Flare validator set via FDC round #{fdcRoundId}
+                            {fdcProofDepth !== null && ` · Merkle proof depth: ${fdcProofDepth}`}
+                          </div>
                         </div>
                       )}
 
-                      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                      <button
+                        className="btn btn-primary"
+                        onClick={() => handleFdcClaim(s.id)}
+                        disabled={
+                          isFdcBusy ||
+                          claiming === s.id ||
+                          !isFlareNetwork ||
+                          (workSource === "github" && !githubRepo.trim()) ||
+                          (workSource === "google" && (!googleDocInput.trim() || !googleToken || !GOOGLE_CLIENT_ID))
+                        }
+                        title={
+                          workSource === "github" && !githubRepo.trim()
+                            ? "Enter a GitHub repo above first"
+                            : workSource === "google" && !googleToken
+                              ? "Sign in with Google first"
+                              : workSource === "google"
+                                ? "Verify Google Doc revisions via FDC and claim"
+                                : "Verify GitHub commits via FDC and claim"
+                        }
+                      >
+                        {isThisStreamFdcBusy
+                          ? "FDC Claiming..."
+                          : workSource === "google"
+                            ? "Claim with Google Docs Proof"
+                            : "Claim with GitHub Proof"}
+                      </button>
+                      <div style={{ marginTop: 8 }}>
                         <button
-                          className="btn btn-primary"
-                          onClick={() => handleFdcClaim(s.id)}
-                          disabled={
-                            isFdcBusy ||
-                            claiming === s.id ||
-                            !isFlareNetwork ||
-                            (workSource === "github" && !githubRepo.trim()) ||
-                            (workSource === "google" && (!googleDocInput.trim() || !googleToken || !GOOGLE_CLIENT_ID))
-                          }
-                          title={
-                            workSource === "github" && !githubRepo.trim()
-                              ? "Enter a GitHub repo above first"
-                              : workSource === "google" && !googleToken
-                                ? "Sign in with Google first"
-                                : workSource === "google"
-                                  ? "Verify Google Doc revisions via FDC and claim"
-                                  : "Verify GitHub commits via FDC and claim"
-                          }
-                        >
-                          {isThisStreamFdcBusy
-                            ? "FDC Claiming..."
-                            : workSource === "google"
-                              ? "Claim with Google Docs Proof"
-                              : "Claim with GitHub Proof"}
-                        </button>
-                        <button
-                          className="btn btn-secondary"
+                          className="btn btn-sm"
+                          style={{ fontSize: "0.75rem", padding: "4px 10px", opacity: 0.6 }}
                           onClick={() => handleClaimDemo(s.id)}
                           disabled={claiming === s.id || isFdcBusy || !isFlareNetwork}
                         >
-                          {claiming === s.id ? "Claiming..." : "Quick Claim (Demo)"}
+                          {claiming === s.id ? "Claiming..." : "Quick Claim (skip FDC — demo only)"}
                         </button>
                       </div>
-                      <p className="muted" style={{ marginTop: 8, fontSize: "0.8rem" }}>
-                        {workSource === "google"
-                          ? "Google Docs Proof uses FDC attestation to verify document revisions. Demo uses hardcoded count."
-                          : "GitHub Proof uses FDC attestation to verify commits. Demo uses hardcoded count."}
+                      <p className="muted" style={{ marginTop: 8, fontSize: "0.75rem" }}>
+                        FDC attestation verifies {workSource === "google" ? "document revisions" : "GitHub commits"} through the Flare validator set before releasing payment.
                       </p>
                     </div>
                   ) : (

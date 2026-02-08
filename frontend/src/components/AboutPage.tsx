@@ -2,12 +2,13 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import "./AboutPage.css";
 
-type Section = "problem" | "overview" | "flare" | "plasma" | "bridge" | "flow" | "stack";
+type Section = "problem" | "overview" | "flare" | "fdc" | "plasma" | "bridge" | "flow" | "stack";
 
 const SECTIONS: { id: Section; label: string }[] = [
   { id: "problem", label: "Why" },
   { id: "overview", label: "Overview" },
   { id: "flare", label: "Why Flare" },
+  { id: "fdc", label: "FDC Deep Dive" },
   { id: "plasma", label: "Why Plasma" },
   { id: "bridge", label: "Cross-Chain" },
   { id: "flow", label: "How It Works" },
@@ -277,6 +278,197 @@ export function AboutPage() {
                 On Flare, it's <strong>one trust model</strong> (the validator set), <strong>one fee</strong> (gas),
                 and <strong>one transaction</strong>.
               </p>
+              <p style={{ marginTop: 12 }}>
+                <button
+                  className="btn btn-secondary"
+                  style={{ fontSize: "0.9rem" }}
+                  onClick={() => setActive("fdc")}
+                >
+                  See the FDC Deep Dive for the full protocol breakdown &rarr;
+                </button>
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ============ FDC DEEP DIVE ============ */}
+        {active === "fdc" && (
+          <div className="about-section">
+            <div className="about-card">
+              <h2>How FDC Verification Works</h2>
+              <p>
+                The Flare Data Connector uses the <strong>CCCR protocol</strong> &mdash; four phases that turn a Web2 API
+                response into a consensus-verified Merkle root stored on-chain.
+              </p>
+
+              <div className="about-steps" style={{ marginTop: 16 }}>
+                <div className="about-step">
+                  <div className="about-step-num" style={{ background: "linear-gradient(135deg, #e62058, #ff7094)" }}>C</div>
+                  <div>
+                    <strong>Collect</strong>
+                    <p>Attestation providers receive the request (URL, HTTP method, JQ filter, ABI signature) and independently query the Web2 API.</p>
+                  </div>
+                </div>
+                <div className="about-step">
+                  <div className="about-step-num" style={{ background: "linear-gradient(135deg, #e62058, #ff7094)" }}>C</div>
+                  <div>
+                    <strong>Choose</strong>
+                    <p>Each provider applies the JQ post-processing filter to the raw response, producing a deterministic result. Providers build a Merkle tree of all verified responses in the round.</p>
+                  </div>
+                </div>
+                <div className="about-step">
+                  <div className="about-step-num" style={{ background: "linear-gradient(135deg, #e62058, #ff7094)" }}>C</div>
+                  <div>
+                    <strong>Commit</strong>
+                    <p>Providers submit a hash commitment of their Merkle root, preventing them from changing their answer after seeing others' responses.</p>
+                  </div>
+                </div>
+                <div className="about-step">
+                  <div className="about-step-num" style={{ background: "linear-gradient(135deg, #e62058, #ff7094)" }}>R</div>
+                  <div>
+                    <strong>Reveal</strong>
+                    <p>Providers reveal their Merkle roots. If 50%+ of signature weight agrees on the same root, it's accepted and stored in the Relay contract.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="about-tech-list" style={{ marginTop: 16 }}>
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(230,32,88,0.12)", color: "#e62058", borderColor: "rgba(230,32,88,0.25)" }}>90s</div>
+                  <div>
+                    <strong>Voting Round Duration</strong>
+                    <p>Each voting round takes ~90 seconds. ~100 independent attestation providers participate, and 50%+ signature weight is required for the Merkle root to be finalized.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="about-card">
+              <h2>What Happens in a Single Claim</h2>
+              <p>
+                When a worker clicks "Claim with GitHub Proof", seven things happen in sequence &mdash; from the browser to the Flare validator set and back:
+              </p>
+
+              <div className="about-steps" style={{ marginTop: 16 }}>
+                <div className="about-step">
+                  <div className="about-step-num">1</div>
+                  <div>
+                    <strong>Prepare</strong>
+                    <p>
+                      The frontend sends <code>{"{url, httpMethod, postProcessJq, abiSignature}"}</code> to the FDC verifier
+                      API. The verifier returns an <code>abiEncodedRequest</code> containing a computed Message Integrity Code (MIC)
+                      that binds the request parameters together.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-step">
+                  <div className="about-step-num">2</div>
+                  <div>
+                    <strong>Submit On-Chain</strong>
+                    <p>
+                      The frontend calls <code>FdcHub.requestAttestation{"{value: fee}"}(abiEncodedRequest)</code> &mdash;
+                      paying the attestation fee and emitting an <code>AttestationRequest</code> event that providers watch for.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-step">
+                  <div className="about-step-num">3</div>
+                  <div>
+                    <strong>Consensus (CCCR)</strong>
+                    <p>
+                      Attestation providers independently fetch the GitHub/Google API, apply the JQ filter,
+                      and vote on the result through the CCCR protocol (Collect &rarr; Choose &rarr; Commit &rarr; Reveal).
+                    </p>
+                  </div>
+                </div>
+                <div className="about-step">
+                  <div className="about-step-num">4</div>
+                  <div>
+                    <strong>Finalize</strong>
+                    <p>
+                      Once 50%+ signature weight agrees, the Merkle root is stored in the Relay contract.
+                      The frontend polls <code>Relay.isFinalized(protocolId=200, roundId)</code> until it returns true.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-step">
+                  <div className="about-step-num">5</div>
+                  <div>
+                    <strong>Retrieve Proof</strong>
+                    <p>
+                      The frontend fetches the Merkle proof from the DA layer
+                      via <code>POST /api/v1/fdc/proof-by-request-round-raw</code>, receiving the proof array and the ABI-encoded response.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-step">
+                  <div className="about-step-num">6</div>
+                  <div>
+                    <strong>Verify On-Chain</strong>
+                    <p>
+                      <code>FdcVerification.verifyWeb2Json(proof)</code> reconstructs the Merkle leaf from the response,
+                      walks the proof path to the root, and compares it against the consensus root stored in the Relay contract.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-step">
+                  <div className="about-step-num">7</div>
+                  <div>
+                    <strong>Pay</strong>
+                    <p>
+                      The contract decodes the verified commit count from the proof, queries FTSO for the live FLR/USD price,
+                      checks Secure Random for the bonus lottery, and transfers FLR to the worker.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="about-card">
+              <h2>Why This Can't Be Faked</h2>
+              <div className="about-tech-list">
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(39,174,96,0.12)", color: "#27ae60", borderColor: "rgba(39,174,96,0.25)" }}>1</div>
+                  <div>
+                    <strong>Full Validator Consensus</strong>
+                    <p>
+                      The attestation goes through the full Flare validator set &mdash; not a single oracle.
+                      ~100 independent providers must reach 50%+ agreement. No single party can forge a result.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(39,174,96,0.12)", color: "#27ae60", borderColor: "rgba(39,174,96,0.25)" }}>2</div>
+                  <div>
+                    <strong>Merkle Proof Binding</strong>
+                    <p>
+                      The Merkle proof ties the specific API response to the consensus root stored on-chain.
+                      Altering any byte of the response invalidates the proof path.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(39,174,96,0.12)", color: "#27ae60", borderColor: "rgba(39,174,96,0.25)" }}>3</div>
+                  <div>
+                    <strong>Request Integrity</strong>
+                    <p>
+                      The JQ filter and ABI signature are part of the attestation request itself. Providers can't
+                      alter the interpretation of the API response &mdash; the processing logic is fixed at submission time
+                      via the Message Integrity Code.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(39,174,96,0.12)", color: "#27ae60", borderColor: "rgba(39,174,96,0.25)" }}>4</div>
+                  <div>
+                    <strong>Runtime Contract Discovery</strong>
+                    <p>
+                      All contract addresses are discovered at runtime via <code>ContractRegistry</code> (<code>0xaD67...0019</code>) &mdash;
+                      the same address on every Flare network. No hardcoded addresses that could be spoofed.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         )}
