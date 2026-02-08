@@ -21,6 +21,9 @@ export function AboutPage() {
     <div className="about">
       <div className="about-hero">
         <h1 className="about-title">InstantPayroll</h1>
+        <p className="about-slogan" style={{ fontSize: "1.4rem", fontWeight: 600, opacity: 0.85, marginBottom: 8 }}>
+          Money should move as fast as work does.
+        </p>
         <p className="about-subtitle">
           Zero-fee stablecoin settlement on Plasma &mdash; verified payroll on Flare &mdash; exportable payment records
         </p>
