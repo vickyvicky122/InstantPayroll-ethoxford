@@ -89,7 +89,7 @@ export function LandingPage({ onConnect, connecting, address }: LandingPageProps
           className={`role-card${selectedRole === "worker" ? " role-card-selected" : ""}`}
           onClick={() => setSelectedRole("worker")}
         >
-          <span className="role-emoji">👷</span>
+          <span className="role-emoji">🧑‍💻</span>
           <h2 className="role-title">I am a Worker</h2>
           <p className="role-desc">Claim USDC or FLR earnings instantly, with exportable records</p>
 
