@@ -143,10 +143,19 @@ import { IICleanableContract } from "./IICleanable";
 import { IIGovernanceVotePowerContract } from "./IIGovernanceVotePower";
 import { IIVPContractContract } from "./IIVPContract";
 import { IIVPTokenContract } from "./IIVPToken";
+import { IERC1155ErrorsContract } from "./IERC1155Errors";
+import { IERC20ErrorsContract } from "./IERC20Errors";
+import { IERC721ErrorsContract } from "./IERC721Errors";
+import { IERC1363Contract } from "./IERC1363";
+import { ERC20Contract } from "./ERC20";
+import { IERC20MetadataContract } from "./IERC20Metadata";
 import { IERC20Contract } from "./IERC20";
+import { SafeERC20Contract } from "./SafeERC20";
 import { IERC165Contract } from "./IERC165";
 import { InstantPayrollContract } from "./InstantPayroll";
 import { InstantPayrollPayoutContract } from "./InstantPayrollPayout";
+import { MockUSDCContract } from "./MockUSDC";
+import { PlasmaPayrollContract } from "./PlasmaPayroll";
 
 declare global {
   namespace Truffle {
@@ -348,10 +357,19 @@ declare global {
       require(name: "IIGovernanceVotePower"): IIGovernanceVotePowerContract;
       require(name: "IIVPContract"): IIVPContractContract;
       require(name: "IIVPToken"): IIVPTokenContract;
+      require(name: "IERC1155Errors"): IERC1155ErrorsContract;
+      require(name: "IERC20Errors"): IERC20ErrorsContract;
+      require(name: "IERC721Errors"): IERC721ErrorsContract;
+      require(name: "IERC1363"): IERC1363Contract;
+      require(name: "ERC20"): ERC20Contract;
+      require(name: "IERC20Metadata"): IERC20MetadataContract;
       require(name: "IERC20"): IERC20Contract;
+      require(name: "SafeERC20"): SafeERC20Contract;
       require(name: "IERC165"): IERC165Contract;
       require(name: "InstantPayroll"): InstantPayrollContract;
       require(name: "InstantPayrollPayout"): InstantPayrollPayoutContract;
+      require(name: "MockUSDC"): MockUSDCContract;
+      require(name: "PlasmaPayroll"): PlasmaPayrollContract;
     }
   }
 }
@@ -818,7 +836,20 @@ export {
 } from "./IIGovernanceVotePower";
 export { IIVPContractContract, IIVPContractInstance } from "./IIVPContract";
 export { IIVPTokenContract, IIVPTokenInstance } from "./IIVPToken";
+export {
+  IERC1155ErrorsContract,
+  IERC1155ErrorsInstance,
+} from "./IERC1155Errors";
+export { IERC20ErrorsContract, IERC20ErrorsInstance } from "./IERC20Errors";
+export { IERC721ErrorsContract, IERC721ErrorsInstance } from "./IERC721Errors";
+export { IERC1363Contract, IERC1363Instance } from "./IERC1363";
+export { ERC20Contract, ERC20Instance } from "./ERC20";
+export {
+  IERC20MetadataContract,
+  IERC20MetadataInstance,
+} from "./IERC20Metadata";
 export { IERC20Contract, IERC20Instance } from "./IERC20";
+export { SafeERC20Contract, SafeERC20Instance } from "./SafeERC20";
 export { IERC165Contract, IERC165Instance } from "./IERC165";
 export {
   InstantPayrollContract,
@@ -828,3 +859,5 @@ export {
   InstantPayrollPayoutContract,
   InstantPayrollPayoutInstance,
 } from "./InstantPayrollPayout";
+export { MockUSDCContract, MockUSDCInstance } from "./MockUSDC";
+export { PlasmaPayrollContract, PlasmaPayrollInstance } from "./PlasmaPayroll";
