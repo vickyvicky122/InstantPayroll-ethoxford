@@ -18,12 +18,17 @@ export default defineConfig(({ mode }) => {
   const network = (env.VITE_NETWORK || 'coston2') as keyof typeof PROXY_TARGETS;
   const targets = PROXY_TARGETS[network] || PROXY_TARGETS.coston2;
 
-  // Merge process.env VITE_* vars so Vercel env vars get inlined too
-  // (loadEnv only reads .env files, not system environment variables)
+  // Ensure all VITE_* env vars (from process.env or .env files) are inlined.
+  // Trim values to avoid newline issues from shell env or cached .env files.
   const define: Record<string, string> = {};
+  for (const [key, val] of Object.entries(env)) {
+    if (key.startsWith('VITE_')) {
+      define[`import.meta.env.${key}`] = JSON.stringify(val.trim());
+    }
+  }
   for (const key of Object.keys(process.env)) {
-    if (key.startsWith('VITE_') && !(key in env)) {
-      define[`import.meta.env.${key}`] = JSON.stringify(process.env[key]);
+    if (key.startsWith('VITE_')) {
+      define[`import.meta.env.${key}`] = JSON.stringify((process.env[key] || '').trim());
     }
   }
 

@@ -1,5 +1,5 @@
 {
-  "buildCommand": "echo '=== VITE ENV VARS ===' && printenv | grep ^VITE_ && cd frontend && echo '=== .env file ===' && cat .env 2>/dev/null || echo 'no .env' && npm install && npm run build",
+  "buildCommand": "cd frontend && npm install && npm run build",
   "outputDirectory": "frontend/dist",
   "installCommand": "cd frontend && npm install",
   "framework": null,
