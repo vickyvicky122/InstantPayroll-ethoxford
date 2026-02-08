@@ -112,6 +112,8 @@ export function WorkerPage({
   const [googleDocInput, setGoogleDocInput] = useState<string>(() => localStorage.getItem("googleDocInput") || "");
   const [googleToken, setGoogleToken] = useState<string | null>(null);
   const [googleSigningIn, setGoogleSigningIn] = useState(false);
+  const [repoStatus, setRepoStatus] = useState<"idle" | "checking" | "valid" | "invalid">("idle");
+  const [repoInfo, setRepoInfo] = useState<{ stars: number; language: string; description: string } | null>(null);
 
   // Persist settings
   useEffect(() => {
@@ -291,6 +293,33 @@ export function WorkerPage({
       alert("Google sign-in failed: " + e.message);
     } finally {
       setGoogleSigningIn(false);
+    }
+  };
+
+  const handleVerifyRepo = async () => {
+    const repo = githubRepo.trim();
+    if (!repo || !repo.includes("/")) {
+      setRepoStatus("invalid");
+      setRepoInfo(null);
+      return;
+    }
+    setRepoStatus("checking");
+    setRepoInfo(null);
+    try {
+      const res = await fetch(`https://api.github.com/repos/${repo}`);
+      if (!res.ok) {
+        setRepoStatus("invalid");
+        return;
+      }
+      const data = await res.json();
+      setRepoInfo({
+        stars: data.stargazers_count,
+        language: data.language || "Unknown",
+        description: data.description || "",
+      });
+      setRepoStatus("valid");
+    } catch {
+      setRepoStatus("invalid");
     }
   };
 
@@ -543,15 +572,39 @@ export function WorkerPage({
 
         {workSource === "github" && (
           <div>
-            <input
-              type="text"
-              className="input"
-              placeholder="owner/repo (e.g. myorg/myproject)"
-              value={githubRepo}
-              onChange={(e) => setGithubRepo(e.target.value)}
-              disabled={isFdcBusy}
-              style={{ width: "100%", maxWidth: 400 }}
-            />
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <input
+                type="text"
+                className="input"
+                placeholder="owner/repo (e.g. myorg/myproject)"
+                value={githubRepo}
+                onChange={(e) => { setGithubRepo(e.target.value); setRepoStatus("idle"); setRepoInfo(null); }}
+                disabled={isFdcBusy}
+                style={{ flex: 1, maxWidth: 400 }}
+              />
+              <button
+                className="btn btn-secondary"
+                onClick={handleVerifyRepo}
+                disabled={isFdcBusy || repoStatus === "checking" || !githubRepo.trim()}
+                style={{ whiteSpace: "nowrap" }}
+              >
+                {repoStatus === "checking" ? "Checking..." : "Verify"}
+              </button>
+              {repoStatus === "valid" && (
+                <span style={{ color: "#27ae60", fontWeight: 600, fontSize: "0.9rem" }}>Valid</span>
+              )}
+              {repoStatus === "invalid" && (
+                <span style={{ color: "#e74c3c", fontWeight: 600, fontSize: "0.9rem" }}>Not found</span>
+              )}
+            </div>
+            {repoInfo && (
+              <div style={{ marginTop: 6, padding: "6px 10px", background: "rgba(39,174,96,0.08)", borderRadius: 6, fontSize: "0.82rem" }}>
+                <strong>{githubRepo}</strong>
+                {repoInfo.description && <span> &mdash; {repoInfo.description}</span>}
+                <br />
+                <span style={{ color: "#888" }}>{repoInfo.language} &middot; {repoInfo.stars} stars</span>
+              </div>
+            )}
             <p className="muted" style={{ marginTop: 4, fontSize: "0.8rem" }}>
               FDC verifies GitHub commit count as proof of work
             </p>
