@@ -296,17 +296,29 @@ export function WorkerPage({
     }
   };
 
-  const handleVerifyRepo = async () => {
-    const repo = githubRepo.trim();
-    if (!repo || !repo.includes("/")) {
+  const parseRepoSlug = (input: string): string | null => {
+    const trimmed = input.trim();
+    // Handle full GitHub URLs: https://github.com/owner/repo
+    const urlMatch = trimmed.match(/github\.com\/([^/]+\/[^/\s?#]+)/);
+    if (urlMatch) return urlMatch[1].replace(/\.git$/, "");
+    // Handle owner/repo format
+    if (/^[^/\s]+\/[^/\s]+$/.test(trimmed)) return trimmed;
+    return null;
+  };
+
+  const handleConfirmRepo = async () => {
+    const slug = parseRepoSlug(githubRepo);
+    if (!slug) {
       setRepoStatus("invalid");
       setRepoInfo(null);
       return;
     }
+    // Normalize the input to owner/repo format
+    setGithubRepo(slug);
     setRepoStatus("checking");
     setRepoInfo(null);
     try {
-      const res = await fetch(`https://api.github.com/repos/${repo}`);
+      const res = await fetch(`https://api.github.com/repos/${slug}`);
       if (!res.ok) {
         setRepoStatus("invalid");
         return;
@@ -576,7 +588,7 @@ export function WorkerPage({
               <input
                 type="text"
                 className="input"
-                placeholder="owner/repo (e.g. myorg/myproject)"
+                placeholder="owner/repo or GitHub URL"
                 value={githubRepo}
                 onChange={(e) => { setGithubRepo(e.target.value); setRepoStatus("idle"); setRepoInfo(null); }}
                 disabled={isFdcBusy}
@@ -584,14 +596,14 @@ export function WorkerPage({
               />
               <button
                 className="btn btn-secondary"
-                onClick={handleVerifyRepo}
+                onClick={handleConfirmRepo}
                 disabled={isFdcBusy || repoStatus === "checking" || !githubRepo.trim()}
                 style={{ whiteSpace: "nowrap" }}
               >
-                {repoStatus === "checking" ? "Checking..." : "Verify"}
+                {repoStatus === "checking" ? "Checking..." : "Confirm"}
               </button>
               {repoStatus === "valid" && (
-                <span style={{ color: "#27ae60", fontWeight: 600, fontSize: "0.9rem" }}>Valid</span>
+                <span style={{ color: "#27ae60", fontWeight: 600, fontSize: "0.9rem" }}>Confirmed</span>
               )}
               {repoStatus === "invalid" && (
                 <span style={{ color: "#e74c3c", fontWeight: 600, fontSize: "0.9rem" }}>Not found</span>
