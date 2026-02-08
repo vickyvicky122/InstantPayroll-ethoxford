@@ -4,17 +4,13 @@ interface HeaderProps {
   address: string;
   connecting: boolean;
   isFlareNetwork: boolean;
-  isPlasmaNetwork: boolean;
-  activeNetwork: "flare" | "plasma" | "unknown";
-  networkName: string;
   onConnect: () => void;
   onSwitchFlare: () => void;
-  onSwitchPlasma: () => void;
 }
 
 export function Header({
-  address, connecting, isFlareNetwork, isPlasmaNetwork, activeNetwork,
-  onConnect, onSwitchFlare, onSwitchPlasma,
+  address, connecting, isFlareNetwork,
+  onConnect, onSwitchFlare,
 }: HeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -68,26 +64,13 @@ export function Header({
         )}
         {isDashboard && (
           <>
-            {address && (
-              <div className="network-switcher">
-                <button
-                  className={`network-btn ${isFlareNetwork ? "network-btn-active" : ""}`}
-                  onClick={onSwitchFlare}
-                >
-                  Flare
-                </button>
-                <button
-                  className={`network-btn ${isPlasmaNetwork ? "network-btn-active" : ""}`}
-                  onClick={onSwitchPlasma}
-                >
-                  Plasma
-                </button>
-                {activeNetwork === "unknown" && (
-                  <span className="network-btn" style={{ color: "var(--warning)", cursor: "default" }}>
-                    Wrong Network
-                  </span>
-                )}
-              </div>
+            {address && !isFlareNetwork && (
+              <button className="btn btn-warning btn-sm" onClick={onSwitchFlare}>
+                Switch to Flare
+              </button>
+            )}
+            {address && isFlareNetwork && (
+              <span className="network-badge">Flare</span>
             )}
             {address ? (
               <>

@@ -4,12 +4,12 @@
 
 - Browser open to **http://localhost:5176/** (homepage)
 - Two MetaMask accounts ready:
-  - **Account A** (Employer) — has testnet FLR on Coston2 + some Plasma XPL
+  - **Account A** (Employer) — has testnet FLR on Coston2
   - **Account B** (Worker) — has testnet FLR for gas
-- Both accounts have Coston2 and Plasma Testnet networks added
+- Both accounts have Coston2 network added
 - GitHub repo `vickyvicky122/InstantPayroll-ethoxford` has recent commits
-- Pre-mint USDC on Account A (use faucet before pitch to save time)
-- Pre-create one active Plasma stream from Account A to Account B (so the worker demo is instant)
+- Pre-create one active stream from Account A to Account B (so the worker demo is instant)
+- Relayer running (`npx ts-node scripts/relayer.ts`) to bridge receipts to Plasma
 
 ---
 
@@ -42,15 +42,15 @@
 
 ### 3. THE SOLUTION (1:15 — 1:50)
 
-> "InstantPayroll streams stablecoin payments to workers — but only when they prove they did the work."
+> "InstantPayroll streams payments to workers — but only when they prove they did the work."
 >
 > "We use **Flare's enshrined protocols** — not oracles you have to trust, but protocols built into the chain itself:"
 >
 > - **FDC (Flare Data Connector)** — verifies GitHub commits or Google Docs edits as cryptographic proof of work
-> - **FTSO v2** — live FLR/USD price feed for accurate conversion
+> - **FTSO v2** — live FLR/USD price feed for accurate USD-denominated pay
 > - **Secure Random** — a bonus lottery on each claim (1-in-10 chance of 2x payout)
 >
-> "And for the actual payments, we use **Plasma** — zero-fee USDC streaming. The employer deposits once, the worker claims as they go."
+> "And every payment receipt is bridged to **Plasma** — a zero-fee chain — for free permanent storage. Workers get an audit-ready payment history at zero cost."
 >
 > "Money moves as fast as work does."
 
@@ -62,29 +62,29 @@
 
 1. Click **"Log In"** from homepage
 2. Select **"I am an Employer"** → enter name → **"Connect Wallet & Continue"** (Account A)
-3. You're on the **Employer Dashboard**, Plasma tab is default
-4. Show the **USDC balance** (pre-minted)
-5. **Create a USDC stream**:
+3. You're on the **Employer Dashboard**
+4. Show the **FLR/USD price ticker** (live FTSO feed)
+5. **Create a stream**:
    - Worker address: paste Account B's address
-   - Rate: `1 USDC / 60 seconds`
-   - Deposit: `100 USDC`
-   - Click **"Create USDC Stream"**
+   - USD per interval: `0.50`
+   - Claim interval: `60` seconds
+   - Deposit: `10 FLR`
+   - Click **"Create Stream"**
 6. Stream appears in the list — show the progress bar, rate, worker address
 
-> "That's it. 100 USDC locked in a smart contract. The worker can now claim $1 every minute."
+> "That's it. 10 FLR locked in escrow. The worker can now claim $0.50 every minute — but only if they prove they did the work."
 
 #### Demo Part B: Worker Claims with Verified Commits (50s)
 
 1. Click **"Log Out"** in the header
 2. Select **"I am a Worker"** → enter name → switch to Account B in MetaMask → **"Connect Wallet & Continue"**
-3. Switch to **Flare tab** (to show the commit verification flow)
-4. Show the **pre-created Flare stream** (set up before the pitch)
-5. GitHub repo is entered: `vickyvicky122/InstantPayroll-ethoxford`
-6. Click **"Claim with GitHub Proof"**
+3. Show the **pre-created stream** (set up before the pitch)
+4. GitHub repo is entered: `vickyvicky122/InstantPayroll-ethoxford`
+5. Click **"Claim with GitHub Proof"**
 
 > "Watch what happens. The FDC is now calling the GitHub API, counting our commits, and creating a cryptographic proof that we actually shipped code."
 
-7. Show the **step-by-step progress**:
+6. Show the **step-by-step progress**:
    - "Verifying all commits..."
    - "Submitting attestation..."
    - "Waiting for finalization (~90s)..."
@@ -92,19 +92,19 @@
 > *(While waiting, explain):*
 > "This is real. The Flare network is independently verifying our GitHub activity right now. No one can fake this — the proof goes through consensus. When it confirms, the contract will check the commit count, convert USD to FLR using FTSO live pricing, and maybe hit the bonus lottery."
 
-8. **If time is tight**, switch back to the **Plasma tab** and show the USDC stream:
-   - The claim interval has elapsed
-   - Click **"Claim USDC"** — instant, one transaction
-   - Show the USDC balance update
+7. **If time is tight**, use **Quick Claim** instead:
+   - Click **"Quick Claim (Demo)"** — instant, uses FTSO + Secure Random but skips FDC wait
+   - Show the FLR payout and bonus status
 
-> "On Plasma, it's instant. Zero gas fees. One click, one USDC in the wallet."
+> "Quick Claim uses the same FTSO pricing and bonus lottery — it just skips the 90-second FDC wait for demo purposes."
 
 #### Demo Part C: History + Export (10s)
 
-1. Scroll to **USDC Claim History**
-2. Click **"Export CSV"**
+1. Scroll to **Flare Claims** history — show claim events with bonus status
+2. Switch to **Plasma Receipts** tab — show the relayed receipts with USD totals
+3. Click **"Export CSV"**
 
-> "Every payment is on-chain. Fully auditable. Exportable for accounting."
+> "Every payment is on-chain. Flare has the execution details, Plasma stores the receipts for free. Fully auditable. Exportable for accounting."
 
 ---
 
@@ -112,12 +112,12 @@
 
 > "Quick recap of the stack:"
 >
-> - **Flare Coston2** — smart contracts with FTSO, FDC, and Secure Random
-> - **Plasma Testnet** — zero-fee USDC streaming for the actual payments
-> - **Cross-chain**: a relayer bridges claim receipts from Flare to Plasma for free permanent storage
+> - **Flare Coston2** — smart contracts using three enshrined protocols: FTSO, FDC, and Secure Random
+> - **Plasma Testnet** — zero-fee receipt storage via a cross-chain relayer
+> - **One-way bridge**: Flare verifies and pays → relayer writes receipts to Plasma for free
 > - **React + ethers.js** frontend, MetaMask wallet integration
 >
-> "Two chains, one payroll system. Flare verifies the work. Plasma moves the money."
+> "Two chains, each playing to its strength. Flare verifies the work and moves the money. Plasma stores the receipts."
 
 ---
 
@@ -134,8 +134,8 @@
 ## Backup Plans
 
 ### If FDC finalization takes too long during demo:
-- Switch to the Plasma USDC tab and demo the instant claim flow instead
-- Say: "The FDC verification takes about 90 seconds for consensus — that's real decentralized verification. Let me show you the instant Plasma side while it confirms."
+- Use the Quick Claim button instead — it still uses FTSO pricing and Secure Random lottery
+- Say: "The FDC verification takes about 90 seconds for consensus — that's real decentralized verification. Let me show you the Quick Claim mode which uses the same oracle pricing and bonus lottery."
 
 ### If MetaMask is slow or errors:
 - Have a second browser window pre-loaded on the Worker dashboard as a fallback
@@ -147,8 +147,11 @@
 ### If asked "What about gaming the system?":
 > "The FDC proof is verified by Flare's full validator set through consensus. You can't fake a GitHub commit count — the attestation providers independently query the API and must agree. And the employer sets the repo upfront."
 
+### If asked "Why Plasma for receipts?":
+> "Storing every payment receipt on Flare costs gas. On Plasma, it's free. A relayer watches Flare events and writes them to Plasma at zero cost. Workers get a complete, queryable payment history — perfect for accounting, taxes, and audits."
+
 ### If asked "What's next?":
-> "More proof sources — Jira tickets, Linear issues, Figma edits. Any API with verifiable output can become a proof of work. We're also looking at streaming on Flare mainnet once FDC is fully live."
+> "More proof sources — Jira tickets, Linear issues, Figma edits. Any API with verifiable output can become a proof of work. We're also looking at Flare mainnet once FDC is fully live."
 
 ---
 
@@ -157,7 +160,7 @@
 - Global freelance market: **$1.5 trillion**
 - Average payment delay for freelancers: **30-60 days**
 - Cross-border payment fees: **3-8%**
-- Plasma gas fees: **zero**
+- Plasma receipt storage fees: **zero**
 - FDC verification time: **~90 seconds**
 - Bonus lottery odds: **1-in-10 for 2x payout**
 
@@ -167,8 +170,8 @@
 
 | Time | Action |
 |------|--------|
-| -10 min | Mint USDC on employer account, create a Flare stream to worker |
-| -5 min | Verify both accounts have gas, streams are visible |
+| -10 min | Create a Flare stream from Account A to Account B, start relayer |
+| -5 min | Verify both accounts have FLR for gas, streams are visible |
 | -2 min | Open browser to homepage, MetaMask unlocked on Account A |
 | 0:00 | Start pitch |
 | 1:50 | Begin live demo |

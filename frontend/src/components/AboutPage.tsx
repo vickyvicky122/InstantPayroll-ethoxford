@@ -25,7 +25,7 @@ export function AboutPage() {
           Money should move as fast as work does.
         </p>
         <p className="about-subtitle">
-          Zero-fee stablecoin settlement on Plasma &mdash; verified payroll on Flare &mdash; exportable payment records
+          Verified payroll on Flare &mdash; free permanent receipts on Plasma &mdash; exportable payment records
         </p>
         <Link to="/login" className="btn btn-primary" style={{ marginTop: 24, fontSize: "1.1rem", padding: "12px 32px" }}>
           Get Started
@@ -80,7 +80,7 @@ export function AboutPage() {
               <div className="about-feature">
                 <div className="about-feature-num" style={{ background: "linear-gradient(135deg, #e62058, #ff7094)" }}>!</div>
                 <h3>Fees Eat Into Micro-Payments</h3>
-                <p>Paying a contractor $5 for a quick task costs $3+ in wire fees, FX conversion, and platform cuts. Traditional rails make frequent small payments irrational. Zero-fee stablecoin streams change the economics entirely.</p>
+                <p>Paying a contractor $5 for a quick task costs $3+ in wire fees, FX conversion, and platform cuts. Traditional rails make frequent small payments irrational. On-chain streaming with oracle pricing changes the economics entirely.</p>
               </div>
             </div>
 
@@ -165,8 +165,8 @@ export function AboutPage() {
                 InstantPayroll splits its workload across <strong>Flare</strong> and <strong>Plasma</strong> because
                 each chain does something the other cannot. Flare provides enshrined data protocols &mdash; FTSO price
                 feeds, FDC Web2 attestation, Secure Random &mdash; that no other EVM chain offers natively. Plasma
-                provides zero-fee transactions, making it viable to store every micro-payment receipt on-chain and run
-                a full USDC stablecoin payroll without cost accumulating.
+                provides zero-fee transactions, making it viable to store every micro-payment receipt on-chain
+                without cost accumulating.
               </p>
               <div className="about-duo">
                 <div className="about-duo-item">
@@ -179,8 +179,8 @@ export function AboutPage() {
                 <div className="about-duo-item">
                   <div className="about-duo-icon" style={{ background: "linear-gradient(135deg, #3b82f6, #60a5fa)" }}>P</div>
                   <div>
-                    <strong>Plasma &mdash; Storage & Stablecoin Payments</strong>
-                    <p>Zero-fee receipt storage for every Flare claim via a relayer bridge. Plus a standalone USDC streaming payroll &mdash; stable value, time-based claims, one click to collect.</p>
+                    <strong>Plasma &mdash; Free Permanent Receipt Storage</strong>
+                    <p>Zero-fee receipt storage for every Flare claim via a relayer bridge. Complete, queryable payment history at zero cost &mdash; workers, accountants, and auditors can access records on-chain.</p>
                   </div>
                 </div>
               </div>
@@ -204,8 +204,8 @@ export function AboutPage() {
               </div>
               <div className="about-feature">
                 <div className="about-feature-num">04</div>
-                <h3>Dual Payroll Models</h3>
-                <p>Crypto payroll on Flare (FLR, oracle-priced, work-verified). Stablecoin payroll on Plasma (USDC, stable value, simple claims).</p>
+                <h3>Audit-Ready Records</h3>
+                <p>Every Flare claim is mirrored to Plasma as a free permanent receipt. Workers export CSV for taxes, employers get a verifiable ledger.</p>
               </div>
             </div>
           </div>
@@ -304,33 +304,32 @@ export function AboutPage() {
                   </div>
                 </div>
                 <div className="about-tech-item">
-                  <div className="about-tech-badge" style={{ background: "rgba(59,130,246,0.12)", color: "#60a5fa", borderColor: "rgba(59,130,246,0.25)" }}>USDC</div>
-                  <div>
-                    <strong>Stablecoin Payroll</strong>
-                    <p>
-                      A standalone USDC streaming payroll runs natively on Plasma. Pay and get paid in USDC
-                      (6 decimals) with no price volatility. Zero-fee transactions mean the cost of
-                      micro-payments doesn't eat into the payment itself.
-                    </p>
-                  </div>
-                </div>
-                <div className="about-tech-item">
-                  <div className="about-tech-badge" style={{ background: "rgba(59,130,246,0.12)", color: "#60a5fa", borderColor: "rgba(59,130,246,0.25)" }}>TIME</div>
-                  <div>
-                    <strong>Time-Based Claims</strong>
-                    <p>
-                      Workers claim based on elapsed intervals. Multiple intervals accumulate and pay out
-                      in a single transaction. No FDC proof needed &mdash; just click and collect.
-                    </p>
-                  </div>
-                </div>
-                <div className="about-tech-item">
                   <div className="about-tech-badge" style={{ background: "rgba(59,130,246,0.12)", color: "#60a5fa", borderColor: "rgba(59,130,246,0.25)" }}>API</div>
                   <div>
                     <strong>Queryable On-Chain Accounting</strong>
                     <p>
                       Workers, accountants, tax tools, or auditors can call <code>getAllPayouts(worker)</code> to
                       get a complete payment history without parsing event logs or relying on an indexer.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(59,130,246,0.12)", color: "#60a5fa", borderColor: "rgba(59,130,246,0.25)" }}>CSV</div>
+                  <div>
+                    <strong>Exportable Records</strong>
+                    <p>
+                      Every receipt includes amount (FLR and USD), timestamp, bonus status, and verified commit
+                      count. Workers export CSV directly from the dashboard for tax filing, invoicing, or audit.
+                    </p>
+                  </div>
+                </div>
+                <div className="about-tech-item">
+                  <div className="about-tech-badge" style={{ background: "rgba(59,130,246,0.12)", color: "#60a5fa", borderColor: "rgba(59,130,246,0.25)" }}>USD</div>
+                  <div>
+                    <strong>Lifetime Earnings Tracker</strong>
+                    <p>
+                      The Plasma contract maintains a per-worker <code>totalEarnedUSD</code> counter, updated
+                      with every relayed receipt. One call to see total career earnings across all streams.
                     </p>
                   </div>
                 </div>
@@ -380,15 +379,6 @@ export function AboutPage() {
                       <span>totalEarnedUSD() &larr; Lifetime earnings</span>
                     </div>
                     <div className="about-arch-event">Zero-fee permanent storage</div>
-                  </div>
-                  <div className="about-arch-box" style={{ marginTop: 12 }}>
-                    <strong>PlasmaPayroll.sol</strong>
-                    <div className="about-arch-items">
-                      <span>createStream() &larr; Employer deposits USDC</span>
-                      <span>claim() &larr; Time-based, one click</span>
-                      <span>endStream() &larr; Recover unused USDC</span>
-                    </div>
-                    <div className="about-arch-event">Standalone stablecoin payroll</div>
                   </div>
                 </div>
               </div>
@@ -454,15 +444,15 @@ export function AboutPage() {
                 <div className="about-step">
                   <div className="about-step-num">1</div>
                   <div>
-                    <strong>Connect & Choose Network</strong>
-                    <p>Connect MetaMask and switch between Flare (FLR payroll) or Plasma (USDC payroll) with the header toggle</p>
+                    <strong>Connect Wallet</strong>
+                    <p>Connect MetaMask on Flare (Coston2 testnet). Get test FLR from the faucet.</p>
                   </div>
                 </div>
                 <div className="about-step">
                   <div className="about-step-num">2</div>
                   <div>
                     <strong>Fund & Create Stream</strong>
-                    <p>On Flare: deposit FLR, set USD rate and interval. On Plasma: get test USDC from faucet, approve, then deposit.</p>
+                    <p>Deposit FLR as escrow, set a USD rate per interval, and assign a worker address.</p>
                   </div>
                 </div>
                 <div className="about-step">
@@ -482,21 +472,21 @@ export function AboutPage() {
                   <div className="about-step-num">1</div>
                   <div>
                     <strong>View Streams</strong>
-                    <p>See all streams assigned to your address with live countdowns to next claim on both networks</p>
+                    <p>See all streams assigned to your address with live countdowns to next claim</p>
                   </div>
                 </div>
                 <div className="about-step">
                   <div className="about-step-num">2</div>
                   <div>
                     <strong>Claim Earnings</strong>
-                    <p>On Flare: verify work via FDC (5-step attestation flow) or use Quick Claim demo. On Plasma: one click, one tx.</p>
+                    <p>Verify work via FDC (5-step GitHub/Google Docs attestation flow) or use Quick Claim for demos. Get paid in FLR at live oracle rates.</p>
                   </div>
                 </div>
                 <div className="about-step">
                   <div className="about-step-num">3</div>
                   <div>
                     <strong>Track History</strong>
-                    <p>Flare tab shows claim events with bonus status. Plasma tab shows structured receipts and lifetime USD totals.</p>
+                    <p>Flare claims tab shows events with bonus status. Plasma receipts tab shows structured records with lifetime USD totals. Export CSV for accounting.</p>
                   </div>
                 </div>
               </div>
@@ -623,16 +613,6 @@ export function AboutPage() {
                   <span className="about-contract-name">InstantPayrollPayout</span>
                   <span className="about-contract-chain">Plasma Testnet</span>
                   <span className="about-contract-desc">Zero-fee receipt storage via relayer bridge</span>
-                </div>
-                <div className="about-contract-row">
-                  <span className="about-contract-name">PlasmaPayroll</span>
-                  <span className="about-contract-chain">Plasma Testnet</span>
-                  <span className="about-contract-desc">USDC streaming with time-based claims</span>
-                </div>
-                <div className="about-contract-row">
-                  <span className="about-contract-name">MockUSDC</span>
-                  <span className="about-contract-chain">Plasma Testnet</span>
-                  <span className="about-contract-desc">ERC20 test token (6 decimals, public faucet)</span>
                 </div>
               </div>
             </div>

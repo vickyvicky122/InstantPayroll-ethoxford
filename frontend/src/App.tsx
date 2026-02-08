@@ -61,8 +61,8 @@ function AutoRedirect({ address }: { address: string }) {
 
 function App() {
   const {
-    address, signer, isCorrectNetwork, isFlareNetwork, isPlasmaNetwork,
-    activeNetwork, connecting, connect, switchToFlare, switchToPlasma, networkName,
+    address, signer, isFlareNetwork,
+    connecting, connect, switchToFlare,
   } = useWallet();
 
   return (
@@ -73,12 +73,8 @@ function App() {
           address={address}
           connecting={connecting}
           isFlareNetwork={isFlareNetwork}
-          isPlasmaNetwork={isPlasmaNetwork}
-          activeNetwork={activeNetwork}
-          networkName={networkName}
           onConnect={connect}
           onSwitchFlare={switchToFlare}
-          onSwitchPlasma={switchToPlasma}
         />
         <main className="main">
           <ErrorBoundary>
@@ -94,12 +90,8 @@ function App() {
                   <EmployerPage
                     address={address}
                     signer={signer}
-                    isCorrectNetwork={isCorrectNetwork}
                     isFlareNetwork={isFlareNetwork}
-                    isPlasmaNetwork={isPlasmaNetwork}
-                    activeNetwork={activeNetwork}
                     switchToFlare={switchToFlare}
-                    switchToPlasma={switchToPlasma}
                   />
                 }
               />
@@ -109,12 +101,8 @@ function App() {
                   <WorkerPage
                     address={address}
                     signer={signer}
-                    isCorrectNetwork={isCorrectNetwork}
                     isFlareNetwork={isFlareNetwork}
-                    isPlasmaNetwork={isPlasmaNetwork}
-                    activeNetwork={activeNetwork}
                     switchToFlare={switchToFlare}
-                    switchToPlasma={switchToPlasma}
                   />
                 }
               />
