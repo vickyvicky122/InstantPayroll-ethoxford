@@ -1,168 +1,291 @@
-# InstantPayroll — 4-Minute Pitch + Demo Script
+# InstantPayroll — Pitch + Live Demo Walkthrough
 
 ## Setup Before Pitch
 
-- Browser open to **http://localhost:5176/** (homepage)
+- Browser open to **http://localhost:5176/** (About page)
 - Two MetaMask accounts ready:
   - **Account A** (Employer) — has testnet FLR on Coston2
   - **Account B** (Worker) — has testnet FLR for gas
 - Both accounts have Coston2 network added
 - GitHub repo `vickyvicky122/InstantPayroll-ethoxford` has recent commits
-- Pre-create one active stream from Account A to Account B (so the worker demo is instant)
-- Relayer running (`npx ts-node scripts/relayer.ts`) to bridge receipts to Plasma
+- Pre-create one active stream from Account A to Account B
+- Relayer running (`npx ts-node scripts/relayer.ts`)
 
 ---
 
 ## Pitch Script (~4 minutes)
 
-### 1. THE HOOK (0:00 — 0:30)
+### 1. THE HOOK (0:00 — 0:20)
 
-> "How many of you have freelanced or hired a remote contractor?"
+> "You hire a remote dev. They say they worked 40 hours. You pay $4,000. Did they actually work? You'll never know."
 >
-> "Here's the problem: you agree on $50/hour. The contractor says they worked 8 hours. You have no way to verify that. You pay them $400 on faith. Maybe they worked 3 hours. Maybe they worked 12. You'll never know."
->
-> "We built InstantPayroll — a payroll system where money only moves when work is cryptographically proven."
+> "We fixed this. **InstantPayroll** — payments stream continuously, but money only moves when work is cryptographically proven on-chain."
 
 ---
 
-### 2. THE PROBLEM (0:30 — 1:15)
+### 2. WHY THIS MATTERS (0:20 — 0:50)
 
-> "Global remote work is a $1.5 trillion market, and it runs on trust and spreadsheets."
+> "The freelance economy is **$1.5 trillion**. It runs on trust and invoices."
+
+**Four problems** *(don't show UI yet — just speak)*:
+
+> 1. **No verification** — employers pay for hours claimed, not work done
+> 2. **30-60 day payment delays** — freelancers finance their own work for weeks
+> 3. **No audit trail** — payments aren't linked to output
+> 4. **3-8% fees** — bank wires and platform cuts eat micro-payments alive
 >
-> **Four pain points** (gesture to the homepage — scroll to the "Why" section):
->
-> 1. **Overpaying** — Employers pay for hours claimed, not hours worked. No verification.
-> 2. **Delayed pay** — Workers wait 30-60 days for invoices to clear. Cash flow kills freelancers.
-> 3. **No accountability** — There's no audit trail linking payments to actual output.
-> 4. **Fees** — Cross-border payments eat 3-8% in bank fees, FX markups, and platform cuts.
->
-> "What if payments were continuous, verified, and instant?"
+> "What if every payment required proof, settled instantly, and cost nothing to record?"
 
 ---
 
-### 3. THE SOLUTION (1:15 — 1:50)
+### 3. THE STACK — TWO CHAINS, ONE SYSTEM (0:50 — 1:20)
 
-> "InstantPayroll streams payments to workers — but only when they prove they did the work."
->
-> "We use **Flare's enshrined protocols** — not oracles you have to trust, but protocols built into the chain itself:"
->
-> - **FDC (Flare Data Connector)** — verifies GitHub commits or Google Docs edits as cryptographic proof of work
-> - **FTSO v2** — live FLR/USD price feed for accurate USD-denominated pay
-> - **Secure Random** — a bonus lottery on each claim (1-in-10 chance of 2x payout)
->
-> "And every payment receipt is bridged to **Plasma** — a zero-fee chain — for free permanent storage. Workers get an audit-ready payment history at zero cost."
->
-> "Money moves as fast as work does."
+> "We built this on **Flare** and **Plasma** because each does something the other can't."
+
+| Chain | Role | Protocols Used |
+|-------|------|----------------|
+| **Flare** (Coston2) | Verify work, price payments, pay workers | **FDC** (Web2Json attestation), **FTSO v2** (FLR/USD oracle), **Secure Random v2** (bonus lottery) |
+| **Plasma** (Testnet) | Store every receipt permanently, for free | Zero-fee chain — relayer bridges Flare events at $0 cost |
+
+> "Three enshrined protocols in one `claim()` transaction. No third-party oracles, no extra trust assumptions, no separate fees. That's what makes Flare unique."
 
 ---
 
-### 4. LIVE DEMO (1:50 — 3:20)
+### 4. LIVE DEMO — SCREEN BY SCREEN (1:20 — 3:30)
 
-#### Demo Part A: Employer Creates a Stream (30s)
+#### Screen 1: About Page (10s)
 
-1. Click **"Log In"** from homepage
-2. Select **"I am an Employer"** → enter name → **"Connect Wallet & Continue"** (Account A)
-3. You're on the **Employer Dashboard**
-4. Show the **FLR/USD price ticker** (live FTSO feed)
-5. **Create a stream**:
-   - Worker address: paste Account B's address
-   - USD per interval: `0.50`
-   - Claim interval: `60` seconds
-   - Deposit: `10 FLR`
-   - Click **"Create Stream"**
-6. Stream appears in the list — show the progress bar, rate, worker address
+*Already open at `/` — the About/landing page*
 
-> "That's it. 10 FLR locked in escrow. The worker can now claim $0.50 every minute — but only if they prove they did the work."
+> "This is our product page. It explains the full architecture."
 
-#### Demo Part B: Worker Claims with Verified Commits (50s)
+- Click through **"Why"** tab — show the four pain points
+- Flash the **"Why Flare"** tab — point at the three protocol badges: **FDC**, **FTSO**, **RNG**
+- Flash **"Why Plasma"** tab — point at **$0 Free Permanent Receipts**
 
-1. Click **"Log Out"** in the header
-2. Select **"I am a Worker"** → enter name → switch to Account B in MetaMask → **"Connect Wallet & Continue"**
-3. Show the **pre-created stream** (set up before the pitch)
-4. GitHub repo is entered: `vickyvicky122/InstantPayroll-ethoxford`
-5. Click **"Claim with GitHub Proof"**
+> "Let me show you it working."
 
-> "Watch what happens. The FDC is now calling the GitHub API, counting our commits, and creating a cryptographic proof that we actually shipped code."
-
-6. Show the **step-by-step progress**:
-   - "Verifying all commits..."
-   - "Submitting attestation..."
-   - "Waiting for finalization (~90s)..."
-
-> *(While waiting, explain):*
-> "This is real. The Flare network is independently verifying our GitHub activity right now. No one can fake this — the proof goes through consensus. When it confirms, the contract will check the commit count, convert USD to FLR using FTSO live pricing, and maybe hit the bonus lottery."
-
-7. **If time is tight**, use **Quick Claim** instead:
-   - Click **"Quick Claim (Demo)"** — instant, uses FTSO + Secure Random but skips FDC wait
-   - Show the FLR payout and bonus status
-
-> "Quick Claim uses the same FTSO pricing and bonus lottery — it just skips the 90-second FDC wait for demo purposes."
-
-#### Demo Part C: History + Export (10s)
-
-1. Scroll to **Flare Claims** history — show claim events with bonus status
-2. Switch to **Plasma Receipts** tab — show the relayed receipts with USD totals
-3. Click **"Export CSV"**
-
-> "Every payment is on-chain. Flare has the execution details, Plasma stores the receipts for free. Fully auditable. Exportable for accounting."
+Click **"Get Started"**.
 
 ---
 
-### 5. TECH & ARCHITECTURE (3:20 — 3:45)
+#### Screen 2: Login / Role Selection (10s)
 
-> "Quick recap of the stack:"
->
-> - **Flare Coston2** — smart contracts using three enshrined protocols: FTSO, FDC, and Secure Random
-> - **Plasma Testnet** — zero-fee receipt storage via a cross-chain relayer
-> - **One-way bridge**: Flare verifies and pays → relayer writes receipts to Plasma for free
-> - **React + ethers.js** frontend, MetaMask wallet integration
->
-> "Two chains, each playing to its strength. Flare verifies the work and moves the money. Plasma stores the receipts."
+*Now on `/login`*
+
+> "Two roles: Employer or Worker. Pick one, connect MetaMask, done."
+
+- Click **"I am an Employer"** → type name → **"Connect Wallet & Continue"** (Account A)
 
 ---
 
-### 6. CLOSE (3:45 — 4:00)
+#### Screen 3: Employer Dashboard (40s)
 
-> "InstantPayroll turns payroll from a trust problem into a math problem."
+*Now on `/employer`*
+
+**What you see:**
+
+| UI Element | Powered By |
+|-----------|------------|
+| **Welcome header** with wallet address, FLR balance | Flare Coston2 RPC |
+| **FLR/USD price ticker** (e.g. "$0.01234") | **FTSO v2** — live feed from `FtsoV2.getFeedById()` |
+| **Active Streams** count, Total Deposited, Remaining Escrow | On-chain stream state |
+
+**Create a stream:**
+
+1. Paste Account B's address as Worker
+2. USD rate: `0.50` per interval
+3. Interval: `60` seconds
+4. Deposit: `10 FLR`
+5. Click **"Create Stream"** → MetaMask confirms
+
+> "10 FLR locked in escrow. The worker can now claim $0.50 every 60 seconds — but only if they prove they worked."
+
+**Point out:**
+- The new stream card with progress bar (deposited vs. claimed)
+- The **"End Stream"** button — employer can recover unused funds anytime
+
+> "The employer stays in control. End the stream, get your remaining FLR back. No more paying out a full month when someone quits on day three."
+
+---
+
+#### Screen 4: Worker Dashboard — Top Section (20s)
+
+*Click **"Log Out"** → Select **"I am a Worker"** → switch MetaMask to Account B → Connect*
+
+*Now on `/worker`*
+
+**What you see:**
+
+| UI Element | Powered By |
+|-----------|------------|
+| **Welcome header** with address, FLR balance | Flare Coston2 RPC |
+| **Total Earned (FLR)** | On-chain stream `totalClaimed` |
+| **FLR/USD Price** | **FTSO v2** — same live oracle |
+| **Bonus Lottery** — "Normal" or "2x ACTIVE!" | **Secure Random v2** — `randomV2.getRandomNumber()` |
+| **Lifetime (USD)** | **Plasma** — `totalEarnedUSD` from receipt contract |
+
+> "Four stats. Three different Flare protocols powering them. Plus Plasma for the USD lifetime total."
+
+---
+
+#### Screen 5: Work Verification (15s)
+
+*Scroll to **Work Verification** card*
+
+**What you see:**
+- Two tabs: **GitHub** | **Google Docs**
+- GitHub selected — repo input with **"Verify"** button
+- Type `vickyvicky122/InstantPayroll-ethoxford` → click **"Verify"**
+- Shows green "Valid" badge with repo description, language, stars
+
+| UI Element | Powered By |
+|-----------|------------|
+| **GitHub tab** — repo input + Verify button | GitHub REST API (client-side) |
+| **Google Docs tab** — Doc URL + Google OAuth sign-in | Google Drive API via OAuth 2.0 |
+| **FDC attestation** (happens on claim) | **Flare FDC** — Web2Json attestation type |
+
+> "The worker picks their proof source. GitHub commits or Google Docs revisions. The FDC will verify this through the full Flare validator set — ~100 independent attestation providers reaching consensus."
+
+---
+
+#### Screen 6: Claiming Payment (50s)
+
+*Scroll to the pre-created stream → it shows "Claim ready"*
+
+**Option A: Full FDC Claim** *(if time allows)*
+
+Click **"Claim with GitHub Proof"**
+
+> "Watch the five-step flow."
+
+| Step | What Happens | Protocol |
+|------|-------------|----------|
+| 1. **Preparing** | Sends URL + JQ filter to FDC verifier API, gets `abiEncodedRequest` with MIC | **FDC** verifier |
+| 2. **Submitting** | Calls `FdcHub.requestAttestation()` on-chain — pays fee, emits event | **FDC** hub contract |
+| 3. **Finalizing** (~90s) | ~100 attestation providers fetch GitHub API, apply JQ filter, vote via CCCR protocol (Collect→Choose→Commit→Reveal). 50%+ signature weight → Merkle root stored in Relay contract | **FDC** consensus |
+| 4. **Retrieving** | Fetches Merkle proof from Flare DA layer | **FDC** DA layer |
+| 5. **Claiming** | `claim()` verifies proof on-chain via `FdcVerification.verifyWeb2Json()`, reads FTSO price, rolls Secure Random, transfers FLR | **FDC** + **FTSO** + **Secure Random** |
+
+> *(While waiting for finalization):*
+> "This is real. The Flare validator set is independently querying GitHub's API right now. No single node can fake the result — they need 50%+ consensus. When it confirms, the contract verifies the Merkle proof, checks the live FLR/USD price from FTSO, and rolls the bonus lottery from Secure Random. Three enshrined protocols, one transaction."
+
+**Option B: Quick Claim** *(if time is tight)*
+
+Click **"Quick Claim (skip FDC — demo only)"** — instant
+
+> "Quick Claim still uses **FTSO** for pricing and **Secure Random** for the bonus — it just skips the 90-second FDC consensus for demo speed."
+
+**After claim completes:**
+- Success message: "Payment claimed! (X commits verified)"
+- Shows: "Verified by Flare validator set via FDC round #N · Merkle proof depth: M"
+
+---
+
+#### Screen 7: Payment History (20s)
+
+*Scroll to **Payment History** section*
+
+**Flare Claims tab:**
+
+| Column | Source |
+|--------|--------|
+| Amount (FLR) | `PaymentClaimed` event from Flare |
+| FLR/USD price at time of claim | **FTSO v2** price stored in event |
+| Bonus badge (2x BONUS) | **Secure Random v2** result |
+| Commit count | **FDC** verified GitHub data |
+| Timestamp | Flare block timestamp |
+
+> "Every claim is an on-chain event with full context."
+
+Click **"Export CSV"** → downloads `flare-payment-history.csv`
+
+**Switch to Plasma Receipts tab:**
+
+| Column | Source |
+|--------|--------|
+| Amount (FLR + USD) | Relayed from Flare `PaymentClaimed` event |
+| Date | Timestamp from relayer write |
+| Bonus, Commits | Mirrored from Flare |
+| Lifetime earnings counter | **Plasma** contract `totalEarnedUSD` |
+
+> "Every Flare claim is automatically bridged to Plasma by our relayer. Zero gas cost. Permanent. The worker gets a complete payment history they can export for taxes or audits — and it cost nothing to store."
+
+Click **"Export CSV"** → downloads `plasma-receipts.csv`
+
+---
+
+#### Screen 8: About Page — Deep Dive (10s, optional)
+
+*If judges want technical depth, navigate to `/` and click tabs:*
+
+- **FDC Deep Dive** — shows the full CCCR protocol (Collect→Choose→Commit→Reveal) and the 7-step claim flow
+- **Cross-Chain** — shows the architecture diagram: Flare (InstantPayroll.sol) → Relayer → Plasma (InstantPayrollPayout.sol)
+- **Tech Stack** — Solidity, Hardhat, React, ethers.js, all four Flare enshrined protocols listed
+
+---
+
+### 5. CLOSE (3:30 — 4:00)
+
+> "Let me recap what Flare does for us that no other chain can:"
 >
-> "Employers only pay for verified work. Workers get paid the moment their commits land. No invoices. No disputes. No fees."
+> - **FDC** — verifies real-world work (GitHub commits, Google Docs edits) through validator consensus. No centralized oracle.
+> - **FTSO v2** — live FLR/USD pricing so employers set budgets in dollars. No Chainlink dependency.
+> - **Secure Random v2** — provably fair bonus lottery. No VRF subscription.
+> - **All three in one transaction, one trust model, one gas fee.**
 >
-> "Money should move as fast as work does. Thank you."
+> "And Plasma gives us what Flare can't do cheaply — **free permanent receipt storage** for every single micro-payment."
+>
+> "InstantPayroll turns payroll from a trust problem into a math problem. Employers only pay for verified work. Workers get paid the second their commits land. No invoices. No disputes. No fees."
+>
+> "**Money should move as fast as work does.** Thank you."
+
+---
+
+## Feature → Technology Map (Quick Reference)
+
+| Feature | Screen | Flare Protocol | Plasma |
+|---------|--------|---------------|--------|
+| Live FLR/USD price ticker | Employer + Worker dashboards | **FTSO v2** | — |
+| USD-to-FLR conversion on claim | Worker claim flow | **FTSO v2** | — |
+| GitHub commit verification | Worker claim (5-step FDC flow) | **FDC** Web2Json | — |
+| Google Docs revision verification | Worker claim (5-step FDC flow) | **FDC** Web2Json | — |
+| Bonus lottery (1-in-10 for 2x) | Worker claim | **Secure Random v2** | — |
+| Contract address discovery | All contract calls | **ContractRegistry** | — |
+| Stream creation + escrow | Employer dashboard | Flare smart contract | — |
+| Stream management + end | Employer dashboard | Flare smart contract | — |
+| Claim events with full context | Flare Claims tab | Event logs on Flare | — |
+| Permanent payment receipts | Plasma Receipts tab | — | **Zero-fee storage** |
+| Lifetime USD earnings | Worker stats | — | **Plasma contract** |
+| CSV export (Flare) | Flare Claims tab | Flare event data | — |
+| CSV export (Plasma) | Plasma Receipts tab | — | Plasma receipt data |
+| Cross-chain bridging | Background process | Flare events (source) | Plasma writes (dest) |
+| Repo verification | Work Verification card | — (GitHub API direct) | — |
 
 ---
 
 ## Backup Plans
 
-### If FDC finalization takes too long during demo:
-- Use the Quick Claim button instead — it still uses FTSO pricing and Secure Random lottery
-- Say: "The FDC verification takes about 90 seconds for consensus — that's real decentralized verification. Let me show you the Quick Claim mode which uses the same oracle pricing and bonus lottery."
+### If FDC finalization takes too long:
+Use Quick Claim — still uses FTSO + Secure Random. Say: "FDC consensus takes ~90 seconds — that's real decentralized verification. Quick Claim uses the same oracle pricing and bonus lottery."
 
-### If MetaMask is slow or errors:
-- Have a second browser window pre-loaded on the Worker dashboard as a fallback
-- Show the existing streams and claim history
+### If MetaMask is slow:
+Have a second browser pre-loaded on Worker dashboard as fallback.
 
-### If asked "Why not just use Sablier/Superfluid?":
-> "Those are great for time-based streaming. We add **proof of work** — your payment is gated on verifiable output, not just time passing. You can't claim if you didn't commit code."
+### If asked "Why not Sablier/Superfluid?":
+> "They stream based on time. We stream based on **verified output**. You can't claim if you didn't commit code."
 
-### If asked "What about gaming the system?":
-> "The FDC proof is verified by Flare's full validator set through consensus. You can't fake a GitHub commit count — the attestation providers independently query the API and must agree. And the employer sets the repo upfront."
+### If asked "What about gaming it?":
+> "The FDC proof goes through ~100 independent attestation providers reaching consensus. You can't fake a GitHub commit count — the validators independently query the API and must agree on the result."
 
 ### If asked "Why Plasma for receipts?":
-> "Storing every payment receipt on Flare costs gas. On Plasma, it's free. A relayer watches Flare events and writes them to Plasma at zero cost. Workers get a complete, queryable payment history — perfect for accounting, taxes, and audits."
+> "Storing 50 receipts per day on Flare costs gas every time. On Plasma, it's free. Workers get a complete, queryable payment history at zero cost — perfect for taxes and audits."
+
+### If asked "Why not just use Chainlink?":
+> "Chainlink VRF + Functions + Price Feeds = three separate services, three trust models, three fee structures. On Flare, it's one validator set, one gas fee, one transaction."
 
 ### If asked "What's next?":
-> "More proof sources — Jira tickets, Linear issues, Figma edits. Any API with verifiable output can become a proof of work. We're also looking at Flare mainnet once FDC is fully live."
-
----
-
-## Key Numbers to Mention
-
-- Global freelance market: **$1.5 trillion**
-- Average payment delay for freelancers: **30-60 days**
-- Cross-border payment fees: **3-8%**
-- Plasma receipt storage fees: **zero**
-- FDC verification time: **~90 seconds**
-- Bonus lottery odds: **1-in-10 for 2x payout**
+> "More proof sources — Jira, Linear, Figma. Any API with verifiable output becomes proof of work via FDC. And mainnet once FDC is fully live."
 
 ---
 
@@ -170,10 +293,11 @@
 
 | Time | Action |
 |------|--------|
-| -10 min | Create a Flare stream from Account A to Account B, start relayer |
-| -5 min | Verify both accounts have FLR for gas, streams are visible |
-| -2 min | Open browser to homepage, MetaMask unlocked on Account A |
-| 0:00 | Start pitch |
-| 1:50 | Begin live demo |
-| 3:20 | Wrap demo, talk tech |
+| -10 min | Create stream from A→B, start relayer |
+| -5 min | Verify both accounts have FLR, streams visible |
+| -2 min | Browser on About page, MetaMask on Account A |
+| 0:00 | Hook + Problem |
+| 0:50 | Two-chain architecture |
+| 1:20 | Begin live demo walkthrough |
+| 3:30 | Close |
 | 4:00 | Done |
