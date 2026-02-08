@@ -232,6 +232,19 @@
   box-shadow: 0 0 16px var(--accent-glow);
 }
 
+.btn-secondary {
+  background: var(--surface-active);
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: var(--surface-hover);
+  color: var(--text-primary);
+  border-color: var(--border-hover);
+  transform: translateY(-1px);
+}
+
 .btn-warning {
   background: rgba(245, 158, 11, 0.12);
   color: var(--warning);

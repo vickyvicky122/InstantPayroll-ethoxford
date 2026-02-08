@@ -99,7 +99,7 @@ export function WorkerPage({
   address, signer, isCorrectNetwork, isFlareNetwork, isPlasmaNetwork,
   activeNetwork, switchToFlare, switchToPlasma,
 }: WorkerPageProps) {
-  const [payrollTab, setPayrollTab] = useState<"flare" | "plasma">("flare");
+  const [payrollTab, setPayrollTab] = useState<"flare" | "plasma">("plasma");
   const [streams, setStreams] = useState<Stream[]>([]);
   const [plasmaPayouts, setPlasmaPayouts] = useState<PlasmaPayout[]>([]);
   const [totalEarnedUSD, setTotalEarnedUSD] = useState<bigint>(0n);
@@ -437,6 +437,43 @@ export function WorkerPage({
 
   const isFdcBusy = fdcStep !== "idle" && fdcStep !== "done" && fdcStep !== "error";
 
+  const exportFlareCsv = () => {
+    if (claimEvents.length === 0) return;
+    const header = "Stream ID,Amount (FLR),FLR/USD Price,Bonus,Commits\n";
+    const rows = claimEvents.map((ev) =>
+      `${ev.streamId.toString()},${ethers.formatEther(ev.amountFLR)},${ethers.formatUnits(ev.flrUsdPrice, priceDecimals)},${ev.bonusTriggered ? "Yes" : "No"},${ev.commitCount.toString()}`
+    ).join("\n");
+    downloadCsv(header + rows, "flare-payment-history.csv");
+  };
+
+  const exportPlasmaCsv = () => {
+    if (plasmaPayouts.length === 0) return;
+    const header = "Stream ID,Amount (FLR),Amount (USD),Date,Bonus,Commits\n";
+    const rows = plasmaPayouts.map((p) =>
+      `${p.flareStreamId.toString()},${ethers.formatEther(p.amountFLR)},${ethers.formatEther(p.amountUSD)},${new Date(Number(p.timestamp) * 1000).toISOString()},${p.bonusTriggered ? "Yes" : "No"},${p.commitCount.toString()}`
+    ).join("\n");
+    downloadCsv(header + rows, "plasma-payment-history.csv");
+  };
+
+  const exportUsdcCsv = () => {
+    if (plasmaClaimEvents.length === 0) return;
+    const header = "Stream ID,Amount (USDC),Intervals\n";
+    const rows = plasmaClaimEvents.map((ev) =>
+      `${ev.streamId.toString()},${ethers.formatUnits(ev.amount, 6)},${ev.intervalsCount.toString()}`
+    ).join("\n");
+    downloadCsv(header + rows, "usdc-payment-history.csv");
+  };
+
+  const downloadCsv = (csv: string, filename: string) => {
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   if (!address) {
     return (
       <div className="page">
@@ -470,16 +507,16 @@ export function WorkerPage({
       {/* Top-level payroll tab bar */}
       <div className="payroll-tabs">
         <button
-          className={`tab ${payrollTab === "flare" ? "tab-active" : ""}`}
-          onClick={() => setPayrollTab("flare")}
-        >
-          Flare Payroll
-        </button>
-        <button
           className={`tab ${payrollTab === "plasma" ? "tab-active" : ""}`}
           onClick={() => setPayrollTab("plasma")}
         >
-          Plasma Payroll (USDC)
+          Stablecoin Payroll (USDC)
+        </button>
+        <button
+          className={`tab ${payrollTab === "flare" ? "tab-active" : ""}`}
+          onClick={() => setPayrollTab("flare")}
+        >
+          Verified Payroll (FLR)
         </button>
       </div>
 
@@ -747,6 +784,11 @@ export function WorkerPage({
 
             {historyTab === "flare" && (
               <div className="events-list">
+                {claimEvents.length > 0 && (
+                  <button className="btn btn-secondary" style={{ alignSelf: "flex-end", marginBottom: 8 }} onClick={exportFlareCsv}>
+                    Export CSV
+                  </button>
+                )}
                 {claimEvents.length === 0 ? (
                   <p className="muted">No claims yet.</p>
                 ) : (
@@ -768,6 +810,11 @@ export function WorkerPage({
 
             {historyTab === "plasma" && (
               <div className="events-list">
+                {plasmaPayouts.length > 0 && (
+                  <button className="btn btn-secondary" style={{ alignSelf: "flex-end", marginBottom: 8 }} onClick={exportPlasmaCsv}>
+                    Export CSV
+                  </button>
+                )}
                 {plasmaPayouts.length === 0 ? (
                   <p className="muted">No Plasma payouts recorded yet.</p>
                 ) : (
@@ -888,6 +935,11 @@ export function WorkerPage({
               <div className="card">
                 <h2>USDC Claim History</h2>
                 <div className="events-list">
+                  {plasmaClaimEvents.length > 0 && (
+                    <button className="btn btn-secondary" style={{ alignSelf: "flex-end", marginBottom: 8 }} onClick={exportUsdcCsv}>
+                      Export CSV
+                    </button>
+                  )}
                   {plasmaClaimEvents.length === 0 ? (
                     <p className="muted">No USDC claims yet.</p>
                   ) : (

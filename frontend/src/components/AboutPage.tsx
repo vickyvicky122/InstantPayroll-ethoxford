@@ -21,7 +21,7 @@ export function AboutPage() {
       <div className="about-hero">
         <h1 className="about-title">About InstantPayroll</h1>
         <p className="about-subtitle">
-          Real-time verified payroll streaming &mdash; computed on Flare, recorded on Plasma
+          Zero-fee stablecoin settlement on Plasma &mdash; verified payroll on Flare &mdash; exportable payment records
         </p>
       </div>
 

@@ -55,7 +55,7 @@ export function EmployerPage({
   address, signer, isCorrectNetwork, isFlareNetwork, isPlasmaNetwork,
   activeNetwork, switchToFlare, switchToPlasma,
 }: EmployerPageProps) {
-  const [payrollTab, setPayrollTab] = useState<"flare" | "plasma">("flare");
+  const [payrollTab, setPayrollTab] = useState<"flare" | "plasma">("plasma");
 
   // --- Flare state ---
   const [workerAddr, setWorkerAddr] = useState("");
@@ -347,16 +347,16 @@ export function EmployerPage({
       {/* Top-level payroll tab bar */}
       <div className="payroll-tabs">
         <button
-          className={`tab ${payrollTab === "flare" ? "tab-active" : ""}`}
-          onClick={() => setPayrollTab("flare")}
-        >
-          Flare Payroll
-        </button>
-        <button
           className={`tab ${payrollTab === "plasma" ? "tab-active" : ""}`}
           onClick={() => setPayrollTab("plasma")}
         >
-          Plasma Payroll (USDC)
+          Stablecoin Payroll (USDC)
+        </button>
+        <button
+          className={`tab ${payrollTab === "flare" ? "tab-active" : ""}`}
+          onClick={() => setPayrollTab("flare")}
+        >
+          Verified Payroll (FLR)
         </button>
       </div>
 

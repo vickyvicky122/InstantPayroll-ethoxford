@@ -1,6 +1,6 @@
 # InstantPayroll
 
-**Real-time verified payroll streaming powered by Flare enshrined protocols + Plasma cross-chain receipts.**
+**Zero-fee stablecoin payments streamed in real time — with on-chain work verification and exportable payment records.**
 
 Built at ETH Oxford 2026.
 
@@ -8,20 +8,57 @@ Built at ETH Oxford 2026.
 
 ## The Problem
 
-Traditional payroll is broken. Workers wait weeks or months to get paid, with no transparency into how much they've earned or when payment arrives. Freelancers and gig workers face even worse conditions: delayed invoices, payment disputes, and no verifiable proof of work completion. Cross-border payments add currency conversion complexity and fees on top.
+Paying global contributors is still broken. Workers wait weeks for payment. Freelancers deal with delayed invoices and disputes. Cross-border transfers incur conversion fees and settlement delays. And there's no standard way to produce a verifiable, on-chain payment history that workers, accountants, or tax tools can query.
 
 ## The Solution
 
-InstantPayroll turns payroll into a real-time stream. Employers deposit funds into a smart contract, workers prove their activity (GitHub commits), and payments flow automatically at configurable intervals. Every claim is:
+InstantPayroll reimagines payments as continuous streams. Two complementary payroll modes serve different needs:
 
-- **Price-accurate** via Flare's FTSO oracle (USD-denominated rates paid in FLR)
-- **Work-verified** via Flare's FDC data connector (on-chain proof of GitHub activity)
-- **Bonus-eligible** via Flare's Secure Random (provably fair 1-in-10 chance of 2x payout)
-- **Receipt-tracked** via Plasma cross-chain relay (zero-fee permanent payment records)
+**1. Zero-Fee Stablecoin Settlement (Plasma)**
+- Stream USDC to workers at configurable intervals with **zero transaction fees**
+- Workers claim with one click — no volatility, no conversion, no gas costs
+- Every payment is recorded on-chain and **exportable as CSV** for accounting, tax filing, or audit
+
+**2. Verified Payroll with Live Price Feeds (Flare)**
+- USD-denominated rates **auto-converted to FLR** via Flare's enshrined FTSO oracle
+- **On-chain work verification** via FDC — proves GitHub commits (or Google Docs revisions) before payment
+- **Provably fair bonus lottery** via Secure Random (1-in-10 chance of 2x payout)
+- All claims are mirrored to Plasma via a relayer for **free permanent receipts**
+
+### Why This Matters for Payments
+
+| Challenge | How InstantPayroll Solves It |
+|---|---|
+| Settlement speed | Streaming — workers claim earnings every 60 seconds, not every 2 weeks |
+| Stablecoin efficiency | USDC on Plasma — zero-fee transactions mean micro-payments are viable |
+| Payment accessibility | CSV export of full history — workers, accountants, tax tools can all access records |
+| Trust & disputes | On-chain verification — FDC proves work happened before payment flows |
+| Cross-border conversion | FTSO oracle — live USD→FLR conversion with no external oracle fees |
 
 ---
 
 ## How It Works
+
+### Mode 1: Stablecoin Payments (Plasma — Zero-Fee USDC)
+
+```
+ EMPLOYER                                       PLASMA (Testnet)
+    |                                                  |
+    |-- approve USDC + createStream(worker, rate) --> |  zero-fee tx
+    |       deposits USDC into escrow                 |
+    |                                                  |
+ WORKER                                               |
+    |-- claim() ------------------------------------ > |  zero-fee tx
+    |       one click, one tx, USDC transferred        |
+    |                                                  |
+    |-- Export CSV ← full payment history              |
+```
+
+1. **Employer** deposits USDC into a stream with a configurable rate (e.g., 1 USDC per minute)
+2. **Worker** claims accumulated USDC at any time — one click, one transaction, zero gas
+3. **Worker** exports full payment history as CSV for accounting, taxes, or audit
+
+### Mode 2: Verified Payroll (Flare — FLR with Oracle Pricing)
 
 ```
  EMPLOYER                           FLARE (Coston2)                              PLASMA (Testnet)
@@ -44,18 +81,15 @@ InstantPayroll turns payroll into a real-time stream. Employers deposit funds in
                                           |-- recordPayout() -----------------------> |
                                           |                                   zero-fee receipt stored
     |                                     |                                            |
-    |-- view history on both chains via frontend ------------------------------------ |
+    |-- Export CSV ← history from both chains via frontend -------------------------- |
 ```
 
-### Step by Step
-
-1. **Employer** creates a payment stream: deposits C2FLR, sets a USD rate per interval (e.g., $0.50/min), and assigns a worker address
-2. **Worker** claims payment after each interval by proving GitHub activity through Flare's FDC Web2Json attestation (or demo mode for testing)
-3. **FTSO** provides the real-time FLR/USD exchange rate so the worker always receives the correct USD-equivalent amount in FLR
-4. **Secure Random** generates a provably fair random number on each claim -- a 1-in-10 chance triggers a 2x bonus payout
-5. **Payment** is transferred to the worker on Flare, and the stream state updates automatically
-6. **Relayer** monitors `PaymentClaimed` events on Flare and writes them to the Plasma testnet contract as permanent, zero-fee payment receipts
-7. **Worker** views their full payment history, earnings stats, and cross-chain records in the frontend dashboard
+1. **Employer** deposits FLR, sets a USD rate per interval (e.g., $0.50/min), and assigns a worker
+2. **Worker** proves activity (GitHub commits) via Flare's FDC attestation, then claims payment
+3. **FTSO** provides live FLR/USD pricing so workers always receive the correct USD-equivalent
+4. **Secure Random** rolls a provably fair bonus on each claim (1-in-10 chance of 2x payout)
+5. **Relayer** mirrors every claim to Plasma as a zero-fee permanent receipt
+6. **Worker** exports complete payment history (both chains) as CSV
 
 ---
 
@@ -119,21 +153,22 @@ The bonus status is also visible in the frontend dashboard, so workers can see w
 
 ---
 
-## Plasma Integration
+## Plasma Integration — Zero-Fee Stablecoin Settlement
 
-[Plasma](https://www.plasma.to) provides a fast, zero-fee L2 environment for storing payment receipts.
+[Plasma](https://www.plasma.to) is a zero-fee EVM chain. Transactions cost nothing. This makes it the ideal rail for stablecoin payments and payment record storage.
 
-### Why Plasma?
+### Two Roles for Plasma
 
-While the core payment logic lives on Flare (where the enshrined protocols are), workers need a permanent, easily queryable record of all their earnings. Storing this on Flare would cost gas on every claim. Plasma's zero-fee testnet provides:
+**1. Stablecoin Payroll (PlasmaPayroll.sol)**
 
-- **Free storage** for payment receipt records
-- **Fast finality** for cross-chain writes
-- **Separate query layer** so workers can check their total earnings without hitting Flare's RPC
+A standalone USDC streaming contract runs natively on Plasma. Employers deposit USDC into escrow, workers claim at intervals. Because Plasma is zero-fee:
+- Micro-payments (e.g., $0.01 per minute) are economically viable — no gas eats into the payment
+- Workers claim frequently without cost concerns
+- Settlement is instant and in a stable asset
 
-### How It Works
+**2. Free Receipt Storage (InstantPayrollPayout.sol)**
 
-The `InstantPayrollPayout` contract on Plasma testnet is a simple receipt ledger:
+Every Flare-based claim is mirrored to Plasma via a relayer as a permanent, queryable receipt:
 
 ```solidity
 struct Payout {
@@ -146,21 +181,23 @@ struct Payout {
 }
 ```
 
-A **relayer script** (`scripts/relayer.ts`) runs as a background process:
+A **relayer script** (`scripts/relayer.ts`) watches Flare events and writes them to Plasma:
 1. Connects to Flare Coston2 and listens for `PaymentClaimed` events
-2. On each event, calls `recordPayout()` on the Plasma contract with the payment details
-3. The Plasma contract stores the receipt and updates the worker's `totalEarnedUSD`
+2. Calls `recordPayout()` on Plasma with payment details — zero fee
+3. Maintains per-worker `totalEarnedUSD` lifetime counter
 
-Workers can query their full payout history from Plasma via `getAllPayouts(address)` and see their lifetime USD earnings via `totalEarnedUSD(address)` -- all without any gas fees.
+Workers query `getAllPayouts(address)` for complete history, or **export as CSV** from the frontend for accounting, taxes, or audit.
 
 ---
 
 ## Deployed Contracts
 
-| Contract | Network | Chain ID | Address |
-|----------|---------|----------|---------|
-| InstantPayroll | Flare Coston2 | 114 | [`0xcdACc7626de63B86C63b4F97EA7AfbB3610D927e`](https://coston2-explorer.flare.network/address/0xcdACc7626de63B86C63b4F97EA7AfbB3610D927e) |
-| InstantPayrollPayout | Plasma Testnet | 9746 | [`0xe8B2dBb78b7A29d3D9E52Cc7Fdf02828Fa02a9c4`](https://testnet.plasmascan.to/address/0xe8B2dBb78b7A29d3D9E52Cc7Fdf02828Fa02a9c4) |
+| Contract | Network | Chain ID | Purpose | Address |
+|----------|---------|----------|---------|---------|
+| PlasmaPayroll | Plasma Testnet | 9746 | USDC stablecoin streaming | Deployed |
+| MockUSDC | Plasma Testnet | 9746 | Test stablecoin (6 decimals) | Deployed |
+| InstantPayroll | Flare Coston2 | 114 | FLR payroll with FTSO + FDC + RNG | [`0xcdACc7626de63B86C63b4F97EA7AfbB3610D927e`](https://coston2-explorer.flare.network/address/0xcdACc7626de63B86C63b4F97EA7AfbB3610D927e) |
+| InstantPayrollPayout | Plasma Testnet | 9746 | Zero-fee receipt storage | [`0xe8B2dBb78b7A29d3D9E52Cc7Fdf02828Fa02a9c4`](https://testnet.plasmascan.to/address/0xe8B2dBb78b7A29d3D9E52Cc7Fdf02828Fa02a9c4) |
 
 ---
 
@@ -267,19 +304,16 @@ npx ts-node scripts/relayer.ts
 
 ## Frontend
 
-The frontend is a React + TypeScript dashboard with two views:
+The frontend is a React + TypeScript dashboard with two views, each offering **Stablecoin (USDC)** and **Verified (FLR)** payroll tabs:
 
-**Employer Dashboard (`/`)**
-- Create payment streams with configurable USD rate, claim interval, and FLR deposit
-- View all active/ended streams with progress bars
-- End streams and recover unused escrow
-- Live FLR/USD price ticker from FTSO
+**Employer Dashboard**
+- **Stablecoin tab (default):** Deposit USDC, create streams, manage active payments — all zero-fee on Plasma
+- **Verified tab:** Deposit FLR, set USD rates, create work-verified streams on Flare with live FTSO price ticker
 
-**Worker Dashboard (`/worker`)**
-- Stats: total earned FLR, live FLR/USD price, bonus lottery status, Plasma USD total
-- Active streams with real-time countdown timers to next claim
-- Claim button with pulsing glow when ready
-- Tabbed history: Flare claims + Plasma payouts with bonus indicators
+**Worker Dashboard**
+- **Stablecoin tab (default):** View USDC streams, claim with one click, see balance and earnings stats
+- **Verified tab:** Claim with GitHub/Google Docs proof via FDC, bonus lottery indicator, countdown timers
+- **CSV export** on all payment history views — Flare claims, Plasma payouts, and USDC claims
 
 ---
 

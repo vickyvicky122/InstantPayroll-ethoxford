@@ -58,10 +58,10 @@ export function LandingPage({ onConnect, connecting, address }: LandingPageProps
     <div className="landing">
       <div className="landing-hero">
         <h1 className="landing-title">
-          Connecting people who build with people who pay — in real time
+          Instant stablecoin payments for global teams
         </h1>
         <p className="landing-subtitle">
-          Stream salaries on Flare. Claim earnings instantly. Verify work on-chain.
+          Zero-fee USDC streaming on Plasma. Verified payroll on Flare. Claim earnings in real time.
         </p>
       </div>
 
@@ -72,7 +72,7 @@ export function LandingPage({ onConnect, connecting, address }: LandingPageProps
         >
           <span className="role-emoji">🏢</span>
           <h2 className="role-title">I am an Employer</h2>
-          <p className="role-desc">Create payment streams and pay your workers</p>
+          <p className="role-desc">Stream USDC or FLR payments to your team in real time</p>
 
           {selectedRole === "employer" && (
             <div className="role-form" onClick={(e) => e.stopPropagation()}>
@@ -110,7 +110,7 @@ export function LandingPage({ onConnect, connecting, address }: LandingPageProps
         >
           <span className="role-emoji">👷</span>
           <h2 className="role-title">I am a Worker</h2>
-          <p className="role-desc">Claim payments and verify your work</p>
+          <p className="role-desc">Claim USDC or FLR earnings instantly, with exportable records</p>
 
           {selectedRole === "worker" && (
             <div className="role-form" onClick={(e) => e.stopPropagation()}>
