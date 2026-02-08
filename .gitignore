@@ -3,3 +3,9 @@ node_modules
 frontend/.env
 frontend/dist
 frontend/node_modules
+.vercel
+.DS_Store
+dist/
+.claude/
+_bmad/
+CLAUDE.md
